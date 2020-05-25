@@ -164,6 +164,24 @@ adjust_DPdata <- function(DP_raw){
 }
 
 
+# Function to return N age groups & sex by country
+get_agesex <- function(data, countries){
+  
+  # vectors to indicate Nages & sex by country
+  NAges <- vector()
+  gender <- vector()
+  
+  for(c in 1:length(countries)) NAges[c] <- length(unique(df$age_min[df$country==countries[c]]))
+  for(c in 1:length(countries)){
+    cc <- data[data$country==countries[c], ]
+    if(cc$sex[1] %in% c('B')) gender[c] <- 1
+    if(cc$sex[1] %in% c('M','F')) gender[c] <- 2
+  }
+  
+  return(list(NAges=NAges, gender=gender))
+}
+
+
 # Run stan model 
 runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
   f <- stan(file=model,data=inputs,iter=N_iter,
@@ -191,6 +209,23 @@ fit_DP <- function(fit, inputs){
   png(filename='DP_Fit.png', width=10, height=10, res=400, units='cm')
   plot(DP_fit)
   dev.off()
+}
+
+# Plot cumulative probabilities of infection
+plot_Pinfection <- function(chains, countries){
+  
+  # extract estimates
+  infec <- data.frame(co=countries, mean=NA, ciL=NA, ciU=NA)
+  for(c in 1:length(countries)){
+    infec[c,2:4] <- quantile(chains$probInfec[,c], c(0.5,0.025,0.975))
+  }
+  
+  # plot
+  pinf <- ggplot(infec, aes(reorder(co, mean),mean))+ geom_point(col='purple')+
+    geom_linerange(aes(ymin=ciL, ymax=ciU),col='purple')+ theme_minimal()+
+    theme(axis.text.x=element_text(angle=60, hjust=1))+ ylab('Prob Infection')+
+    xlab('')
+  return(pinf)
 }
 
 
@@ -263,14 +298,6 @@ fit_deaths <- function(chains, inputs, data, countries){
         scale_fill_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))+
         labs(subtitle=paste(dfc$country[1]))
     }
-  }
-  N <- ceiling(length(countries)/10)
-  for(p in 1:N){
-    u <- p*10
-    l <- u-9
-    png(filename=paste('ModelFit',p,'.png',sep=''), width=18, height=27, res=400, units='cm')
-    grid.arrange(grobs=plotD[l:u], ncol=2, left='deaths', bottom='age')
-    dev.off()
   }
   return(plotD)
 }
