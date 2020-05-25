@@ -2,23 +2,24 @@
 
 
 # Function to compile demographic data for model
-compile_pop <- function(poplist){
+compile_pop <- function(poplist, countries){
   
   # matrices for model
-  pop_m <- matrix(NA, nrow=19, ncol=length(poplist)) 
-  pop_f <- matrix(NA, nrow=19, ncol=length(poplist)) 
-  pop_b <- matrix(NA, nrow=19, ncol=length(poplist)) 
+  pop_m <- matrix(NA, nrow=17, ncol=length(poplist)) 
+  pop_f <- matrix(NA, nrow=17, ncol=length(poplist)) 
+  pop_b <- matrix(NA, nrow=17, ncol=length(poplist)) 
   
   # compile for model
-  for(c in 1:length(poplist)){
-    pop_m[ ,c] <- poplist[[c]]$M[1:19]
-    pop_f[ ,c] <- poplist[[c]]$`F`[1:19]
-    pop_b[ ,c] <- poplist[[c]]$M[1:19] + poplist[[c]]$`F`[1:19]
+  for(c in 1:length(countries)){
+    ci <- countries[c]
+    pop_m[ ,c] <- poplist[[ci]]$M[1:17]
+    pop_f[ ,c] <- poplist[[ci]]$`F`[1:17]
+    pop_b[ ,c] <- poplist[[ci]]$M[1:17] + poplist[[ci]]$`F`[1:17]
     
     # add ages 90+
-    pop_m[19,c] <- sum(poplist[[c]]$M[19:21])
-    pop_f[19,c] <- sum(poplist[[c]]$`F`[19:21])
-    pop_b[19,c] <- sum(poplist[[c]]$M[19:21]) + sum(poplist[[c]]$`F`[19:21])
+    pop_m[17,c] <- sum(poplist[[ci]]$M[17:21])
+    pop_f[17,c] <- sum(poplist[[ci]]$`F`[17:21])
+    pop_b[17,c] <- sum(poplist[[ci]]$M[17:21]) + sum(poplist[[c]]$`F`[17:21])
   }
   
   
@@ -31,9 +32,9 @@ compile_pop <- function(poplist){
 compile_deathsA <- function(deathsA, countries){
   
   # matrices for model
-  deaths_m <- matrix(-999, nrow=19, ncol=length(countries))
-  deaths_f <- matrix(-999, nrow=19, ncol=length(countries))
-  deaths_b <- matrix(-999, nrow=19, ncol=length(countries))
+  deaths_m <- matrix(-999, nrow=17, ncol=length(countries))
+  deaths_f <- matrix(-999, nrow=17, ncol=length(countries))
+  deaths_b <- matrix(-999, nrow=17, ncol=length(countries))
   
   # compile for model
   for(c in 1:length(countries)){
@@ -51,8 +52,8 @@ compile_deathsA <- function(deathsA, countries){
 }
 
 
-# Function to aggregate deaths 90+ (when broken down)
-agg_deaths90p <- function(deathsA, countries){
+# Function to aggregate deaths 80+ (if broken down)
+agg_deaths80p <- function(deathsA, countries){
   
   # list for aggregated/tidied dataframes
   agg <- list()
@@ -62,14 +63,15 @@ agg_deaths90p <- function(deathsA, countries){
     
     dfc <- deathsA[deathsA$country==countries[c], ]
     
-    # if multiple age groups 90+, aggregate
-    if(any(dfc$age_min>90)){ 
-      new <- dfc[dfc$age_min<90, ]
+    # if multiple age groups 80+, aggregate
+    if(any(dfc$age_min>80)){ 
+      new <- dfc[dfc$age_max<80, ]
       for(s in unique(new$sex)){
-        d90p <- sum(dfc$deaths[dfc$age_min>89 & dfc$sex==s])
-        n90p <- data.frame(country=countries[c], sex=s, age_min=90, age_max=110,
-                           deaths=as.numeric(d90p), asof=new$asof[1])
-        new <- rbind(new,n90p)
+        d80p <- sum(dfc$deaths[dfc$age_max>80 & dfc$sex==s])
+        minA <- min(dfc$age_min[dfc$age_max>80])
+        n80p <- data.frame(country=countries[c], sex=s, age_min=minA, age_max=110,
+                           deaths=as.numeric(d80p), asof=new$asof[1])
+        new <- rbind(new,n80p)
       }
       agg[[c]] <- new
     }else{
@@ -115,12 +117,12 @@ align_ages <- function(data, popdata){
 index_ages <- function(data, countries){
   
   # min & max bounds of age groupings
-  Amin <- seq(0,90,5)
-  Amax <- c(seq(4,89,5),110)
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
   
   # matrices for storage
-  ageG_min <- matrix(-999, nrow=19, ncol=length(countries))
-  ageG_max <- matrix(-999, nrow=19, ncol=length(countries))
+  ageG_min <- matrix(-999, nrow=17, ncol=length(countries))
+  ageG_max <- matrix(-999, nrow=17, ncol=length(countries))
   
   # get indices
   for(c in 1:length(countries)){
@@ -147,22 +149,16 @@ index_ages <- function(data, countries){
 
 
 # Tidy Diamond Princess data
-tidy_DPdata <- function(DP_raw){
+adjust_DPdata <- function(DP_raw){
   
-  DP_raw[2, ] <- DP_raw[2, ]+DP_raw[1, ] # combine 0-9 and 10-19 ages
-  DP_raw[9, ] <- DP_raw[9, ]+DP_raw[10, ] # combine 80-89 and 90+ ages
-  DP_raw <- DP_raw[c(-10,-1), ]
-  DP_raw$AgeMax[c(1,8)] <- c(19,150)
-  DP_raw[c(1,8),1] <- c(0,80)
+  # age-sex breakdown for 634/712 cases
+  pos_m <- DP_raw$pos_m
+  pos_f <- DP_raw$pos_f
   
-  # age-sex breakdown for 634/714 cases
-  DP_pos_m <- c(1,16,23,21,25,74,123,38)
-  DP_pos_f <- c(5,15,11,6,35,104,119,18)
-  
-  AdditionalPositives <- 712 - sum(DP_pos_m+DP_pos_f) # add cases with no age/sex
-  wts <- cbind(DP_pos_m, DP_pos_f)/(sum(DP_pos_m+DP_pos_f)) # assume same age/sex dist of new positives
-  DP_raw$pos_m <- round(DP_pos_m + (AdditionalPositives*wts)[,1])
-  DP_raw$pos_f <- round(DP_pos_f + (AdditionalPositives*wts)[,2])
+  AdditionalPositives <- 712 - sum(pos_m+pos_f) # cases with no age/sex
+  wts <- cbind(pos_m, pos_f)/(sum(pos_m+pos_f)) # assume same age/sex dist of new positives
+  DP_raw$pos_m <- round(pos_m + (AdditionalPositives*wts)[,1])
+  DP_raw$pos_f <- round(pos_f + (AdditionalPositives*wts)[,2])
   
   return(DP_raw) # return adjusted data
 }
@@ -199,10 +195,8 @@ fit_DP <- function(fit, inputs){
 
 
 # Plot model fits
-fit_deaths <- function(fit, inputs, data, countries){
+fit_deaths <- function(chains, inputs, data, countries){
   
-  #chains <- rstan::extract(fit)
-  chains <- fit
   # age mid & age groups for plots
   data$age_mid <- data$age_min+((data$age_max-data$age_min)+1)/2
   data$ageG <- paste(data$age_min, data$age_max, sep='-')
@@ -233,7 +227,7 @@ fit_deaths <- function(fit, inputs, data, countries){
                         age=dfc$ageG, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3])
       
       plotD[[c]] <- ggplot(fit, aes(reorder(age,amin), n))+ geom_col(fill='seagreen2')+
-        xlab('')+ ylab('deaths')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
+        xlab('')+ ylab('')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
         theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
         labs(fill='')+ geom_point(aes(age, fit))+geom_linerange(aes(age, ymin=ciL, ymax=ciU))+
         labs(subtitle=paste(dfc$country[1]))
@@ -262,7 +256,7 @@ fit_deaths <- function(fit, inputs, data, countries){
       for(a in 1:nrow(fit)) fit$age[a] <- dfc$ageG[dfc$age_min==fit$amin[a]][1]
       fit$sex <- factor(fit$sex, levels=c('F','M'))
       plotD[[c]] <- ggplot(fit, aes(reorder(age,amin), n))+ geom_col(aes(fill=sex), position=position_dodge())+
-        xlab('')+ ylab('deaths')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
+        xlab('')+ ylab('')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
         theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
         labs(fill='')+ geom_point(aes(age, fit, group=sex), position=position_dodge(width=0.9))+
         geom_linerange(aes(age, ymin=ciL, ymax=ciU, group=sex), position=position_dodge(width=0.9))+
@@ -270,8 +264,17 @@ fit_deaths <- function(fit, inputs, data, countries){
         labs(subtitle=paste(dfc$country[1]))
     }
   }
+  N <- ceiling(length(countries)/10)
+  for(p in 1:N){
+    u <- p*10
+    l <- u-9
+    png(filename=paste('ModelFit',p,'.png',sep=''), width=18, height=27, res=400, units='cm')
+    grid.arrange(grobs=plotD[l:u], ncol=2, left='deaths', bottom='age')
+    dev.off()
+  }
   return(plotD)
 }
+
 
 # Plot age/sex IFRs
 plot_IFR <- function(fit){
@@ -280,22 +283,22 @@ plot_IFR <- function(fit){
   chains <- rstan::extract(fit)
   
   # min & max bounds of age groupings
-  Amin <- seq(0,90,5)
-  Amax <- c(seq(4,89,5),110)
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
   
   # dataframe for ests
   ifr_f <- data.frame(mean=NA, ciL=NA, ciU=NA)
   ifr_m <- data.frame(mean=NA, ciL=NA, ciU=NA)
-  for(a in 1:19){
+  for(a in 1:17){
     ifr_f[a,] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
     ifr_m[a,] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
   }
   
   ifr <- rbind(ifr_m, ifr_f)
-  ifr$sex <- c(rep('M',19),rep('F',19))
-  ifr$age <- rep(seq(1:19),2)
+  ifr$sex <- c(rep('M',17),rep('F',17))
+  ifr$age <- rep(seq(1:17),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
-  ifr$ageG[ifr$ageG=='90-110'] <- '90+'
+  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
   ifrp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
     geom_point(position=position_dodge(width=0.4))+
     geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+

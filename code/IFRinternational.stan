@@ -12,74 +12,71 @@ functions {
 
 data {
    
+  // Number of areas, age-groups & gender by area
   int <lower=1> NArea; 
   int <lower=1> NAges[NArea];
-  int gender[NArea]; // 1=both, 2=male & female
+  int gender[NArea]; 
   
   // population by 5 year age groups
-  matrix[19,NArea] pop_m;
-  matrix[19,NArea] pop_f;
-  matrix[19,NArea] pop_b;
+  matrix[17,NArea] pop_m;
+  matrix[17,NArea] pop_f;
+  matrix[17,NArea] pop_b;
   
   // age-specific death data
-  int deaths_m[19,NArea];
-  int deaths_f[19,NArea];
-  int deaths_b[19,NArea];
+  int deaths_m[17,NArea];
+  int deaths_f[17,NArea];
+  int deaths_b[17,NArea];
   
   // min & max of age bands for indexing
-  int ageG_min[19,NArea];
-  int ageG_max[19,NArea];
-  int NGroups;
- 
-  int <lower=0> DP_pos_m[NGroups]; 
-  int <lower=0> DP_pos_f[NGroups]; 
+  int ageG_min[17,NArea];
+  int ageG_max[17,NArea];
+  
+  // age-specific probabilities of infection
+  real relProbInfection[17];
+  
+  // Diamond Princess data for likelihood
+  int <lower=0> DP_pos_m[8]; 
+  int <lower=0> DP_pos_f[8]; 
   int <lower=0> DP_deathsTot;
-  real relProbInfection[19];
   
 }
 
 parameters {
   
-  real logit_probInfec[NArea];  
-  real logit_probDeathMi[19];
-  real log_relprobDeathSex;
-  real phi;
+  real logit_probInfec[NArea]; // cumulative probability of infection  
+  real logit_ifr_m[17]; // prob death given infection (males)
+  real log_relifrsex; // relative prob death (females)
+  real phi; // over-dispersion parameter
   
 }
 
 transformed parameters {
   
-  real probInfec[NArea]; 
-  real probDeath_m[19,NArea]; 
-  real probDeath_f[19,NArea];
+  real probInfec[NArea];
+  real relifrsex;
 
-  // probs given infection
-  real probDeathMi[19];
-  real relprobDeathSex;
-  real ifr_f[19];
-  real ifr_m[19];
+  // infection fatality ratios
+  real ifr_f[17];
+  real ifr_m[17];
   
-  // national age sex estimates
-  real natDeath_m[19,NArea];
-  real natDeath_f[19,NArea];
-  real natDeath_b[19,NArea];
+  // estimated deaths by age sex & area
+  real natDeath_m[17,NArea];
+  real natDeath_f[17,NArea];
+  real natDeath_b[17,NArea];
   
   // transformed parameters
-  relprobDeathSex = exp(log_relprobDeathSex);
+  relifrsex = exp(log_relifrsex);
   for(c in 1:NArea) probInfec[c] = inv_logit(logit_probInfec[c]);
-  for(a in 1:19) probDeathMi[a] = inv_logit(logit_probDeathMi[a]);
+  for(a in 1:17) ifr_m[a] = inv_logit(logit_ifr_m[a]);
+  for(a in 1:17) ifr_f[a] = ifr_m[a]*relifrsex;
   
   // Probs by age, sex & region
-  for (a in 1:19){
+  for (a in 1:17){
     for(c in 1:NArea){
-      probDeath_m[a,c] = probInfec[c]*relProbInfection[a]*probDeathMi[a];
-      probDeath_f[a,c] = probInfec[c]*relProbInfection[a]*probDeathMi[a]*relprobDeathSex;
-      natDeath_m[a,c] = probDeath_m[a,c]*pop_m[a,c];
-      natDeath_f[a,c] = probDeath_f[a,c]*pop_f[a,c];
-      natDeath_b[a,c] = probDeath_m[a,c]*pop_m[a,c] + probDeath_f[a,c]*pop_f[a,c];
+      natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*relProbInfection[a]*ifr_m[a];
+      natDeath_f[a,c] = pop_f[a,c]*probInfec[c]*relProbInfection[a]*ifr_f[a];
+      natDeath_b[a,c] = natDeath_f[a,c] + natDeath_m[a,c];
     }
-    ifr_m[a] = probDeathMi[a]; 
-    ifr_f[a] = probDeathMi[a]*relprobDeathSex;
   }
   
 }
@@ -89,16 +86,16 @@ model {
 
   int ObservedDeaths;
   real estDPdeaths;
-  real estDeaths_b[19,NArea];
-  real estDeaths_m[19,NArea];
-  real estDeaths_f[19,NArea];
-  real difr_f[NGroups];
-  real difr_m[NGroups];
+  real estDeaths_b[17,NArea];
+  real estDeaths_m[17,NArea];
+  real estDeaths_f[17,NArea];
+  real difr_f[8];
+  real difr_m[8];
 
   // Priors
-  log_relprobDeathSex ~ normal(0.,0.5);
+  log_relifrsex ~ normal(0.,0.5);
   for(c in 1:NArea) logit_probInfec[c] ~ normal(0.,2);
-  for(a in 1:19) logit_probDeathMi[a] ~ normal(0.,2);
+  for(a in 1:17) logit_ifr_m[a] ~ normal(0.,2);
   
   // fit to age & sex-specific data
   for(c in 1:NArea){
@@ -124,7 +121,7 @@ model {
   difr_m[5] = mean(ifr_m[11:12]);
   difr_m[6] = mean(ifr_m[13:14]);
   difr_m[7] = mean(ifr_m[15:16]);
-  difr_m[8] = mean(ifr_m[17:19]);
+  difr_m[8] = ifr_m[17];
   difr_f[1] = mean(ifr_f[1:4]);
   difr_f[2] = mean(ifr_f[5:6]);
   difr_f[3] = mean(ifr_f[7:8]);
@@ -132,9 +129,9 @@ model {
   difr_f[5] = mean(ifr_f[11:12]);
   difr_f[6] = mean(ifr_f[13:14]);
   difr_f[7] = mean(ifr_f[15:16]);
-  difr_f[8] = mean(ifr_f[17:19]);
+  difr_f[8] = ifr_f[17];
   // Sum expected deaths across age groups
-  for (j in 1:NGroups){ 
+  for (j in 1:8){ 
     estDPdeaths=estDPdeaths+(difr_f[j]*DP_pos_f[j]+difr_m[j]*DP_pos_m[j]);
   }
   
@@ -145,10 +142,6 @@ model {
  
 generated quantities {
 
-  real probDeathFi[19];
-  
-  // probabilties of death and ICU for females 
-  for(a in 1:19) probDeathFi[a] = probDeathMi[a]*relprobDeathSex; 
 
 }
 
