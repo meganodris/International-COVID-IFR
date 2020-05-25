@@ -70,7 +70,7 @@ agg_deaths80p <- function(deathsA, countries){
         d80p <- sum(dfc$deaths[dfc$age_max>80 & dfc$sex==s])
         minA <- min(dfc$age_min[dfc$age_max>80])
         n80p <- data.frame(country=countries[c], sex=s, age_min=minA, age_max=110,
-                           deaths=as.numeric(d80p), asof=new$asof[1])
+                           deaths=as.numeric(d80p), asof=new$asof[1], nat.reg=new$nat.reg[1])
         new <- rbind(new,n80p)
       }
       agg[[c]] <- new
