@@ -197,6 +197,10 @@ fit_DP <- function(fit, inputs){
   fit_m <- t(apply(chains$ifr_m, 2, quantile, probs=c(0.5,0.025,0.975)))
   fit_f <- t(apply(chains$ifr_f, 2, quantile, probs=c(0.5,0.025,0.975)))
   
+  # aggregate to DP age groups 
+  fit_m <- aggregate(fit_m, by=list(c(1,1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8)), FUN='mean')[ ,2:4]
+  fit_f <- aggregate(fit_f, by=list(c(1,1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8)), FUN='mean')[ ,2:4]
+  
   df <- data.frame(Obs=inputs$DP_deaths, expec=sum(fit_m[,1]*inputs$DP_pos_m + fit_f[,1]*inputs$DP_pos_f),
                    ciL=sum(fit_m[,2]*inputs$DP_pos_m + fit_f[,2]*inputs$DP_pos_f), 
                    ciU=sum(fit_m[,3]*inputs$DP_pos_m + fit_f[,3]*inputs$DP_pos_f))
@@ -205,10 +209,10 @@ fit_DP <- function(fit, inputs){
     geom_linerange(aes(x=1,ymin=ciL,ymax=ciU))+ theme_minimal()+ 
     theme(axis.text.x=element_blank())+ xlab('')+ ylab('N')+
     labs(subtitle='Diamond Princess deaths')
-  
-  png(filename='DP_Fit.png', width=10, height=10, res=400, units='cm')
-  plot(DP_fit)
-  dev.off()
+  return(DP_fit)
+  #png(filename='DP_Fit.png', width=10, height=10, res=400, units='cm')
+  #plot(DP_fit)
+  #dev.off()
 }
 
 # Plot cumulative probabilities of infection

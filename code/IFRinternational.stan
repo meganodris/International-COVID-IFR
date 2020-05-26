@@ -1,9 +1,16 @@
 functions {
   
-  real[] align(real[] d, int Nage, int[] AMin, int[] AMax){
+  real[] alignSUM(real[] d, int Nage, int[] AMin, int[] AMax){
     
     real Da[Nage];
     for(a in 1:Nage) Da[a] = sum(d[AMin[a]:AMax[a]]);
+    return(Da);
+  }
+  
+  real[] alignMEAN(real[] d, int Nage, int[] AMin, int[] AMax){
+    
+    real Da[Nage];
+    for(a in 1:Nage) Da[a] = mean(d[AMin[a]:AMax[a]]);
     return(Da);
   }
 }
@@ -37,6 +44,8 @@ data {
   // Diamond Princess data for likelihood
   int <lower=0> DP_pos_m[8]; 
   int <lower=0> DP_pos_f[8]; 
+  int <lower=0> DPamin[8];
+  int <lower=0> DPamax[8];
   int <lower=0> DP_deathsTot;
   
 }
@@ -89,8 +98,8 @@ model {
   real estDeaths_b[17,NArea];
   real estDeaths_m[17,NArea];
   real estDeaths_f[17,NArea];
-  real difr_f[8];
-  real difr_m[8];
+  real dpifr_f[8];
+  real dpifr_m[8];
 
   // Priors
   log_relifrsex ~ normal(0.,0.5);
@@ -101,38 +110,26 @@ model {
   for(c in 1:NArea){
     
     if(gender[c]==1){
-      estDeaths_b[1:NAges[c],c] = align(natDeath_b[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
+      estDeaths_b[1:NAges[c],c] = alignSUM(natDeath_b[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
       deaths_b[1:NAges[c],c] ~ neg_binomial_2(estDeaths_b[1:NAges[c],c], phi);
     }
     if(gender[c]==2){
-      estDeaths_m[1:NAges[c],c] = align(natDeath_m[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
-      estDeaths_f[1:NAges[c],c] = align(natDeath_f[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
+      estDeaths_m[1:NAges[c],c] = alignSUM(natDeath_m[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
+      estDeaths_f[1:NAges[c],c] = alignSUM(natDeath_f[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
       deaths_m[1:NAges[c],c] ~ neg_binomial_2(estDeaths_m[1:NAges[c],c], phi);
       deaths_f[1:NAges[c],c] ~ neg_binomial_2(estDeaths_f[1:NAges[c],c], phi);
     }
   }
   
 
-  estDPdeaths=0;
-  difr_m[1] = mean(ifr_m[1:4]);
-  difr_m[2] = mean(ifr_m[5:6]);
-  difr_m[3] = mean(ifr_m[7:8]);
-  difr_m[4] = mean(ifr_m[9:10]);
-  difr_m[5] = mean(ifr_m[11:12]);
-  difr_m[6] = mean(ifr_m[13:14]);
-  difr_m[7] = mean(ifr_m[15:16]);
-  difr_m[8] = ifr_m[17];
-  difr_f[1] = mean(ifr_f[1:4]);
-  difr_f[2] = mean(ifr_f[5:6]);
-  difr_f[3] = mean(ifr_f[7:8]);
-  difr_f[4] = mean(ifr_f[9:10]);
-  difr_f[5] = mean(ifr_f[11:12]);
-  difr_f[6] = mean(ifr_f[13:14]);
-  difr_f[7] = mean(ifr_f[15:16]);
-  difr_f[8] = ifr_f[17];
+  // align to DP age groups
+  dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
+  dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
+
   // Sum expected deaths across age groups
+  estDPdeaths=0;
   for (j in 1:8){ 
-    estDPdeaths=estDPdeaths+(difr_f[j]*DP_pos_f[j]+difr_m[j]*DP_pos_m[j]);
+    estDPdeaths=estDPdeaths+(dpifr_f[j]*DP_pos_f[j]+dpifr_m[j]*DP_pos_m[j]);
   }
   
   // Likelihood
