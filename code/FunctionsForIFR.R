@@ -171,7 +171,7 @@ get_agesex <- function(data, countries){
   NAges <- vector()
   gender <- vector()
   
-  for(c in 1:length(countries)) NAges[c] <- length(unique(df$age_min[df$country==countries[c]]))
+  for(c in 1:length(countries)) NAges[c] <- length(unique(data$age_min[data$country==countries[c]]))
   for(c in 1:length(countries)){
     cc <- data[data$country==countries[c], ]
     if(cc$sex[1] %in% c('B')) gender[c] <- 1

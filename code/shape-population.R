@@ -14,7 +14,7 @@ for(k in 1:length(poplist)) names(poplist)[k] <- substr(names(poplist)[k],1,ncha
 NHpop <- list()
 NH <- list.files('./nursing-home-population/')
 for(k in unique(NH)) NHpop[[k]] <- read.csv(paste('./nursing-home-population/', k, sep=''))
-for(k in 1:length(NHpop)) names(NHpop)[k] <- substr(names(NHpop)[k],1,nchar(names(NHpop)[k])-23)
+for(k in 1:length(NHpop)) names(NHpop)[k] <- substr(names(NHpop)[k],1,nchar(names(NHpop)[k])-4)
 
 
 # check which countries we have data for
@@ -41,5 +41,6 @@ for(ci in names(poplist)){
   nonNH[[ci]]$`F`[nonNH[[ci]]$`F`<0] <- 0
   
   # output
+  colnames(nonNH[[ci]])[1] <- 'Age'
   write.csv(nonNH[[ci]], paste(ci,'.csv',sep=''))
 }
