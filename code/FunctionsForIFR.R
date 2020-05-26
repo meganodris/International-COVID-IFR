@@ -5,9 +5,9 @@
 compile_pop <- function(poplist, countries){
   
   # matrices for model
-  pop_m <- matrix(NA, nrow=17, ncol=length(poplist)) 
-  pop_f <- matrix(NA, nrow=17, ncol=length(poplist)) 
-  pop_b <- matrix(NA, nrow=17, ncol=length(poplist)) 
+  pop_m <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_f <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_b <- matrix(NA, nrow=17, ncol=length(countries)) 
   
   # compile for model
   for(c in 1:length(countries)){
