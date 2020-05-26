@@ -14,7 +14,7 @@ df <- agg_deaths80p(df, countries)
 # death location data
 loc <- read_excel('./data/deaths_location.xlsx', sheet='Sheet1')
 loc$pLTC <- loc$LTC_deaths/loc$total_deaths
-loc <- loc[!(loc$country %in% c('England','Wales', 'England & Wales')),]
+loc <- loc[!(loc$country %in% c('England','Wales')),]
 
 # nursing home population
 NHpop <- list()

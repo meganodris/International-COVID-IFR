@@ -104,7 +104,7 @@ model {
   // Priors
   log_relifrsex ~ normal(0.,0.5);
   for(c in 1:NArea) logit_probInfec[c] ~ normal(0.,2);
-  for(a in 1:17) logit_ifr_m[a] ~ normal(0.,2);
+  for(a in 1:17) logit_ifr_m[a] ~ cauchy(0,1);
   
   // fit to age & sex-specific data
   for(c in 1:NArea){
@@ -125,7 +125,7 @@ model {
   // align to DP age groups
   dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
   dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
-
+ 
   // Sum expected deaths across age groups
   estDPdeaths=0;
   for (j in 1:8){ 
