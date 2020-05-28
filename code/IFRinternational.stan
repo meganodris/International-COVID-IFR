@@ -54,7 +54,7 @@ parameters {
   
   real logit_probInfec[NArea]; // cumulative probability of infection  
   real logit_ifr_m[17]; // prob death given infection (males)
-  real log_relifrsex; // relative prob death (females)
+  real log_relifrsex[2]; // relative prob death (females)
   real phi; // over-dispersion parameter
   
 }
@@ -62,7 +62,7 @@ parameters {
 transformed parameters {
   
   real probInfec[NArea];
-  real relifrsex;
+  real relifrsex[2];
 
   // infection fatality ratios
   real ifr_f[17];
@@ -74,10 +74,11 @@ transformed parameters {
   real natDeath_b[17,NArea];
   
   // transformed parameters
-  relifrsex = exp(log_relifrsex);
+  for(s in 1:2) relifrsex[s] = exp(log_relifrsex[s]);
   for(c in 1:NArea) probInfec[c] = inv_logit(logit_probInfec[c]);
   for(a in 1:17) ifr_m[a] = inv_logit(logit_ifr_m[a]);
-  for(a in 1:17) ifr_f[a] = ifr_m[a]*relifrsex;
+  for(a in 1:12) ifr_f[a] = ifr_m[a]*relifrsex[1];
+  for(a in 13:17) ifr_f[a] = ifr_m[a]*relifrsex[2];
   
   // Probs by age, sex & region
   for (a in 1:17){
@@ -102,8 +103,8 @@ model {
   real dpifr_m[8];
 
   // Priors
-  log_relifrsex ~ normal(0.,0.5);
-  for(c in 1:NArea) logit_probInfec[c] ~ normal(0.,2);
+  for(s in 1:2) log_relifrsex[s] ~ normal(0,1);
+  for(c in 1:NArea) logit_probInfec[c] ~ cauchy(0,1);
   for(a in 1:17) logit_ifr_m[a] ~ cauchy(0,1);
   
   // fit to age & sex-specific data
@@ -133,7 +134,7 @@ model {
   }
   
   // Likelihood
-  DP_deathsTot ~ poisson(estDPdeaths);
+  DP_deathsTot ~ neg_binomial_2(estDPdeaths, phi);
 
 }
  
