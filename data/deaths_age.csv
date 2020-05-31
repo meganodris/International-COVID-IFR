@@ -1,452 +1,456 @@
 country,sex,age_min,age_max,deaths,asof,nat-reg
-Germany,M,0,9,0,12/05/2020,nat
-Germany,M,10,19,2,12/05/2020,nat
-Germany,M,20,29,5,12/05/2020,nat
-Germany,M,30,39,13,12/05/2020,nat
-Germany,M,40,49,40,12/05/2020,nat
-Germany,M,50,59,194,12/05/2020,nat
-Germany,M,60,69,504,12/05/2020,nat
-Germany,M,70,79,1146,12/05/2020,nat
-Germany,M,80,89,1801,12/05/2020,nat
-Germany,M,90,99,494,12/05/2020,nat
-Germany,M,100,110,5,12/05/2020,nat
-Germany,F,0,9,1,12/05/2020,nat
-Germany,F,10,19,0,12/05/2020,nat
-Germany,F,20,29,2,12/05/2020,nat
-Germany,F,30,39,6,12/05/2020,nat
-Germany,F,40,49,14,12/05/2020,nat
-Germany,F,50,59,62,12/05/2020,nat
-Germany,F,60,69,177,12/05/2020,nat
-Germany,F,70,79,544,12/05/2020,nat
-Germany,F,80,89,1603,12/05/2020,nat
-Germany,F,90,99,874,12/05/2020,nat
-Germany,F,100,110,41,12/05/2020,nat
-Italy,M,0,9,1,14/05/2020,nat
-Italy,M,10,19,0,14/05/2020,nat
-Italy,M,20,29,8,14/05/2020,nat
-Italy,M,30,39,40,14/05/2020,nat
-Italy,M,40,49,191,14/05/2020,nat
-Italy,M,50,59,824,14/05/2020,nat
-Italy,M,60,69,2399,14/05/2020,nat
-Italy,M,70,79,5804,14/05/2020,nat
-Italy,M,80,89,6942,14/05/2020,nat
-Italy,M,90,110,1668,14/05/2020,nat
-Italy,F,0,9,2,14/05/2020,nat
-Italy,F,10,19,0,14/05/2020,nat
-Italy,F,20,29,4,14/05/2020,nat
-Italy,F,30,39,19,14/05/2020,nat
-Italy,F,40,49,67,14/05/2020,nat
-Italy,F,50,59,239,14/05/2020,nat
-Italy,F,60,69,728,14/05/2020,nat
-Italy,F,70,79,2417,14/05/2020,nat
-Italy,F,80,89,5162,14/05/2020,nat
-Italy,F,90,110,3176,14/05/2020,nat
-Sweden,B,0,9,1,14/05/2020,nat
-Sweden,B,10,19,0,14/05/2020,nat
-Sweden,B,20,29,9,14/05/2020,nat
-Sweden,B,30,39,13,14/05/2020,nat
-Sweden,B,40,49,33,14/05/2020,nat
-Sweden,B,50,59,110,14/05/2020,nat
-Sweden,B,60,69,253,14/05/2020,nat
-Sweden,B,70,79,783,14/05/2020,nat
-Sweden,B,80,89,1453,14/05/2020,nat
-Sweden,B,90,110,873,14/05/2020,nat
-Netherlands,M,0,4,0,14/05/2020,nat
-Netherlands,M,5,9,0,14/05/2020,nat
-Netherlands,M,10,14,0,14/05/2020,nat
-Netherlands,M,15,19,1,14/05/2020,nat
-Netherlands,M,20,24,0,14/05/2020,nat
-Netherlands,M,25,29,3,14/05/2020,nat
-Netherlands,M,30,34,2,14/05/2020,nat
-Netherlands,M,35,39,5,14/05/2020,nat
-Netherlands,M,40,44,5,14/05/2020,nat
-Netherlands,M,45,49,8,14/05/2020,nat
-Netherlands,M,50,54,22,14/05/2020,nat
-Netherlands,M,55,59,69,14/05/2020,nat
-Netherlands,M,60,64,102,14/05/2020,nat
-Netherlands,M,65,69,195,14/05/2020,nat
-Netherlands,M,70,74,357,14/05/2020,nat
-Netherlands,M,75,79,627,14/05/2020,nat
-Netherlands,M,80,84,695,14/05/2020,nat
-Netherlands,M,85,89,657,14/05/2020,nat
-Netherlands,M,90,94,290,14/05/2020,nat
-Netherlands,M,95,110,72,14/05/2020,nat
-Netherlands,F,0,4,0,14/05/2020,nat
-Netherlands,F,5,9,0,14/05/2020,nat
-Netherlands,F,10,14,0,14/05/2020,nat
-Netherlands,F,15,19,0,14/05/2020,nat
-Netherlands,F,20,24,0,14/05/2020,nat
-Netherlands,F,25,29,0,14/05/2020,nat
-Netherlands,F,30,34,1,14/05/2020,nat
-Netherlands,F,35,39,2,14/05/2020,nat
-Netherlands,F,40,44,0,14/05/2020,nat
-Netherlands,F,45,49,13,14/05/2020,nat
-Netherlands,F,50,54,18,14/05/2020,nat
-Netherlands,F,55,59,23,14/05/2020,nat
-Netherlands,F,60,64,49,14/05/2020,nat
-Netherlands,F,65,69,108,14/05/2020,nat
-Netherlands,F,70,74,227,14/05/2020,nat
-Netherlands,F,75,79,322,14/05/2020,nat
-Netherlands,F,80,84,482,14/05/2020,nat
-Netherlands,F,85,89,586,14/05/2020,nat
-Netherlands,F,90,94,450,14/05/2020,nat
-Netherlands,F,95,110,199,14/05/2020,nat
-Switzerland,M,0,9,0,14/05/2020,nat
-Switzerland,M,10,19,0,14/05/2020,nat
-Switzerland,M,20,29,0,14/05/2020,nat
-Switzerland,M,30,39,3,14/05/2020,nat
-Switzerland,M,40,49,3,14/05/2020,nat
-Switzerland,M,50,59,24,14/05/2020,nat
-Switzerland,M,60,69,86,14/05/2020,nat
-Switzerland,M,70,79,220,14/05/2020,nat
-Switzerland,M,80,110,583,14/05/2020,nat
-Switzerland,F,0,9,0,14/05/2020,nat
-Switzerland,F,10,19,0,14/05/2020,nat
-Switzerland,F,20,29,0,14/05/2020,nat
-Switzerland,F,30,39,2,14/05/2020,nat
-Switzerland,F,40,49,1,14/05/2020,nat
-Switzerland,F,50,59,10,14/05/2020,nat
-Switzerland,F,60,69,29,14/05/2020,nat
-Switzerland,F,70,79,105,14/05/2020,nat
-Switzerland,F,80,110,523,14/05/2020,nat
-Republic of Korea,B,0,9,0,14/05/2020,nat
-Republic of Korea,B,10,19,0,14/05/2020,nat
-Republic of Korea,B,20,29,0,14/05/2020,nat
-Republic of Korea,B,30,39,2,14/05/2020,nat
-Republic of Korea,B,40,49,3,14/05/2020,nat
-Republic of Korea,B,50,59,15,14/05/2020,nat
-Republic of Korea,B,60,69,38,14/05/2020,nat
-Republic of Korea,B,70,79,77,14/05/2020,nat
-Republic of Korea,B,80,110,125,14/05/2020,nat
-Norway,B,0,9,0,14/05/2020,nat
-Norway,B,10,19,0,14/05/2020,nat
-Norway,B,20,29,0,14/05/2020,nat
-Norway,B,30,39,0,14/05/2020,nat
-Norway,B,40,49,4,14/05/2020,nat
-Norway,B,50,59,6,14/05/2020,nat
-Norway,B,60,69,18,14/05/2020,nat
-Norway,B,70,79,53,14/05/2020,nat
-Norway,B,80,89,83,14/05/2020,nat
-Norway,B,90,110,68,14/05/2020,nat
-Finland,B,0,9,0,14/05/2020,nat
-Finland,B,10,19,0,14/05/2020,nat
-Finland,B,20,29,0,14/05/2020,nat
-Finland,B,30,39,2,14/05/2020,nat
-Finland,B,40,49,2,14/05/2020,nat
-Finland,B,50,59,5,14/05/2020,nat
-Finland,B,60,69,18,14/05/2020,nat
-Finland,B,70,79,43,14/05/2020,nat
-Finland,B,80,89,109,14/05/2020,nat
-Finland,B,90,110,65,14/05/2020,nat
-Colombia,B,0,9,0,14/05/2020,nat
-Colombia,B,10,19,0,14/05/2020,nat
-Colombia,B,20,29,12,14/05/2020,nat
-Colombia,B,30,39,15,14/05/2020,nat
-Colombia,B,40,49,42,14/05/2020,nat
-Colombia,B,50,59,68,14/05/2020,nat
-Colombia,B,60,69,123,14/05/2020,nat
-Colombia,B,70,79,146,14/05/2020,nat
-Colombia,B,80,89,85,14/05/2020,nat
-Colombia,B,90,110,28,14/05/2020,nat
-Ireland,B,0,4,0,11/05/2020,nat
-Ireland,B,5,14,0,11/05/2020,nat
-Ireland,B,15,24,2,11/05/2020,nat
-Ireland,B,25,34,5,11/05/2020,nat
-Ireland,B,35,44,10,11/05/2020,nat
-Ireland,B,45,54,22,11/05/2020,nat
-Ireland,B,55,64,52,11/05/2020,nat
-Ireland,B,65,74,180,11/05/2020,nat
-Ireland,B,75,84,428,11/05/2020,nat
-Ireland,B,85,110,547,11/05/2020,nat
-Northern Ireland,B,0,19,0,14/05/2020,nat
-Northern Ireland,B,20,39,1,14/05/2020,nat
-Northern Ireland,B,40,59,19,14/05/2020,nat
-Northern Ireland,B,60,79,132,14/05/2020,nat
-Northern Ireland,B,80,110,301,14/05/2020,nat
-Scotland,B,0,14,0,10/05/2020,nat
-Scotland,B,15,44,21,10/05/2020,nat
-Scotland,B,45,64,279,10/05/2020,nat
-Scotland,B,65,74,486,10/05/2020,nat
-Scotland,B,75,84,1098,10/05/2020,nat
-Scotland,B,85,110,1329,10/05/2020,nat
-England & Wales,M,0,4,0,01/05/2020,nat
-England & Wales,M,5,9,0,01/05/2020,nat
-England & Wales,M,10,14,0,01/05/2020,nat
-England & Wales,M,15,19,5,01/05/2020,nat
-England & Wales,M,20,24,11,01/05/2020,nat
-England & Wales,M,25,29,20,01/05/2020,nat
-England & Wales,M,30,34,41,01/05/2020,nat
-England & Wales,M,35,39,55,01/05/2020,nat
-England & Wales,M,40,44,115,01/05/2020,nat
-England & Wales,M,45,49,216,01/05/2020,nat
-England & Wales,M,50,54,407,01/05/2020,nat
-England & Wales,M,55,59,746,01/05/2020,nat
-England & Wales,M,60,64,1044,01/05/2020,nat
-England & Wales,M,65,69,1413,01/05/2020,nat
-England & Wales,M,70,74,2215,01/05/2020,nat
-England & Wales,M,75,79,3011,01/05/2020,nat
-England & Wales,M,80,84,3925,01/05/2020,nat
-England & Wales,M,85,89,3758,01/05/2020,nat
-England & Wales,M,90,110,2997,01/05/2020,nat
-England & Wales,F,0,4,1,01/05/2020,nat
-England & Wales,F,5,9,0,01/05/2020,nat
-England & Wales,F,10,14,1,01/05/2020,nat
-England & Wales,F,15,19,3,01/05/2020,nat
-England & Wales,F,20,24,8,01/05/2020,nat
-England & Wales,F,25,29,15,01/05/2020,nat
-England & Wales,F,30,34,23,01/05/2020,nat
-England & Wales,F,35,39,44,01/05/2020,nat
-England & Wales,F,40,44,59,01/05/2020,nat
-England & Wales,F,45,49,133,01/05/2020,nat
-England & Wales,F,50,54,244,01/05/2020,nat
-England & Wales,F,55,59,355,01/05/2020,nat
-England & Wales,F,60,64,520,01/05/2020,nat
-England & Wales,F,65,69,708,01/05/2020,nat
-England & Wales,F,70,74,1160,01/05/2020,nat
-England & Wales,F,75,79,1810,01/05/2020,nat
-England & Wales,F,80,84,2769,01/05/2020,nat
-England & Wales,F,85,89,3165,01/05/2020,nat
-England & Wales,F,90,110,4047,01/05/2020,nat
-New York City,B,0,17,8,13/05/2020,reg
-New York City,B,18,44,609,13/05/2020,reg
-New York City,B,45,64,3438,13/05/2020,reg
-New York City,B,65,74,3816,13/05/2020,reg
-New York City,B,75,110,7475,13/05/2020,reg
-Austria,B,0,4,0,14/05/2020,nat
-Austria,B,5,14,0,14/05/2020,nat
-Austria,B,15,24,0,14/05/2020,nat
-Austria,B,25,34,1,14/05/2020,nat
-Austria,B,35,44,2,14/05/2020,nat
-Austria,B,45,54,11,14/05/2020,nat
-Austria,B,55,64,22,14/05/2020,nat
-Austria,B,65,74,96,14/05/2020,nat
-Austria,B,75,84,225,14/05/2020,nat
-Austria,B,85,110,238,14/05/2020,nat
-Denmark,M,0,59,11,14/05/2020,nat
-Denmark,M,60,69,33,14/05/2020,nat
-Denmark,M,70,79,107,14/05/2020,nat
-Denmark,M,80,89,116,14/05/2020,nat
-Denmark,M,90,110,37,14/05/2020,nat
-Denmark,F,0,59,5,14/05/2020,nat
-Denmark,F,60,69,20,14/05/2020,nat
-Denmark,F,70,79,46,14/05/2020,nat
-Denmark,F,80,89,85,14/05/2020,nat
-Denmark,F,90,110,77,14/05/2020,nat
-Portugal,M,0,9,0,14/05/2020,nat
-Portugal,M,10,19,0,14/05/2020,nat
-Portugal,M,20,29,1,14/05/2020,nat
-Portugal,M,30,39,0,14/05/2020,nat
-Portugal,M,40,49,7,14/05/2020,nat
-Portugal,M,50,59,28,14/05/2020,nat
-Portugal,M,60,69,67,14/05/2020,nat
-Portugal,M,70,79,136,14/05/2020,nat
-Portugal,M,80,110,337,14/05/2020,nat
-Portugal,F,0,9,0,14/05/2020,nat
-Portugal,F,10,19,0,14/05/2020,nat
-Portugal,F,20,29,0,14/05/2020,nat
-Portugal,F,30,39,0,14/05/2020,nat
-Portugal,F,40,49,6,14/05/2020,nat
-Portugal,F,50,59,11,14/05/2020,nat
-Portugal,F,60,69,37,14/05/2020,nat
-Portugal,F,70,79,99,14/05/2020,nat
-Portugal,F,80,110,455,14/05/2020,nat
-Thailand,B,0,9,0,10/05/2020,nat
-Thailand,B,10,19,0,10/05/2020,nat
-Thailand,B,20,29,2,10/05/2020,nat
-Thailand,B,30,39,3,10/05/2020,nat
-Thailand,B,40,49,11,10/05/2020,nat
-Thailand,B,50,59,16,10/05/2020,nat
-Thailand,B,60,69,11,10/05/2020,nat
-Thailand,B,70,79,8,10/05/2020,nat
-Thailand,B,80,110,5,10/05/2020,nat
-Bangladesh,B,0,9,5,13/05/2020,nat
-Bangladesh,B,10,19,0,13/05/2020,nat
-Bangladesh,B,20,29,9,13/05/2020,nat
-Bangladesh,B,30,39,20,13/05/2020,nat
-Bangladesh,B,40,49,54,13/05/2020,nat
-Bangladesh,B,50,59,76,13/05/2020,nat
-Bangladesh,B,60,110,119,13/05/2020,nat
-Greece,M,0,17,0,14/05/2020,nat
-Greece,M,18,39,2,14/05/2020,nat
-Greece,M,40,64,31,14/05/2020,nat
-Greece,M,65,110,82,14/05/2020,nat
-Greece,F,0,17,0,14/05/2020,nat
-Greece,F,18,39,0,14/05/2020,nat
-Greece,F,40,64,7,14/05/2020,nat
-Greece,F,65,110,34,14/05/2020,nat
-Canada,B,0,19,0,13/05/2020,nat
-Canada,B,20,29,3,13/05/2020,nat
-Canada,B,30,39,12,13/05/2020,nat
-Canada,B,40,49,35,13/05/2020,nat
-Canada,B,50,59,111,13/05/2020,nat
-Canada,B,60,69,372,13/05/2020,nat
-Canada,B,70,79,914,13/05/2020,nat
-Canada,B,80,110,3819,13/05/2020,nat
-Czech Republic,M,0,14,0,14/05/2020,nat
-Czech Republic,M,15,24,0,14/05/2020,nat
-Czech Republic,M,25,34,1,14/05/2020,nat
-Czech Republic,M,35,44,5,14/05/2020,nat
-Czech Republic,M,45,54,2,14/05/2020,nat
-Czech Republic,M,55,64,15,14/05/2020,nat
-Czech Republic,M,65,74,47,14/05/2020,nat
-Czech Republic,M,75,84,60,14/05/2020,nat
-Czech Republic,M,85,110,40,14/05/2020,nat
-Czech Republic,F,0,14,0,14/05/2020,nat
-Czech Republic,F,15,24,0,14/05/2020,nat
-Czech Republic,F,25,34,1,14/05/2020,nat
-Czech Republic,F,35,44,1,14/05/2020,nat
-Czech Republic,F,45,54,2,14/05/2020,nat
-Czech Republic,F,55,64,3,14/05/2020,nat
-Czech Republic,F,65,74,21,14/05/2020,nat
-Czech Republic,F,75,84,43,14/05/2020,nat
-Czech Republic,F,85,110,52,14/05/2020,nat
-Poland,M,0,9,0,14/05/2020,nat
-Poland,M,10,19,1,14/05/2020,nat
-Poland,M,20,29,0,14/05/2020,nat
-Poland,M,30,39,6,14/05/2020,nat
-Poland,M,40,49,15,14/05/2020,nat
-Poland,M,50,59,33,14/05/2020,nat
-Poland,M,60,69,116,14/05/2020,nat
-Poland,M,70,79,143,14/05/2020,nat
-Poland,M,80,89,121,14/05/2020,nat
-Poland,M,90,110,20,14/05/2020,nat
-Poland,F,0,9,0,14/05/2020,nat
-Poland,F,10,19,1,14/05/2020,nat
-Poland,F,20,29,0,14/05/2020,nat
-Poland,F,30,39,7,14/05/2020,nat
-Poland,F,40,49,10,14/05/2020,nat
-Poland,F,50,59,17,14/05/2020,nat
-Poland,F,60,69,50,14/05/2020,nat
-Poland,F,70,79,106,14/05/2020,nat
-Poland,F,80,89,169,14/05/2020,nat
-Poland,F,90,110,66,14/05/2020,nat
-Slovenia,M,0,4,0,13/05/2020,nat
-Slovenia,M,5,9,0,13/05/2020,nat
-Slovenia,M,15,24,0,13/05/2020,nat
-Slovenia,M,25,34,0,13/05/2020,nat
-Slovenia,M,35,44,0,13/05/2020,nat
-Slovenia,M,45,54,1,13/05/2020,nat
-Slovenia,M,55,64,2,13/05/2020,nat
-Slovenia,M,65,74,10,13/05/2020,nat
-Slovenia,M,75,84,15,13/05/2020,nat
-Slovenia,M,85,110,14,13/05/2020,nat
-Slovenia,F,0,4,0,14/05/2020,nat
-Slovenia,F,5,9,0,14/05/2020,nat
-Slovenia,F,15,24,0,14/05/2020,nat
-Slovenia,F,25,34,0,14/05/2020,nat
-Slovenia,F,35,44,0,14/05/2020,nat
-Slovenia,F,45,54,1,14/05/2020,nat
-Slovenia,F,55,64,0,14/05/2020,nat
-Slovenia,F,65,74,5,14/05/2020,nat
-Slovenia,F,75,84,11,14/05/2020,nat
-Slovenia,F,85,110,44,14/05/2020,nat
-Hungary,B,0,19,0,14/05/2020,nat
-Hungary,B,20,34,1,14/05/2020,nat
-Hungary,B,35,49,10,14/05/2020,nat
-Hungary,B,50,64,47,14/05/2020,nat
-Hungary,B,65,79,183,14/05/2020,nat
-Hungary,B,80,89,154,14/05/2020,nat
-Hungary,B,90,110,41,14/05/2020,nat
-South Africa,B,0,9,0,02/05/2020,nat
-South Africa,B,10,19,0,02/05/2020,nat
-South Africa,B,20,29,1,02/05/2020,nat
-South Africa,B,30,39,6,02/05/2020,nat
-South Africa,B,40,49,19,02/05/2020,nat
-South Africa,B,50,59,23,02/05/2020,nat
-South Africa,B,60,69,30,02/05/2020,nat
-South Africa,B,70,79,28,02/05/2020,nat
-South Africa,B,80,89,14,02/05/2020,nat
-South Africa,B,90,110,2,02/05/2020,nat
-Philippines,M,0,4,5,14/05/2020,nat
-Philippines,M,5,9,0,14/05/2020,nat
-Philippines,M,10,14,1,14/05/2020,nat
-Philippines,M,15,19,3,14/05/2020,nat
-Philippines,M,20,24,2,14/05/2020,nat
-Philippines,M,25,29,2,14/05/2020,nat
-Philippines,M,30,34,8,14/05/2020,nat
-Philippines,M,35,39,15,14/05/2020,nat
-Philippines,M,40,44,21,14/05/2020,nat
-Philippines,M,45,49,28,14/05/2020,nat
-Philippines,M,50,54,44,14/05/2020,nat
-Philippines,M,55,59,57,14/05/2020,nat
-Philippines,M,60,64,84,14/05/2020,nat
-Philippines,M,65,69,80,14/05/2020,nat
-Philippines,M,70,74,58,14/05/2020,nat
-Philippines,M,75,79,50,14/05/2020,nat
-Philippines,M,80,110,65,14/05/2020,nat
-Philippines,F,0,4,2,14/05/2020,nat
-Philippines,F,5,9,1,14/05/2020,nat
-Philippines,F,10,14,0,14/05/2020,nat
-Philippines,F,15,19,1,14/05/2020,nat
-Philippines,F,20,24,1,14/05/2020,nat
-Philippines,F,25,29,4,14/05/2020,nat
-Philippines,F,30,34,3,14/05/2020,nat
-Philippines,F,35,39,5,14/05/2020,nat
-Philippines,F,40,44,9,14/05/2020,nat
-Philippines,F,45,49,10,14/05/2020,nat
-Philippines,F,50,54,16,14/05/2020,nat
-Philippines,F,55,59,20,14/05/2020,nat
-Philippines,F,60,64,45,14/05/2020,nat
-Philippines,F,65,69,45,14/05/2020,nat
-Philippines,F,70,74,51,14/05/2020,nat
-Philippines,F,75,79,27,14/05/2020,nat
-Philippines,F,80,110,43,14/05/2020,nat
-Mexico,M,0,4,8,14/05/2020,nat
-Mexico,M,5,9,0,14/05/2020,nat
-Mexico,M,10,14,0,14/05/2020,nat
-Mexico,M,15,19,0,14/05/2020,nat
-Mexico,M,20,24,3,14/05/2020,nat
-Mexico,M,25,29,28,14/05/2020,nat
-Mexico,M,30,34,71,14/05/2020,nat
-Mexico,M,35,39,120,14/05/2020,nat
-Mexico,M,40,44,223,14/05/2020,nat
-Mexico,M,45,49,349,14/05/2020,nat
-Mexico,M,50,54,401,14/05/2020,nat
-Mexico,M,55,59,405,14/05/2020,nat
-Mexico,M,60,64,383,14/05/2020,nat
-Mexico,M,65,69,393,14/05/2020,nat
-Mexico,M,70,74,289,14/05/2020,nat
-Mexico,M,75,79,172,14/05/2020,nat
-Mexico,M,80,84,109,14/05/2020,nat
-Mexico,M,85,89,54,14/05/2020,nat
-Mexico,M,90,94,27,14/05/2020,nat
-Mexico,M,95,110,10,14/05/2020,nat
-Mexico,F,0,4,3,14/05/2020,nat
-Mexico,F,5,9,2,14/05/2020,nat
-Mexico,F,10,14,0,14/05/2020,nat
-Mexico,F,15,19,3,14/05/2020,nat
-Mexico,F,20,24,9,14/05/2020,nat
-Mexico,F,25,29,18,14/05/2020,nat
-Mexico,F,30,34,18,14/05/2020,nat
-Mexico,F,35,39,53,14/05/2020,nat
-Mexico,F,40,44,72,14/05/2020,nat
-Mexico,F,45,49,143,14/05/2020,nat
-Mexico,F,50,54,137,14/05/2020,nat
-Mexico,F,55,59,192,14/05/2020,nat
-Mexico,F,60,64,186,14/05/2020,nat
-Mexico,F,65,69,199,14/05/2020,nat
-Mexico,F,70,74,140,14/05/2020,nat
-Mexico,F,75,79,112,14/05/2020,nat
-Mexico,F,80,84,88,14/05/2020,nat
-Mexico,F,85,89,40,14/05/2020,nat
-Mexico,F,90,94,11,14/05/2020,nat
-Mexico,F,95,110,4,14/05/2020,nat
-France,M,0,19,5,19/05/2020,nat
-France,M,20,29,11,19/05/2020,nat
-France,M,30,39,46,19/05/2020,nat
-France,M,40,49,140,19/05/2020,nat
-France,M,50,59,520,19/05/2020,nat
-France,M,60,69,1394,19/05/2020,nat
-France,M,70,79,2476,19/05/2020,nat
-France,M,80,110,4552,19/05/2020,nat
-France,F,0,19,3,19/05/2020,nat
-France,F,20,29,7,19/05/2020,nat
-France,F,30,39,27,19/05/2020,nat
-France,F,40,49,71,19/05/2020,nat
-France,F,50,59,235,19/05/2020,nat
-France,F,60,69,565,19/05/2020,nat
-France,F,70,79,1099,19/05/2020,nat
-France,F,80,110,4064,19/05/2020,nat
+Germany,M,0,9,0,25/05/2020,nat
+Germany,M,10,19,2,25/05/2020,nat
+Germany,M,20,29,6,25/05/2020,nat
+Germany,M,30,39,14,25/05/2020,nat
+Germany,M,40,49,45,25/05/2020,nat
+Germany,M,50,59,211,25/05/2020,nat
+Germany,M,60,69,565,25/05/2020,nat
+Germany,M,70,79,1249,25/05/2020,nat
+Germany,M,80,89,1951,25/05/2020,nat
+Germany,M,90,99,524,25/05/2020,nat
+Germany,M,100,110,5,25/05/2020,nat
+Germany,F,0,9,1,25/05/2020,nat
+Germany,F,10,19,0,25/05/2020,nat
+Germany,F,20,29,2,25/05/2020,nat
+Germany,F,30,39,6,25/05/2020,nat
+Germany,F,40,49,17,25/05/2020,nat
+Germany,F,50,59,72,25/05/2020,nat
+Germany,F,60,69,202,25/05/2020,nat
+Germany,F,70,79,602,25/05/2020,nat
+Germany,F,80,89,1753,25/05/2020,nat
+Germany,F,90,99,980,25/05/2020,nat
+Germany,F,100,110,45,25/05/2020,nat
+Italy,M,0,9,1,21/05/2020,nat
+Italy,M,10,19,0,21/05/2020,nat
+Italy,M,20,29,10,21/05/2020,nat
+Italy,M,30,39,41,21/05/2020,nat
+Italy,M,40,49,199,21/05/2020,nat
+Italy,M,50,59,852,21/05/2020,nat
+Italy,M,60,69,2463,21/05/2020,nat
+Italy,M,70,79,5940,21/05/2020,nat
+Italy,M,80,89,7202,21/05/2020,nat
+Italy,M,90,110,1773,21/05/2020,nat
+Italy,F,0,9,3,21/05/2020,nat
+Italy,F,10,19,0,21/05/2020,nat
+Italy,F,20,29,3,21/05/2020,nat
+Italy,F,30,39,20,21/05/2020,nat
+Italy,F,40,49,70,21/05/2020,nat
+Italy,F,50,59,250,21/05/2020,nat
+Italy,F,60,69,762,21/05/2020,nat
+Italy,F,70,79,2526,21/05/2020,nat
+Italy,F,80,89,5527,21/05/2020,nat
+Italy,F,90,110,3454,21/05/2020,nat
+Sweden,B,0,9,1,28/05/2020,nat
+Sweden,B,10,19,0,28/05/2020,nat
+Sweden,B,20,29,8,28/05/2020,nat
+Sweden,B,30,39,12,28/05/2020,nat
+Sweden,B,40,49,40,28/05/2020,nat
+Sweden,B,50,59,132,28/05/2020,nat
+Sweden,B,60,69,298,28/05/2020,nat
+Sweden,B,70,79,934,28/05/2020,nat
+Sweden,B,80,89,1756,28/05/2020,nat
+Sweden,B,90,110,1085,28/05/2020,nat
+Netherlands,M,0,4,0,27/05/2020,nat
+Netherlands,M,5,9,0,27/05/2020,nat
+Netherlands,M,10,14,0,27/05/2020,nat
+Netherlands,M,15,19,1,27/05/2020,nat
+Netherlands,M,20,24,0,27/05/2020,nat
+Netherlands,M,25,29,3,27/05/2020,nat
+Netherlands,M,30,34,2,27/05/2020,nat
+Netherlands,M,35,39,5,27/05/2020,nat
+Netherlands,M,40,44,5,27/05/2020,nat
+Netherlands,M,45,49,9,27/05/2020,nat
+Netherlands,M,50,54,26,27/05/2020,nat
+Netherlands,M,55,59,73,27/05/2020,nat
+Netherlands,M,60,64,109,27/05/2020,nat
+Netherlands,M,65,69,213,27/05/2020,nat
+Netherlands,M,70,74,376,27/05/2020,nat
+Netherlands,M,75,79,647,27/05/2020,nat
+Netherlands,M,80,84,723,27/05/2020,nat
+Netherlands,M,85,89,688,27/05/2020,nat
+Netherlands,M,90,94,306,27/05/2020,nat
+Netherlands,M,95,110,73,27/05/2020,nat
+Netherlands,F,0,4,0,27/05/2020,nat
+Netherlands,F,5,9,0,27/05/2020,nat
+Netherlands,F,10,14,0,27/05/2020,nat
+Netherlands,F,15,19,0,27/05/2020,nat
+Netherlands,F,20,24,0,27/05/2020,nat
+Netherlands,F,25,29,0,27/05/2020,nat
+Netherlands,F,30,34,1,27/05/2020,nat
+Netherlands,F,35,39,2,27/05/2020,nat
+Netherlands,F,40,44,0,27/05/2020,nat
+Netherlands,F,45,49,14,27/05/2020,nat
+Netherlands,F,50,54,19,27/05/2020,nat
+Netherlands,F,55,59,24,27/05/2020,nat
+Netherlands,F,60,64,50,27/05/2020,nat
+Netherlands,F,65,69,112,27/05/2020,nat
+Netherlands,F,70,74,236,27/05/2020,nat
+Netherlands,F,75,79,337,27/05/2020,nat
+Netherlands,F,80,84,507,27/05/2020,nat
+Netherlands,F,85,89,638,27/05/2020,nat
+Netherlands,F,90,94,485,27/05/2020,nat
+Netherlands,F,95,110,219,27/05/2020,nat
+Switzerland,M,0,9,0,28/05/2020,nat
+Switzerland,M,10,19,0,28/05/2020,nat
+Switzerland,M,20,29,0,28/05/2020,nat
+Switzerland,M,30,39,3,28/05/2020,nat
+Switzerland,M,40,49,3,28/05/2020,nat
+Switzerland,M,50,59,26,28/05/2020,nat
+Switzerland,M,60,69,92,28/05/2020,nat
+Switzerland,M,70,79,227,28/05/2020,nat
+Switzerland,M,80,110,601,28/05/2020,nat
+Switzerland,F,0,9,0,28/05/2020,nat
+Switzerland,F,10,19,0,28/05/2020,nat
+Switzerland,F,20,29,0,28/05/2020,nat
+Switzerland,F,30,39,2,28/05/2020,nat
+Switzerland,F,40,49,1,28/05/2020,nat
+Switzerland,F,50,59,11,28/05/2020,nat
+Switzerland,F,60,69,31,28/05/2020,nat
+Switzerland,F,70,79,109,28/05/2020,nat
+Switzerland,F,80,110,547,28/05/2020,nat
+Republic of Korea,B,0,9,0,28/05/2020,nat
+Republic of Korea,B,10,19,0,28/05/2020,nat
+Republic of Korea,B,20,29,0,28/05/2020,nat
+Republic of Korea,B,30,39,2,28/05/2020,nat
+Republic of Korea,B,40,49,3,28/05/2020,nat
+Republic of Korea,B,50,59,15,28/05/2020,nat
+Republic of Korea,B,60,69,39,28/05/2020,nat
+Republic of Korea,B,70,79,79,28/05/2020,nat
+Republic of Korea,B,80,110,131,28/05/2020,nat
+Norway,B,0,9,0,28/05/2020,nat
+Norway,B,10,19,0,28/05/2020,nat
+Norway,B,20,29,0,28/05/2020,nat
+Norway,B,30,39,0,28/05/2020,nat
+Norway,B,40,49,4,28/05/2020,nat
+Norway,B,50,59,6,28/05/2020,nat
+Norway,B,60,69,19,28/05/2020,nat
+Norway,B,70,79,54,28/05/2020,nat
+Norway,B,80,89,84,28/05/2020,nat
+Norway,B,90,110,69,28/05/2020,nat
+Finland,B,0,9,0,28/05/2020,nat
+Finland,B,10,19,2,28/05/2020,nat
+Finland,B,20,29,2,28/05/2020,nat
+Finland,B,30,39,2,28/05/2020,nat
+Finland,B,40,49,2,28/05/2020,nat
+Finland,B,50,59,10,28/05/2020,nat
+Finland,B,60,69,24,28/05/2020,nat
+Finland,B,70,79,59,28/05/2020,nat
+Finland,B,80,89,125,28/05/2020,nat
+Finland,B,90,110,76,28/05/2020,nat
+Colombia,B,0,9,5,28/05/2020,nat
+Colombia,B,10,19,1,28/05/2020,nat
+Colombia,B,20,29,13,28/05/2020,nat
+Colombia,B,30,39,24,28/05/2020,nat
+Colombia,B,40,49,61,28/05/2020,nat
+Colombia,B,50,59,121,28/05/2020,nat
+Colombia,B,60,69,192,28/05/2020,nat
+Colombia,B,70,79,214,28/05/2020,nat
+Colombia,B,80,89,147,28/05/2020,nat
+Colombia,B,90,110,44,28/05/2020,nat
+Ireland,B,0,4,0,28/05/2020,nat
+Ireland,B,5,14,0,28/05/2020,nat
+Ireland,B,15,24,2,28/05/2020,nat
+Ireland,B,25,34,5,28/05/2020,nat
+Ireland,B,35,44,10,28/05/2020,nat
+Ireland,B,45,54,23,28/05/2020,nat
+Ireland,B,55,64,59,28/05/2020,nat
+Ireland,B,65,74,198,28/05/2020,nat
+Ireland,B,75,84,473,28/05/2020,nat
+Ireland,B,85,110,608,28/05/2020,nat
+Northern Ireland,B,0,19,0,28/05/2020,nat
+Northern Ireland,B,20,39,1,28/05/2020,nat
+Northern Ireland,B,40,59,22,28/05/2020,nat
+Northern Ireland,B,60,79,149,28/05/2020,nat
+Northern Ireland,B,80,110,345,28/05/2020,nat
+Scotland,B,0,14,0,24/05/2020,nat
+Scotland,B,15,44,23,24/05/2020,nat
+Scotland,B,45,64,316,24/05/2020,nat
+Scotland,B,65,74,557,24/05/2020,nat
+Scotland,B,75,84,1262,24/05/2020,nat
+Scotland,B,85,110,1621,24/05/2020,nat
+England & Wales,M,0,4,2,20/05/2020,nat
+England & Wales,M,5,9,0,20/05/2020,nat
+England & Wales,M,10,14,0,20/05/2020,nat
+England & Wales,M,15,19,5,20/05/2020,nat
+England & Wales,M,20,24,13,20/05/2020,nat
+England & Wales,M,25,29,29,20/05/2020,nat
+England & Wales,M,30,34,44,20/05/2020,nat
+England & Wales,M,35,39,65,20/05/2020,nat
+England & Wales,M,40,44,135,20/05/2020,nat
+England & Wales,M,45,49,247,20/05/2020,nat
+England & Wales,M,50,54,461,20/05/2020,nat
+England & Wales,M,55,59,857,20/05/2020,nat
+England & Wales,M,60,64,1205,20/05/2020,nat
+England & Wales,M,65,69,1615,20/05/2020,nat
+England & Wales,M,70,74,2578,20/05/2020,nat
+England & Wales,M,75,79,3539,20/05/2020,nat
+England & Wales,M,80,84,4638,20/05/2020,nat
+England & Wales,M,85,89,4489,20/05/2020,nat
+England & Wales,M,90,110,3673,20/05/2020,nat
+England & Wales,F,0,4,1,20/05/2020,nat
+England & Wales,F,5,9,0,20/05/2020,nat
+England & Wales,F,10,14,1,20/05/2020,nat
+England & Wales,F,15,19,4,20/05/2020,nat
+England & Wales,F,20,24,9,20/05/2020,nat
+England & Wales,F,25,29,16,20/05/2020,nat
+England & Wales,F,30,34,29,20/05/2020,nat
+England & Wales,F,35,39,49,20/05/2020,nat
+England & Wales,F,40,44,76,20/05/2020,nat
+England & Wales,F,45,49,149,20/05/2020,nat
+England & Wales,F,50,54,274,20/05/2020,nat
+England & Wales,F,55,59,405,20/05/2020,nat
+England & Wales,F,60,64,598,20/05/2020,nat
+England & Wales,F,65,69,823,20/05/2020,nat
+England & Wales,F,70,74,1365,20/05/2020,nat
+England & Wales,F,75,79,2153,20/05/2020,nat
+England & Wales,F,80,84,3354,20/05/2020,nat
+England & Wales,F,85,89,4048,20/05/2020,nat
+England & Wales,F,90,110,5224,20/05/2020,nat
+New York City,B,0,17,10,28/05/2020,reg
+New York City,B,18,44,653,28/05/2020,reg
+New York City,B,45,64,3761,28/05/2020,reg
+New York City,B,65,74,4173,28/05/2020,reg
+New York City,B,75,110,8140,28/05/2020,reg
+Austria,B,0,4,0,28/05/2020,nat
+Austria,B,5,14,0,28/05/2020,nat
+Austria,B,15,24,0,28/05/2020,nat
+Austria,B,25,34,1,28/05/2020,nat
+Austria,B,35,44,2,28/05/2020,nat
+Austria,B,45,54,12,28/05/2020,nat
+Austria,B,55,64,22,28/05/2020,nat
+Austria,B,65,74,111,28/05/2020,nat
+Austria,B,75,84,236,28/05/2020,nat
+Austria,B,85,110,254,28/05/2020,nat
+Denmark,M,0,59,11,28/05/2020,nat
+Denmark,M,60,69,33,28/05/2020,nat
+Denmark,M,70,79,115,28/05/2020,nat
+Denmark,M,80,89,123,28/05/2020,nat
+Denmark,M,90,110,39,28/05/2020,nat
+Denmark,F,0,59,5,28/05/2020,nat
+Denmark,F,60,69,21,28/05/2020,nat
+Denmark,F,70,79,48,28/05/2020,nat
+Denmark,F,80,89,93,28/05/2020,nat
+Denmark,F,90,110,80,28/05/2020,nat
+Portugal,M,0,9,0,29/05/2020,nat
+Portugal,M,10,19,0,29/05/2020,nat
+Portugal,M,20,29,1,29/05/2020,nat
+Portugal,M,30,39,0,29/05/2020,nat
+Portugal,M,40,49,9,29/05/2020,nat
+Portugal,M,50,59,30,29/05/2020,nat
+Portugal,M,60,69,81,29/05/2020,nat
+Portugal,M,70,79,160,29/05/2020,nat
+Portugal,M,80,110,400,29/05/2020,nat
+Portugal,F,0,9,0,29/05/2020,nat
+Portugal,F,10,19,0,29/05/2020,nat
+Portugal,F,20,29,0,29/05/2020,nat
+Portugal,F,30,39,1,29/05/2020,nat
+Portugal,F,40,49,6,29/05/2020,nat
+Portugal,F,50,59,13,29/05/2020,nat
+Portugal,F,60,69,43,29/05/2020,nat
+Portugal,F,70,79,110,29/05/2020,nat
+Portugal,F,80,110,529,29/05/2020,nat
+Thailand,B,0,9,0,15/05/2020,nat
+Thailand,B,10,19,0,15/05/2020,nat
+Thailand,B,20,29,2,15/05/2020,nat
+Thailand,B,30,39,3,15/05/2020,nat
+Thailand,B,40,49,11,15/05/2020,nat
+Thailand,B,50,59,16,15/05/2020,nat
+Thailand,B,60,69,11,15/05/2020,nat
+Thailand,B,70,79,8,15/05/2020,nat
+Thailand,B,80,110,5,15/05/2020,nat
+Bangladesh,B,0,9,12,28/05/2020,nat
+Bangladesh,B,10,19,0,28/05/2020,nat
+Bangladesh,B,20,29,18,28/05/2020,nat
+Bangladesh,B,30,39,43,28/05/2020,nat
+Bangladesh,B,40,49,116,28/05/2020,nat
+Bangladesh,B,50,59,165,28/05/2020,nat
+Bangladesh,B,60,110,256,28/05/2020,nat
+Greece,M,0,17,0,29/05/2020,nat
+Greece,M,18,39,3,29/05/2020,nat
+Greece,M,40,64,30,29/05/2020,nat
+Greece,M,65,110,90,29/05/2020,nat
+Greece,F,0,17,0,29/05/2020,nat
+Greece,F,18,39,0,29/05/2020,nat
+Greece,F,40,64,9,29/05/2020,nat
+Greece,F,65,110,43,29/05/2020,nat
+Canada,B,0,19,0,15/05/2020,nat
+Canada,B,20,29,3,15/05/2020,nat
+Canada,B,30,39,10,15/05/2020,nat
+Canada,B,40,49,36,15/05/2020,nat
+Canada,B,50,59,116,15/05/2020,nat
+Canada,B,60,69,382,15/05/2020,nat
+Canada,B,70,79,959,15/05/2020,nat
+Canada,B,80,110,3982,15/05/2020,nat
+Czech Republic,M,0,14,0,28/05/2020,nat
+Czech Republic,M,15,24,0,28/05/2020,nat
+Czech Republic,M,25,34,0,28/05/2020,nat
+Czech Republic,M,35,44,5,28/05/2020,nat
+Czech Republic,M,45,54,2,28/05/2020,nat
+Czech Republic,M,55,64,15,28/05/2020,nat
+Czech Republic,M,65,74,54,28/05/2020,nat
+Czech Republic,M,75,84,63,28/05/2020,nat
+Czech Republic,M,85,110,47,28/05/2020,nat
+Czech Republic,F,0,14,0,28/05/2020,nat
+Czech Republic,F,15,24,0,28/05/2020,nat
+Czech Republic,F,25,34,1,28/05/2020,nat
+Czech Republic,F,35,44,0,28/05/2020,nat
+Czech Republic,F,45,54,3,28/05/2020,nat
+Czech Republic,F,55,64,3,28/05/2020,nat
+Czech Republic,F,65,74,24,28/05/2020,nat
+Czech Republic,F,75,84,46,28/05/2020,nat
+Czech Republic,F,85,110,56,28/05/2020,nat
+Poland,M,0,9,0,29/05/2020,nat
+Poland,M,10,19,1,29/05/2020,nat
+Poland,M,20,29,0,29/05/2020,nat
+Poland,M,30,39,6,29/05/2020,nat
+Poland,M,40,49,16,29/05/2020,nat
+Poland,M,50,59,38,29/05/2020,nat
+Poland,M,60,69,138,29/05/2020,nat
+Poland,M,70,79,171,29/05/2020,nat
+Poland,M,80,89,142,29/05/2020,nat
+Poland,M,90,110,25,29/05/2020,nat
+Poland,F,0,9,0,29/05/2020,nat
+Poland,F,10,19,1,29/05/2020,nat
+Poland,F,20,29,0,29/05/2020,nat
+Poland,F,30,39,7,29/05/2020,nat
+Poland,F,40,49,12,29/05/2020,nat
+Poland,F,50,59,24,29/05/2020,nat
+Poland,F,60,69,59,29/05/2020,nat
+Poland,F,70,79,120,29/05/2020,nat
+Poland,F,80,89,203,29/05/2020,nat
+Poland,F,90,110,86,29/05/2020,nat
+Slovenia,M,0,4,0,29/05/2020,nat
+Slovenia,M,5,9,0,29/05/2020,nat
+Slovenia,M,15,24,0,29/05/2020,nat
+Slovenia,M,25,34,0,29/05/2020,nat
+Slovenia,M,35,44,0,29/05/2020,nat
+Slovenia,M,45,54,1,29/05/2020,nat
+Slovenia,M,55,64,2,29/05/2020,nat
+Slovenia,M,65,74,10,29/05/2020,nat
+Slovenia,M,75,84,17,29/05/2020,nat
+Slovenia,M,85,110,14,29/05/2020,nat
+Slovenia,F,0,4,0,29/05/2020,nat
+Slovenia,F,5,9,0,29/05/2020,nat
+Slovenia,F,15,24,0,29/05/2020,nat
+Slovenia,F,25,34,0,29/05/2020,nat
+Slovenia,F,35,44,0,29/05/2020,nat
+Slovenia,F,45,54,1,29/05/2020,nat
+Slovenia,F,55,64,0,29/05/2020,nat
+Slovenia,F,65,74,5,29/05/2020,nat
+Slovenia,F,75,84,11,29/05/2020,nat
+Slovenia,F,85,110,47,29/05/2020,nat
+Hungary,B,0,19,0,29/05/2020,nat
+Hungary,B,20,34,1,29/05/2020,nat
+Hungary,B,35,49,11,29/05/2020,nat
+Hungary,B,50,64,56,29/05/2020,nat
+Hungary,B,65,79,219,29/05/2020,nat
+Hungary,B,80,89,179,29/05/2020,nat
+Hungary,B,90,110,51,29/05/2020,nat
+South Africa,B,0,9,2,29/05/2020,nat
+South Africa,B,10,19,1,29/05/2020,nat
+South Africa,B,20,29,4,29/05/2020,nat
+South Africa,B,30,39,34,29/05/2020,nat
+South Africa,B,40,49,68,29/05/2020,nat
+South Africa,B,50,59,152,29/05/2020,nat
+South Africa,B,60,69,162,29/05/2020,nat
+South Africa,B,70,79,120,29/05/2020,nat
+South Africa,B,80,89,57,29/05/2020,nat
+South Africa,B,90,110,11,29/05/2020,nat
+Philippines,M,0,4,5,29/05/2020,nat
+Philippines,M,5,9,0,29/05/2020,nat
+Philippines,M,10,14,1,29/05/2020,nat
+Philippines,M,15,19,4,29/05/2020,nat
+Philippines,M,20,24,3,29/05/2020,nat
+Philippines,M,25,29,6,29/05/2020,nat
+Philippines,M,30,34,8,29/05/2020,nat
+Philippines,M,35,39,19,29/05/2020,nat
+Philippines,M,40,44,26,29/05/2020,nat
+Philippines,M,45,49,30,29/05/2020,nat
+Philippines,M,50,54,48,29/05/2020,nat
+Philippines,M,55,59,67,29/05/2020,nat
+Philippines,M,60,64,95,29/05/2020,nat
+Philippines,M,65,69,92,29/05/2020,nat
+Philippines,M,70,74,69,29/05/2020,nat
+Philippines,M,75,79,59,29/05/2020,nat
+Philippines,M,80,110,72,29/05/2020,nat
+Philippines,F,0,4,2,29/05/2020,nat
+Philippines,F,5,9,2,29/05/2020,nat
+Philippines,F,10,14,1,29/05/2020,nat
+Philippines,F,15,19,1,29/05/2020,nat
+Philippines,F,20,24,1,29/05/2020,nat
+Philippines,F,25,29,5,29/05/2020,nat
+Philippines,F,30,34,3,29/05/2020,nat
+Philippines,F,35,39,6,29/05/2020,nat
+Philippines,F,40,44,13,29/05/2020,nat
+Philippines,F,45,49,16,29/05/2020,nat
+Philippines,F,50,54,20,29/05/2020,nat
+Philippines,F,55,59,24,29/05/2020,nat
+Philippines,F,60,64,53,29/05/2020,nat
+Philippines,F,65,69,49,29/05/2020,nat
+Philippines,F,70,74,62,29/05/2020,nat
+Philippines,F,75,79,30,29/05/2020,nat
+Philippines,F,80,110,50,29/05/2020,nat
+Mexico,M,0,4,12,29/05/2020,nat
+Mexico,M,5,9,0,29/05/2020,nat
+Mexico,M,10,14,0,29/05/2020,nat
+Mexico,M,15,19,0,29/05/2020,nat
+Mexico,M,20,24,16,29/05/2020,nat
+Mexico,M,25,29,52,29/05/2020,nat
+Mexico,M,30,34,134,29/05/2020,nat
+Mexico,M,35,39,247,29/05/2020,nat
+Mexico,M,40,44,423,29/05/2020,nat
+Mexico,M,45,49,635,29/05/2020,nat
+Mexico,M,50,54,822,29/05/2020,nat
+Mexico,M,55,59,897,29/05/2020,nat
+Mexico,M,60,64,803,29/05/2020,nat
+Mexico,M,65,69,796,29/05/2020,nat
+Mexico,M,70,74,595,29/05/2020,nat
+Mexico,M,75,79,419,29/05/2020,nat
+Mexico,M,80,84,279,29/05/2020,nat
+Mexico,M,85,89,133,29/05/2020,nat
+Mexico,M,90,94,52,29/05/2020,nat
+Mexico,M,95,110,13,29/05/2020,nat
+Mexico,F,0,4,8,29/05/2020,nat
+Mexico,F,5,9,2,29/05/2020,nat
+Mexico,F,10,14,0,29/05/2020,nat
+Mexico,F,15,19,6,29/05/2020,nat
+Mexico,F,20,24,16,29/05/2020,nat
+Mexico,F,25,29,34,29/05/2020,nat
+Mexico,F,30,34,51,29/05/2020,nat
+Mexico,F,35,39,94,29/05/2020,nat
+Mexico,F,40,44,138,29/05/2020,nat
+Mexico,F,45,49,263,29/05/2020,nat
+Mexico,F,50,54,298,29/05/2020,nat
+Mexico,F,55,59,388,29/05/2020,nat
+Mexico,F,60,64,435,29/05/2020,nat
+Mexico,F,65,69,412,29/05/2020,nat
+Mexico,F,70,74,338,29/05/2020,nat
+Mexico,F,75,79,253,29/05/2020,nat
+Mexico,F,80,84,196,29/05/2020,nat
+Mexico,F,85,89,101,29/05/2020,nat
+Mexico,F,90,94,31,29/05/2020,nat
+Mexico,F,95,110,9,29/05/2020,nat
+France,M,0,9,2,30/05/2020,nat
+France,M,10,19,4,30/05/2020,nat
+France,M,20,29,14,30/05/2020,nat
+France,M,30,39,51,30/05/2020,nat
+France,M,40,49,151,30/05/2020,nat
+France,M,50,59,587,30/05/2020,nat
+France,M,60,69,1557,30/05/2020,nat
+France,M,70,79,2837,30/05/2020,nat
+France,M,80,89,3930,30/05/2020,nat
+France,M,90,110,1676,30/05/2020,nat
+France,F,0,9,1,30/05/2020,nat
+France,F,10,19,2,30/05/2020,nat
+France,F,20,29,7,30/05/2020,nat
+France,F,30,39,32,30/05/2020,nat
+France,F,40,49,77,30/05/2020,nat
+France,F,50,59,266,30/05/2020,nat
+France,F,60,69,628,30/05/2020,nat
+France,F,70,79,1283,30/05/2020,nat
+France,F,80,89,2904,30/05/2020,nat
+France,F,90,110,2267,30/05/2020,nat
 Panama,M,0,19,2,01/05/2020,nat
 Panama,M,20,39,7,01/05/2020,nat
 Panama,M,40,59,30,01/05/2020,nat
@@ -457,109 +461,199 @@ Panama,F,20,39,1,01/05/2020,nat
 Panama,F,40,59,10,01/05/2020,nat
 Panama,F,60,79,25,01/05/2020,nat
 Panama,F,80,110,23,01/05/2020,nat
-Ecuador,B,0,4,4,15/05/2020,nat
-Ecuador,B,5,9,3,15/05/2020,nat
-Ecuador,B,10,14,0,15/05/2020,nat
-Ecuador,B,15,19,0,15/05/2020,nat
-Ecuador,B,20,24,11,15/05/2020,nat
-Ecuador,B,25,29,10,15/05/2020,nat
-Ecuador,B,30,34,32,15/05/2020,nat
-Ecuador,B,35,39,58,15/05/2020,nat
-Ecuador,B,40,44,90,15/05/2020,nat
-Ecuador,B,45,49,127,15/05/2020,nat
-Ecuador,B,50,54,211,15/05/2020,nat
-Ecuador,B,55,59,306,15/05/2020,nat
-Ecuador,B,60,64,419,15/05/2020,nat
-Ecuador,B,65,69,404,15/05/2020,nat
-Ecuador,B,70,74,334,15/05/2020,nat
-Ecuador,B,75,79,242,15/05/2020,nat
-Ecuador,B,80,84,183,15/05/2020,nat
-Ecuador,B,85,89,103,15/05/2020,nat
-Ecuador,B,90,94,37,15/05/2020,nat
-Ecuador,B,95,110,20,15/05/2020,nat
-Peru,M,0,9,2,16/05/2020,nat
-Peru,M,10,19,2,16/05/2020,nat
-Peru,M,20,29,13,16/05/2020,nat
-Peru,M,30,39,59,16/05/2020,nat
-Peru,M,40,49,156,16/05/2020,nat
-Peru,M,50,59,381,16/05/2020,nat
-Peru,M,60,69,547,16/05/2020,nat
-Peru,M,70,79,401,16/05/2020,nat
-Peru,M,80,89,205,16/05/2020,nat
-Peru,M,90,110,41,16/05/2020,nat
-Peru,F,0,9,6,16/05/2020,nat
-Peru,F,10,19,4,16/05/2020,nat
-Peru,F,20,29,8,16/05/2020,nat
-Peru,F,30,39,25,16/05/2020,nat
-Peru,F,40,49,53,16/05/2020,nat
-Peru,F,50,59,112,16/05/2020,nat
-Peru,F,60,69,188,16/05/2020,nat
-Peru,F,70,79,176,16/05/2020,nat
-Peru,F,80,89,119,16/05/2020,nat
-Peru,F,90,110,25,16/05/2020,nat
-Argentina,B,0,9,0,15/05/2020,nat
-Argentina,B,10,19,0,15/05/2020,nat
-Argentina,B,20,29,1,15/05/2020,nat
-Argentina,B,30,39,7,15/05/2020,nat
-Argentina,B,40,49,14,15/05/2020,nat
-Argentina,B,50,59,33,15/05/2020,nat
-Argentina,B,60,69,72,15/05/2020,nat
-Argentina,B,70,79,90,15/05/2020,nat
-Argentina,B,80,110,138,15/05/2020,nat
-Geneva,M,0,9,0,16/05/2020,reg
-Geneva,M,10,19,0,16/05/2020,reg
-Geneva,M,20,29,0,16/05/2020,reg
-Geneva,M,30,39,1,16/05/2020,reg
-Geneva,M,40,49,0,16/05/2020,reg
-Geneva,M,50,59,6,16/05/2020,reg
-Geneva,M,60,69,8,16/05/2020,reg
-Geneva,M,70,79,26,16/05/2020,reg
-Geneva,M,80,110,101,16/05/2020,reg
-Geneva,F,0,9,0,16/05/2020,reg
-Geneva,F,10,19,0,16/05/2020,reg
-Geneva,F,20,29,0,16/05/2020,reg
-Geneva,F,30,39,1,16/05/2020,reg
-Geneva,F,40,49,0,16/05/2020,reg
-Geneva,F,50,59,2,16/05/2020,reg
-Geneva,F,60,69,6,16/05/2020,reg
-Geneva,F,70,79,20,16/05/2020,reg
-Geneva,F,80,110,89,16/05/2020,reg
-Belgium,M,0,14,0,16/05/2020,nat
-Belgium,M,25,44,28,16/05/2020,nat
-Belgium,M,45,64,411,16/05/2020,nat
-Belgium,M,65,74,793,16/05/2020,nat
-Belgium,M,75,84,1547,16/05/2020,nat
-Belgium,M,85,110,1769,16/05/2020,nat
-Belgium,F,0,14,1,16/05/2020,nat
-Belgium,F,25,44,15,16/05/2020,nat
-Belgium,F,45,64,192,16/05/2020,nat
-Belgium,F,65,74,424,16/05/2020,nat
-Belgium,F,75,84,1240,16/05/2020,nat
-Belgium,F,85,110,2585,16/05/2020,nat
-Spain,M,0,9,1,15/05/2020,nat
-Spain,M,10,19,2,15/05/2020,nat
-Spain,M,20,29,14,15/05/2020,nat
-Spain,M,30,39,41,15/05/2020,nat
-Spain,M,40,49,131,15/05/2020,nat
-Spain,M,50,59,434,15/05/2020,nat
-Spain,M,60,69,1198,15/05/2020,nat
-Spain,M,70,79,3164,15/05/2020,nat
-Spain,M,80,89,4372,15/05/2020,nat
-Spain,M,90,110,1589,15/05/2020,nat
-Spain,F,0,9,1,15/05/2020,nat
-Spain,F,10,19,3,15/05/2020,nat
-Spain,F,20,29,9,15/05/2020,nat
-Spain,F,30,39,22,15/05/2020,nat
-Spain,F,40,49,70,15/05/2020,nat
-Spain,F,50,59,177,15/05/2020,nat
-Spain,F,60,69,497,15/05/2020,nat
-Spain,F,70,79,1468,15/05/2020,nat
-Spain,F,80,89,3500,15/05/2020,nat
-Spain,F,90,110,2493,15/05/2020,nat
-Luxembourg,B,0,29,0,17/05/2020,nat
-Luxembourg,B,30,39,0,17/05/2020,nat
-Luxembourg,B,40,49,0,17/05/2020,nat
-Luxembourg,B,50,59,2,17/05/2020,nat
-Luxembourg,B,60,69,7,17/05/2020,nat
-Luxembourg,B,70,79,25,17/05/2020,nat
-Luxembourg,B,80,110,73,17/05/2020,nat
+Ecuador,B,0,4,4,29/05/2020,nat
+Ecuador,B,5,9,2,29/05/2020,nat
+Ecuador,B,10,14,0,29/05/2020,nat
+Ecuador,B,15,19,1,29/05/2020,nat
+Ecuador,B,20,24,13,29/05/2020,nat
+Ecuador,B,25,29,13,29/05/2020,nat
+Ecuador,B,30,34,48,29/05/2020,nat
+Ecuador,B,35,39,60,29/05/2020,nat
+Ecuador,B,40,44,111,29/05/2020,nat
+Ecuador,B,45,49,171,29/05/2020,nat
+Ecuador,B,50,54,266,29/05/2020,nat
+Ecuador,B,55,59,381,29/05/2020,nat
+Ecuador,B,60,64,523,29/05/2020,nat
+Ecuador,B,65,69,522,29/05/2020,nat
+Ecuador,B,70,74,445,29/05/2020,nat
+Ecuador,B,75,79,317,29/05/2020,nat
+Ecuador,B,80,84,250,29/05/2020,nat
+Ecuador,B,85,89,146,29/05/2020,nat
+Ecuador,B,90,94,52,29/05/2020,nat
+Ecuador,B,95,110,20,29/05/2020,nat
+Peru,M,0,9,7,29/05/2020,nat
+Peru,M,10,19,3,29/05/2020,nat
+Peru,M,20,29,22,29/05/2020,nat
+Peru,M,30,39,101,29/05/2020,nat
+Peru,M,40,49,270,29/05/2020,nat
+Peru,M,50,59,606,29/05/2020,nat
+Peru,M,60,69,883,29/05/2020,nat
+Peru,M,70,79,705,29/05/2020,nat
+Peru,M,80,89,370,29/05/2020,nat
+Peru,M,90,110,74,29/05/2020,nat
+Peru,F,0,9,9,29/05/2020,nat
+Peru,F,10,19,5,29/05/2020,nat
+Peru,F,20,29,10,29/05/2020,nat
+Peru,F,30,39,35,29/05/2020,nat
+Peru,F,40,49,80,29/05/2020,nat
+Peru,F,50,59,178,29/05/2020,nat
+Peru,F,60,69,328,29/05/2020,nat
+Peru,F,70,79,314,29/05/2020,nat
+Peru,F,80,89,190,29/05/2020,nat
+Peru,F,90,110,40,29/05/2020,nat
+Argentina,B,0,9,0,28/05/2020,nat
+Argentina,B,10,19,1,28/05/2020,nat
+Argentina,B,20,29,1,28/05/2020,nat
+Argentina,B,30,39,9,28/05/2020,nat
+Argentina,B,40,49,24,28/05/2020,nat
+Argentina,B,50,59,54,28/05/2020,nat
+Argentina,B,60,69,101,28/05/2020,nat
+Argentina,B,70,79,123,28/05/2020,nat
+Argentina,B,80,110,194,28/05/2020,nat
+Geneva,M,0,9,0,28/05/2020,reg
+Geneva,M,10,19,0,28/05/2020,reg
+Geneva,M,20,29,0,28/05/2020,reg
+Geneva,M,30,39,1,28/05/2020,reg
+Geneva,M,40,49,0,28/05/2020,reg
+Geneva,M,50,59,7,28/05/2020,reg
+Geneva,M,60,69,9,28/05/2020,reg
+Geneva,M,70,79,27,28/05/2020,reg
+Geneva,M,80,110,104,28/05/2020,reg
+Geneva,F,0,9,0,28/05/2020,reg
+Geneva,F,10,19,0,28/05/2020,reg
+Geneva,F,20,29,0,28/05/2020,reg
+Geneva,F,30,39,1,28/05/2020,reg
+Geneva,F,40,49,0,28/05/2020,reg
+Geneva,F,50,59,2,28/05/2020,reg
+Geneva,F,60,69,6,28/05/2020,reg
+Geneva,F,70,79,22,28/05/2020,reg
+Geneva,F,80,110,92,28/05/2020,reg
+Belgium,M,0,24,0,28/05/2020,nat
+Belgium,M,25,44,28,28/05/2020,nat
+Belgium,M,45,64,433,28/05/2020,nat
+Belgium,M,65,74,833,28/05/2020,nat
+Belgium,M,75,84,1614,28/05/2020,nat
+Belgium,M,85,110,1864,28/05/2020,nat
+Belgium,F,0,24,1,28/05/2020,nat
+Belgium,F,25,44,21,28/05/2020,nat
+Belgium,F,45,64,201,28/05/2020,nat
+Belgium,F,65,74,440,28/05/2020,nat
+Belgium,F,75,84,1287,28/05/2020,nat
+Belgium,F,85,110,2708,28/05/2020,nat
+Spain,M,0,9,1,21/05/2020,nat
+Spain,M,10,19,4,21/05/2020,nat
+Spain,M,20,29,21,21/05/2020,nat
+Spain,M,30,39,59,21/05/2020,nat
+Spain,M,40,49,195,21/05/2020,nat
+Spain,M,50,59,648,21/05/2020,nat
+Spain,M,60,69,1787,21/05/2020,nat
+Spain,M,70,79,4630,21/05/2020,nat
+Spain,M,80,89,6491,21/05/2020,nat
+Spain,M,90,110,2346,21/05/2020,nat
+Spain,F,0,9,1,21/05/2020,nat
+Spain,F,10,19,3,21/05/2020,nat
+Spain,F,20,29,13,21/05/2020,nat
+Spain,F,30,39,29,21/05/2020,nat
+Spain,F,40,49,107,21/05/2020,nat
+Spain,F,50,59,266,21/05/2020,nat
+Spain,F,60,69,753,21/05/2020,nat
+Spain,F,70,79,2182,21/05/2020,nat
+Spain,F,80,89,5290,21/05/2020,nat
+Spain,F,90,110,3802,21/05/2020,nat
+Luxembourg,B,0,29,0,29/05/2020,nat
+Luxembourg,B,30,39,0,29/05/2020,nat
+Luxembourg,B,40,49,0,29/05/2020,nat
+Luxembourg,B,50,59,3,29/05/2020,nat
+Luxembourg,B,60,69,7,29/05/2020,nat
+Luxembourg,B,70,79,26,29/05/2020,nat
+Luxembourg,B,80,110,74,29/05/2020,nat
+Japan,B,0,9,0,29/05/2020,nat
+Japan,B,10,19,0,29/05/2020,nat
+Japan,B,20,29,0,29/05/2020,nat
+Japan,B,30,39,4,29/05/2020,nat
+Japan,B,40,49,9,29/05/2020,nat
+Japan,B,50,59,20,29/05/2020,nat
+Japan,B,60,69,66,29/05/2020,nat
+Japan,B,70,79,160,29/05/2020,nat
+Japan,B,80,110,327,29/05/2020,nat
+Pakistan,M,0,9,0,29/05/2020,nat
+Pakistan,M,10,19,6,29/05/2020,nat
+Pakistan,M,20,29,28,29/05/2020,nat
+Pakistan,M,30,39,53,29/05/2020,nat
+Pakistan,M,40,49,111,29/05/2020,nat
+Pakistan,M,50,59,257,29/05/2020,nat
+Pakistan,M,60,69,319,29/05/2020,nat
+Pakistan,M,70,79,186,29/05/2020,nat
+Pakistan,M,80,110,68,29/05/2020,nat
+Pakistan,F,0,9,0,29/05/2020,nat
+Pakistan,F,10,19,4,29/05/2020,nat
+Pakistan,F,20,29,12,29/05/2020,nat
+Pakistan,F,30,39,18,29/05/2020,nat
+Pakistan,F,40,49,52,29/05/2020,nat
+Pakistan,F,50,59,93,29/05/2020,nat
+Pakistan,F,60,69,98,29/05/2020,nat
+Pakistan,F,70,79,60,29/05/2020,nat
+Pakistan,F,80,110,20,29/05/2020,nat
+Chile,B,0,39,19,29/05/2020,nat
+Chile,B,40,49,46,29/05/2020,nat
+Chile,B,50,59,94,29/05/2020,nat
+Chile,B,60,69,173,29/05/2020,nat
+Chile,B,70,79,279,29/05/2020,nat
+Chile,B,80,89,242,29/05/2020,nat
+Chile,B,90,110,91,29/05/2020,nat
+Dominican Republic,M,0,4,1,29/05/2020,nat
+Dominican Republic,M,5,9,0,29/05/2020,nat
+Dominican Republic,M,10,19,2,29/05/2020,nat
+Dominican Republic,M,20,29,8,29/05/2020,nat
+Dominican Republic,M,30,39,22,29/05/2020,nat
+Dominican Republic,M,40,49,37,29/05/2020,nat
+Dominican Republic,M,50,59,69,29/05/2020,nat
+Dominican Republic,M,60,110,209,29/05/2020,nat
+Dominican Republic,F,0,4,5,29/05/2020,nat
+Dominican Republic,F,5,9,0,29/05/2020,nat
+Dominican Republic,F,10,19,1,29/05/2020,nat
+Dominican Republic,F,20,29,7,29/05/2020,nat
+Dominican Republic,F,30,39,5,29/05/2020,nat
+Dominican Republic,F,40,49,7,29/05/2020,nat
+Dominican Republic,F,50,59,25,29/05/2020,nat
+Dominican Republic,F,60,110,100,29/05/2020,nat
+United States of America,M,0,4,4,23/05/2020,nat
+United States of America,M,5,14,9,23/05/2020,nat
+United States of America,M,15,24,61,23/05/2020,nat
+United States of America,M,25,34,372,23/05/2020,nat
+United States of America,M,35,44,1010,23/05/2020,nat
+United States of America,M,45,54,2767,23/05/2020,nat
+United States of America,M,55,64,6448,23/05/2020,nat
+United States of America,M,65,74,10632,23/05/2020,nat
+United States of America,M,75,84,12045,23/05/2020,nat
+United States of America,M,85,110,10729,23/05/2020,nat
+United States of America,F,0,4,4,23/05/2020,nat
+United States of America,F,5,14,2,23/05/2020,nat
+United States of America,F,15,24,32,23/05/2020,nat
+United States of America,F,25,34,170,23/05/2020,nat
+United States of America,F,35,44,393,23/05/2020,nat
+United States of America,F,45,54,1126,23/05/2020,nat
+United States of America,F,55,64,3328,23/05/2020,nat
+United States of America,F,65,74,6349,23/05/2020,nat
+United States of America,F,75,84,9777,23/05/2020,nat
+United States of America,F,85,110,16113,23/05/2020,nat
+Catalonia,M,0,9,0,30/05/2020,reg
+Catalonia,M,10,19,2,30/05/2020,reg
+Catalonia,M,20,29,3,30/05/2020,reg
+Catalonia,M,30,39,13,30/05/2020,reg
+Catalonia,M,40,49,63,30/05/2020,reg
+Catalonia,M,50,59,235,30/05/2020,reg
+Catalonia,M,60,69,683,30/05/2020,reg
+Catalonia,M,70,79,1565,30/05/2020,reg
+Catalonia,M,80,89,2499,30/05/2020,reg
+Catalonia,M,90,110,896,30/05/2020,reg
+Catalonia,F,0,9,0,30/05/2020,reg
+Catalonia,F,10,19,1,30/05/2020,reg
+Catalonia,F,20,29,5,30/05/2020,reg
+Catalonia,F,30,39,17,30/05/2020,reg
+Catalonia,F,40,49,41,30/05/2020,reg
+Catalonia,F,50,59,118,30/05/2020,reg
+Catalonia,F,60,69,302,30/05/2020,reg
+Catalonia,F,70,79,939,30/05/2020,reg
+Catalonia,F,80,89,2768,30/05/2020,reg
+Catalonia,F,90,110,2119,30/05/2020,reg
