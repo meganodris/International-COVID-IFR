@@ -24,10 +24,15 @@ data {
   int <lower=1> NAges[NArea];
   int gender[NArea]; 
   
-  // population by 5 year age groups
+  // population by 5 year age groups, excluding LTC
   matrix[17,NArea] pop_m;
   matrix[17,NArea] pop_f;
   matrix[17,NArea] pop_b;
+  
+  // population by 5 year age groups, total
+  matrix[17,NArea] Tpop_m;
+  matrix[17,NArea] Tpop_f;
+  matrix[17,NArea] Tpop_b;
   
   // age-specific death data
   int deaths_m[17,NArea];
@@ -139,6 +144,12 @@ model {
 }
  
 generated quantities {
+  
+  real ifr_C[NArea]; // population weighted IFRs
+  
+  for(c in 1:NArea){
+    ifr_C[c] = sum(to_vector(ifr_m).*to_vector(Tpop_m[,c]) + to_vector(ifr_f).*to_vector(Tpop_f[,c]))/sum(Tpop_b[,c]);
+  }
 
 
 }
