@@ -63,5 +63,6 @@ for(c in unique(loc$country)){
 
 # output adjusted death data csv
 adjusted_deaths <- do.call('rbind', new)
+adjusted_deaths <- rbind(adjusted_deaths, df[df$country=='France', ])
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data')
 write.csv(adjusted_deaths, 'deaths_age_adjusted.csv', row.names=F)
