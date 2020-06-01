@@ -53,6 +53,13 @@ data {
   int <lower=0> DPamax[8];
   int <lower=0> DP_deathsTot;
   
+  // CDG data for likelihood
+  int <lower=0> CDG_pos_m[4]; 
+  int <lower=0> CDG_pos_f[4]; 
+  int <lower=0> CDGamin[4];
+  int <lower=0> CDGamax[4];
+  int <lower=0> CDG_deathsTot;
+  
 }
 
 parameters {
@@ -99,13 +106,15 @@ transformed parameters {
 
 model {
 
-  int ObservedDeaths;
-  real estDPdeaths;
   real estDeaths_b[17,NArea];
   real estDeaths_m[17,NArea];
   real estDeaths_f[17,NArea];
+  real estDPdeaths;
+  real estCDGdeaths;
   real dpifr_f[8];
   real dpifr_m[8];
+  real cdgifr_f[4];
+  real cdgifr_m[4];
 
   // Priors
   for(s in 1:2) log_relifrsex[s] ~ normal(0,1);
@@ -128,18 +137,25 @@ model {
   }
   
 
-  // align to DP age groups
+  // align to DP & CDG age groups
   dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
   dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
+  cdgifr_m = alignMEAN(ifr_m, 4, CDGamin, CDGamax);
+  cdgifr_f = alignMEAN(ifr_f, 4, CDGamin, CDGamax);
  
   // Sum expected deaths across age groups
   estDPdeaths=0;
-  for (j in 1:8){ 
+  estCDGdeaths=0;
+  for(j in 1:8){ 
     estDPdeaths=estDPdeaths+(dpifr_f[j]*DP_pos_f[j]+dpifr_m[j]*DP_pos_m[j]);
+  }
+  for(j in 1:4){ 
+    estCDGdeaths=estCDGdeaths+(cdgifr_f[j]*CDG_pos_f[j]+cdgifr_m[j]*CDG_pos_m[j]);
   }
   
   // Likelihood
   DP_deathsTot ~ neg_binomial_2(estDPdeaths, phi);
+  CDG_deathsTot ~ neg_binomial_2(estCDGdeaths, phi);
 
 }
  
