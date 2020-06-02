@@ -1,5 +1,5 @@
 #===== Functions for International IFR model analysis =====#
-
+library(ggplot2)
 
 # Function to compile demographic data for model
 compile_pop <- function(poplist, countries){
@@ -29,12 +29,12 @@ compile_pop <- function(poplist, countries){
 
 
 # Function to compile death data for model 
-compile_deathsA <- function(deathsA, countries){
+compile_deathsA <- function(deathsA, countries, nAges){
   
   # matrices for model
-  deaths_m <- matrix(-999, nrow=17, ncol=length(countries))
-  deaths_f <- matrix(-999, nrow=17, ncol=length(countries))
-  deaths_b <- matrix(-999, nrow=17, ncol=length(countries))
+  deaths_m <- matrix(-999, nrow=nAges, ncol=length(countries))
+  deaths_f <- matrix(-999, nrow=nAges, ncol=length(countries))
+  deaths_b <- matrix(-999, nrow=nAges, ncol=length(countries))
   
   # compile for model
   for(c in 1:length(countries)){
@@ -191,28 +191,22 @@ runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
 }
 
 
-# Plot fit to Diamond Princess data
-fit_DP <- function(fit, inputs){
+# Plot fit to Diamond Princess & Charles de Gaulle data
+fit_active <- function(chains, inputs){
   
-  fit_m <- t(apply(chains$ifr_m, 2, quantile, probs=c(0.5,0.025,0.975)))
-  fit_f <- t(apply(chains$ifr_f, 2, quantile, probs=c(0.5,0.025,0.975)))
+  # model estimates
+  active_fit <- data.frame(outbreak=c('Diamond Princess','Charles de Gaulle'), N=c(inputs$DP_deathsTot, inputs$CDG_deathsTot),
+                           mean=NA, ciL=NA, ciU=NA)
+  active_fit[1,3:5] <- quantile(chains$estDPdeaths, c(0.5,0.025,0.975))
+  active_fit[2,3:5] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
   
-  # aggregate to DP age groups 
-  fit_m <- aggregate(fit_m, by=list(c(1,1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8)), FUN='mean')[ ,2:4]
-  fit_f <- aggregate(fit_f, by=list(c(1,1,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8)), FUN='mean')[ ,2:4]
+  m_fit <- ggplot(active_fit, aes(outbreak, N))+ geom_col(fill='royalblue')+ 
+    geom_point(aes(outbreak,mean))+ xlab('')+ ylab('N deaths')+
+    geom_linerange(aes(outbreak,ymin=ciL,ymax=ciU))+ theme_minimal()+ 
+    labs(subtitle='Predicted deaths from active surveillance campaigns')
   
-  df <- data.frame(Obs=inputs$DP_deaths, expec=sum(fit_m[,1]*inputs$DP_pos_m + fit_f[,1]*inputs$DP_pos_f),
-                   ciL=sum(fit_m[,2]*inputs$DP_pos_m + fit_f[,2]*inputs$DP_pos_f), 
-                   ciU=sum(fit_m[,3]*inputs$DP_pos_m + fit_f[,3]*inputs$DP_pos_f))
-  
-  DP_fit <- ggplot(df, aes(x=1, Obs))+ geom_col(fill='royalblue')+ geom_point(aes(x=1,expec))+
-    geom_linerange(aes(x=1,ymin=ciL,ymax=ciU))+ theme_minimal()+ 
-    theme(axis.text.x=element_blank())+ xlab('')+ ylab('N')+
-    labs(subtitle='Diamond Princess deaths')
-  return(DP_fit)
-  #png(filename='DP_Fit.png', width=10, height=10, res=400, units='cm')
-  #plot(DP_fit)
-  #dev.off()
+  return(m_fit)
+
 }
 
 # Plot cumulative probabilities of infection by country
@@ -308,25 +302,20 @@ fit_deaths <- function(chains, inputs, data, countries){
 
 
 # Plot age/sex IFRs
-plot_IFR <- function(fit, inputs, countries){
-  
-  # extract samples
-  chains <- rstan::extract(fit)
+plot_IFR_age <- function(chains, inputs){
   
   # min & max bounds of age groupings
   Amin <- seq(0,80,5)
   Amax <- c(seq(4,79,5),110)
   
   # dataframe for ests
-  ifr_f <- data.frame(mean=NA, ciL=NA, ciU=NA)
-  ifr_m <- data.frame(mean=NA, ciL=NA, ciU=NA)
+  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',17),rep('F',17)))
   for(a in 1:17){
-    ifr_f[a,] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
-    ifr_m[a,] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
+    ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
+    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
   }
   
-  ifr <- rbind(ifr_m, ifr_f)
-  ifr$sex <- c(rep('M',17),rep('F',17))
+  # plot
   ifr$age <- rep(seq(1:17),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
   ifr$ageG[ifr$ageG=='80-110'] <- '80+'
@@ -337,21 +326,29 @@ plot_IFR <- function(fit, inputs, countries){
     theme(axis.text.x=element_text(angle=60,hjust=1), legend.position=c(0.1,0.85))+
     scale_colour_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))
   
+  # return plot & data
+  return(list(ifrA=ifr, ifrAp=ifrAp))
+}
+
+
+# Plot country-specific IFRs
+plot_IFR_area <- function(chains, inputs, countries){
   
+  # country-specific IFRs
   ifrc <- data.frame(country=countries, ifr=NA, ciL=NA, ciU=NA)
   for(c in 1:length(countries)){
-    ifrc$ifr[c] <- sum((ifr_m[,1]*inputs$pop_m[,c] + ifr_f[,1]*inputs$pop_f[,c])/sum(inputs$pop_b[,c]))
-    ifrc$ciL[c] <- sum((ifr_m[,2]*inputs$pop_m[,c] + ifr_f[,2]*inputs$pop_f[,c])/sum(inputs$pop_b[,c]))
-    ifrc$ciU[c] <- sum((ifr_m[,3]*inputs$pop_m[,c] + ifr_f[,3]*inputs$pop_f[,c])/sum(inputs$pop_b[,c]))
+    ifrc[c,2:4] <- quantile(chains$ifr_C[,c], c(0.5,0.025,0.975))
   }
   
+  # plot
   ifrCp <- ggplot(ifrc, aes(reorder(country,ifr), ifr))+ 
     geom_point(col='royalblue')+
     geom_linerange(aes(ymin=ciL, ymax=ciU), col='royalblue')+
     theme_minimal()+ ylab('IFR')+ xlab('')+
     theme(axis.text.x=element_text(angle=60,hjust=1))
   
-  return(list(ifrA=ifr, ifrAp=ifrAp, ifrc=ifrc, ifrCp=ifrCp))
+  # return plot & data
+  return(list(ifrc=ifrc, ifrCp=ifrCp))
 }
 
 
@@ -367,13 +364,14 @@ immune_time <- function(chains, deathsA, deathsT, countries, delay, inputs){
   # dataframe for results
   latestDate <- as.Date('2020-01-22') + ncol(deathsT)-5
   immTc <- data.frame(country=NA, date=seq.Date(as.Date('2020-01-22'), latestDate, 1), 
-                      deaths=NA, imm=NA, ciL=NA, ciU=NA)
+                      deaths=NA, deathsS=NA, imm=NA, ciL=NA, ciU=NA)
   
   for(c in 1:length(countries)){
     
     # death time series 
     dt <- deathsT[deathsT$Country.Region==countries[c], ] 
-    immTc$deaths <- as.vector(t(dt[1,5:ncol(dt)]))
+    immTc$deaths <- as.vector(as.numeric(t(dt[1,5:ncol(dt)])))
+    for(j in 7:nrow(immTc)) immTc$deathsS[j] <- mean(immTc$deaths[(j-7):(j+7)], na.rm=TRUE)
     
     # cumulative immunity estimates as of 
     Cimm <- quantile(chains$probInfec[,c], c(0.5,0.025,0.975)) 
@@ -381,44 +379,40 @@ immune_time <- function(chains, deathsA, deathsT, countries, delay, inputs){
     
     # distribute immunity over time
     deathsAsOf <- immTc$deaths[which(immTc$date==dateofCimm)]
-    timm <- (Cimm[1]/deathsAsOf)*immTc$deaths
-    timmL <- (Cimm[2]/deathsAsOf)*immTc$deaths
-    timmU <- (Cimm[3]/deathsAsOf)*immTc$deaths
-    immTc$imm[1:(nrow(immTc)-delay)] <- timm[(delay+1):length(timm)]
-    immTc$ciL[1:(nrow(immTc)-delay)] <- timmL[(delay+1):length(timm)]
-    immTc$ciU[1:(nrow(immTc)-delay)] <- timmU[(delay+1):length(timm)]
-    
+    immTc$imm[1:(nrow(immTc)-delay)] <- ((Cimm[1]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
+    immTc$ciL[1:(nrow(immTc)-delay)] <- ((Cimm[2]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
+    immTc$ciU[1:(nrow(immTc)-delay)] <- ((Cimm[3]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
     
     # plot immunity over time
     ip <- ggplot(immTc, aes(date, imm))+ geom_line(col='lightgreen')+
       geom_ribbon(aes(date, ymin=ciL, ymax=ciU), fill='lightgreen', alpha=0.4)+
       theme_minimal()+ theme(axis.title=element_blank())+
       geom_vline(aes(xintercept=dateofCimm-delay), linetype='dashed')+
-      labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],dateofCimm)
-    
+      labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],NA)
     
     # daily infections
-    pop <- sum(inputs$pop_b[,c])
-    immTc[c('dI','dIL','dIU')] <- NA
-    for(d in 1:nrow(immTc)-1) immTc$dI[d] <- pop*(immTc$imm[d+1] - immTc$imm[d]) 
-    for(d in 1:nrow(immTc)-1) immTc$dIL[d] <- pop*(immTc$ciL[d+1] - immTc$ciL[d])
-    for(d in 1:nrow(immTc)-1) immTc$dIU[d] <- pop*(immTc$ciU[d+1] - immTc$ciU[d])
-    
+    #pop <- sum(inputs$pop_b[,c])
+    #immTc[c('daily','dailyS','dI','dIL','dIU')] <- NA
+    #for(j in 2:nrow(immTc)) immTc$daily[j] <- immTc$deathsS[j+1] - immTc$deathsS[j]
+    #immTc$dI[1:(nrow(immTc)-delay)] <- ((Cimm[1]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
+    #immTc$dIL[1:(nrow(immTc)-delay)] <- ((Cimm[2]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
+    #immTc$dIU[1:(nrow(immTc)-delay)] <- ((Cimm[3]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
     
     # plot daily infections
-    inp <- ggplot(immTc, aes(date, dI))+ geom_line(col='mediumpurple2')+
-      geom_ribbon(aes(date, ymin=dIL, ymax=dIU), fill='mediumpurple2', alpha=0.4)+
-      theme_minimal()+ theme(axis.title=element_blank())+
-      geom_vline(aes(xintercept=dateofCimm-delay), linetype='dashed')+
-      labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],dateofCimm)
+    #inp <- ggplot(immTc, aes(date, dI))+ geom_line(col='mediumpurple2')+
+      #geom_line(aes(date, daily*pop))+
+      #geom_ribbon(aes(date, ymin=dIL, ymax=dIU), fill='mediumpurple2', alpha=0.4)+
+      #theme_minimal()+ theme(axis.title=element_blank())+
+      #geom_vline(aes(xintercept=dateofCimm-delay), linetype='dashed')+
+      #labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],dateofCimm)
+    #inp
     
-  
     # store
     immTc$country <- countries[c]
     immT[[c]] <- immTc
     immplots[[c]] <- ip
-    dimmplots[[c]] <- inp
+    #dimmplots[[c]] <- inp
   }
-  return(list(immTR=immTc, immP=immplots, DimmP=dimmplots))
+  return(list(immTR=do.call('rbind', immT), immP=immplots))
 }
 
