@@ -1,5 +1,6 @@
 #===== Functions for International IFR model analysis =====#
 library(ggplot2)
+library(epitools)
 
 # Function to compile demographic data for model
 compile_pop <- function(poplist, countries){
@@ -52,8 +53,8 @@ compile_deathsA <- function(deathsA, countries, nAges){
 }
 
 
-# Function to aggregate deaths 80+ (if broken down)
-agg_deaths80p <- function(deathsA, countries){
+# Function to aggregate deaths A+ (e.g. 80+)
+agg_deathsAp <- function(deathsA, countries, A){
   
   # list for aggregated/tidied dataframes
   agg <- list()
@@ -64,13 +65,13 @@ agg_deaths80p <- function(deathsA, countries){
     dfc <- deathsA[deathsA$country==countries[c], ]
     
     # if multiple age groups 80+, aggregate
-    if(any(dfc$age_min>80)){ 
-      new <- dfc[dfc$age_max<80, ]
+    if(any(dfc$age_min>A)){ 
+      new <- dfc[dfc$age_max<A, ]
       for(s in unique(new$sex)){
-        d80p <- sum(dfc$deaths[dfc$age_max>80 & dfc$sex==s])
-        minA <- min(dfc$age_min[dfc$age_max>80])
+        d80p <- sum(dfc$deaths[dfc$age_max>A & dfc$sex==s])
+        minA <- min(dfc$age_min[dfc$age_max>A])
         n80p <- data.frame(country=countries[c], sex=s, age_min=minA, age_max=110,
-                           deaths=as.numeric(d80p), asof=new$asof[1], nat.reg=new$nat.reg[1])
+                           deaths=as.numeric(d80p), asof=new$asof[1], nat.reg=new$nat.reg[1], continent=new$continent[1])
         new <- rbind(new,n80p)
       }
       agg[[c]] <- new
@@ -352,67 +353,122 @@ plot_IFR_area <- function(chains, inputs, countries){
 }
 
 
-
-# Function to distribute cumulative immunity over time
-immune_time <- function(chains, deathsA, deathsT, countries, delay, inputs){
+get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   
-  # lists for plots & results
-  immplots <- list()
-  dimmplots <- list()
-  immT <- list()
+  Inputs <- list()
+  Inputs <- get_agesex(dataA, countries) # age/sex by country
+  Inputs$NArea <- length(countries) # N countries
+  Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries,17)) # death data
+  Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
+  Tpop <- compile_pop(poplist, countries)
+  Inputs$Tpop_m <- Tpop$pop_m
+  Inputs$Tpop_f <- Tpop$pop_f
+  Inputs$Tpop_b <- Tpop$pop_b
+  Inputs$CDG_pos_m <- cdg$pos_m
+  Inputs$CDG_pos_f <- cdg$pos_f
+  Inputs$CDGamin <- c(5,6,8,10)
+  Inputs$CDGamax <- c(5,7,9,12)
+  Inputs$CDG_deathsTot <- 0
+  Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,90)
+  Inputs$DP_pos_m <- dpd$pos_m # Diamond Princess data
+  Inputs$DP_pos_f <- dpd$pos_f
+  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
+  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
+  Inputs$DP_deathsTot <- 15
   
-  # dataframe for results
-  latestDate <- as.Date('2020-01-22') + ncol(deathsT)-5
-  immTc <- data.frame(country=NA, date=seq.Date(as.Date('2020-01-22'), latestDate, 1), 
-                      deaths=NA, deathsS=NA, imm=NA, ciL=NA, ciU=NA)
-  
-  for(c in 1:length(countries)){
-    
-    # death time series 
-    dt <- deathsT[deathsT$Country.Region==countries[c], ] 
-    immTc$deaths <- as.vector(as.numeric(t(dt[1,5:ncol(dt)])))
-    for(j in 7:nrow(immTc)) immTc$deathsS[j] <- mean(immTc$deaths[(j-7):(j+7)], na.rm=TRUE)
-    
-    # cumulative immunity estimates as of 
-    Cimm <- quantile(chains$probInfec[,c], c(0.5,0.025,0.975)) 
-    dateofCimm <- as.Date(deathsA$asof[deathsA$country==countries[c]][1], format('%d/%m/%Y'))
-    
-    # distribute immunity over time
-    deathsAsOf <- immTc$deaths[which(immTc$date==dateofCimm)]
-    immTc$imm[1:(nrow(immTc)-delay)] <- ((Cimm[1]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
-    immTc$ciL[1:(nrow(immTc)-delay)] <- ((Cimm[2]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
-    immTc$ciU[1:(nrow(immTc)-delay)] <- ((Cimm[3]/deathsAsOf)*immTc$deathsS)[(delay+1):nrow(immTc)]
-    
-    # plot immunity over time
-    ip <- ggplot(immTc, aes(date, imm))+ geom_line(col='lightgreen')+
-      geom_ribbon(aes(date, ymin=ciL, ymax=ciU), fill='lightgreen', alpha=0.4)+
-      theme_minimal()+ theme(axis.title=element_blank())+
-      geom_vline(aes(xintercept=dateofCimm-delay), linetype='dashed')+
-      labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],NA)
-    
-    # daily infections
-    #pop <- sum(inputs$pop_b[,c])
-    #immTc[c('daily','dailyS','dI','dIL','dIU')] <- NA
-    #for(j in 2:nrow(immTc)) immTc$daily[j] <- immTc$deathsS[j+1] - immTc$deathsS[j]
-    #immTc$dI[1:(nrow(immTc)-delay)] <- ((Cimm[1]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
-    #immTc$dIL[1:(nrow(immTc)-delay)] <- ((Cimm[2]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
-    #immTc$dIU[1:(nrow(immTc)-delay)] <- ((Cimm[3]/deathsAsOf)*immTc$daily)[(delay+1):length(timm)]*pop
-    
-    # plot daily infections
-    #inp <- ggplot(immTc, aes(date, dI))+ geom_line(col='mediumpurple2')+
-      #geom_line(aes(date, daily*pop))+
-      #geom_ribbon(aes(date, ymin=dIL, ymax=dIU), fill='mediumpurple2', alpha=0.4)+
-      #theme_minimal()+ theme(axis.title=element_blank())+
-      #geom_vline(aes(xintercept=dateofCimm-delay), linetype='dashed')+
-      #labs(subtitle=paste(countries[c]))+ xlim(immTc$date[1],dateofCimm)
-    #inp
-    
-    # store
-    immTc$country <- countries[c]
-    immT[[c]] <- immTc
-    immplots[[c]] <- ip
-    #dimmplots[[c]] <- inp
-  }
-  return(list(immTR=do.call('rbind', immT), immP=immplots))
+  return(Inputs)
 }
 
+# Function to get model inputs for time series of death data
+get_deathsT <- function(deathsT, countries, deathsA, infectodeath, infectosero){
+  
+  # N days since 22/01/2020
+  Ndays <- ncol(deathsT)-1
+  
+  # matrix of deaths over time
+  dt <- matrix(NA, ncol=length(countries), nrow=Ndays)
+  for(c in 1:length(countries)) dt[,c] <- as.numeric(deathsT[deathsT$ï..region==countries[c],2:(Ndays+1)])
+  
+  # index for date of age-specific deaths
+  TdeathsA <- vector()
+  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
+  deathsA$asof <- as.Date(deathsA$asof, format('%d/%m/%Y'))
+  for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
+  
+  # delay from seroconversion to death
+  serotodeath <- infectodeath - infectosero
+  
+  # return list of inputs for model
+  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA, serotodeath=serotodeath))
+}
+
+
+# Function to get model inputs for serology data
+get_sero <- function(sero, countries, Ndays, serotodeath){
+  
+  # countries for model
+  sero$region <- as.character(sero$region)
+  sero$region[sero$region=='England'] <- 'England & Wales'
+  sero <- sero[sero$region %in% countries, ]
+  
+  # format dates
+  sero$tmin <- as.Date(sero$tmin, format('%d/%m/%Y'))
+  sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
+  sero <- sero[!(is.na(sero$tmin)), ]
+  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
+  sero <- sero[sero$tmax<max(dates)-serotodeath, ] # remove any data beyond death time series
+  
+  # inputs
+  NSero <- nrow(sero)
+  SeroAreaInd <- vector()
+  tmin <- vector()
+  tmax <- vector()
+  for(i in 1:NSero){
+    SeroAreaInd[i] <- which(countries==sero$region[i])
+    tmin[i]  <- which(dates==sero$tmin[i])
+    tmax[i]  <- which(dates==sero$tmax[i])
+  }
+  
+  # return inputs for model
+  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaInd=SeroAreaInd, tmin=tmin, tmax=tmax))
+}
+
+
+# Function to plot immunity over time fits
+plot_immunity <- function(chains, inputs, countries, plotfit=F){
+  
+  # dates for plots
+  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=inputs$Ndays)
+  
+  # plots
+  plots <- list()
+  for(c in 1:length(countries)){
+    
+    # extract values
+    dts <- t(apply(chains$seroT[,,c], 2, quantile, probs=c(0.5,0.025,0.975, 0.25,0.75)))
+    dts <- as.data.frame(dts)
+    colnames(dts) <- c('mean','ciL','ciU','mciL','mciU')
+    
+    # plot
+    dts$date <- dates[1:125]
+    plots[[c]] <- ggplot()+ geom_line(data=dts, aes(date, mean),col='green4')+
+      theme_minimal()+ geom_ribbon(data=dts,aes(date, ymin=ciL, ymax=ciU), fill='lightgreen',alpha=0.4)+
+      geom_ribbon(data=dts, aes(date, ymin=mciL, ymax=mciU), fill='lightgreen',alpha=0.7)+ xlab('')+
+      ylab('')+ labs(subtitle=paste(countries[c]))
+    
+    # plot fit if serology data used
+    if(plotfit==T & any(inputs$SeroAreaInd==c)){
+      seroc <- data.frame(NPos=inputs$NPos[inputs$SeroAreaInd==c],NSamples=inputs$NSamples[inputs$SeroAreaInd==c],
+                          tmin=inputs$tmin[inputs$SeroAreaInd==c],tmax=inputs$tmax[inputs$SeroAreaInd==c])
+      seroc[,c('prop','sciL','sciU')] <- binom.exact(seroc$NPos, seroc$NSamples)[,3:5]
+      seroc$dmin <- dates[seroc$tmin]
+      seroc$dmax <- dates[seroc$tmax]
+      seroc$dmean <- (seroc$dmax - seroc$dmin)/2 + seroc$dmin
+      
+      plots[[c]] <- plots[[c]] + geom_point(data=seroc, aes(dmean, prop))+ 
+        geom_linerange(data=seroc, aes(x=dmean, ymin=sciL, ymax=sciU))
+    }
+  }
+  return(plots)
+}
