@@ -9,7 +9,7 @@ source('./code/FunctionsForIFR.R')
 # death data
 df <- read.csv('./data/deaths_age.csv')
 countries <- sort(unique(df$country))
-df <- agg_deaths80p(df, countries)
+df <- agg_deathsAp(df, countries,90)
 
 # death location data
 loc <- read_excel('./data/deaths_location.xlsx', sheet='Sheet1')
