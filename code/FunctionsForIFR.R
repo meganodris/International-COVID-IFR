@@ -319,7 +319,7 @@ plot_IFR_age <- function(chains, inputs){
   # plot
   ifr$age <- rep(seq(1:19),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
-  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
+  ifr$ageG[ifr$ageG=='90-110'] <- '90+'
   ifrAp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
     geom_point(position=position_dodge(width=0.4))+
     geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+
@@ -373,8 +373,8 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs$agemid <- c(2,7,12,19,22,27,32,37,42,47,52,57,62,67,72,77,82,87,95)
   Inputs$DP_pos_m <- dpd$pos_m # Diamond Princess data
   Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
-  Inputs$DPamax <- c(4,6,8,10,12,14,16,19)
+  Inputs$DPamin <- c(1,5,7,9,11,13,15,17,19)
+  Inputs$DPamax <- c(4,6,8,10,12,14,16,18,19)
   Inputs$DP_deathsTot <- 15
   
   return(Inputs)
@@ -451,7 +451,7 @@ plot_immunity <- function(chains, inputs, countries, plotfit=F){
     colnames(dts) <- c('mean','ciL','ciU','mciL','mciU')
     
     # plot
-    dts$date <- dates[1:125]
+    dts$date <- dates[1:121]
     plots[[c]] <- ggplot()+ geom_line(data=dts, aes(date, mean),col='green4')+
       theme_minimal()+ geom_ribbon(data=dts,aes(date, ymin=ciL, ymax=ciU), fill='lightgreen',alpha=0.4)+
       geom_ribbon(data=dts, aes(date, ymin=mciL, ymax=mciU), fill='lightgreen',alpha=0.7)+ xlab('')+
