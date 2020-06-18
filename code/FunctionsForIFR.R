@@ -396,7 +396,7 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs$DP_pos_f <- dpd$pos_f
   Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
   Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
-  Inputs$DP_deathsTot <- 14
+  Inputs$DP_deathsTot <- 15
   
   return(Inputs)
 }
