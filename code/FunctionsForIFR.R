@@ -6,21 +6,21 @@ library(epitools)
 compile_pop <- function(poplist, countries){
   
   # matrices for model
-  pop_m <- matrix(NA, nrow=19, ncol=length(countries)) 
-  pop_f <- matrix(NA, nrow=19, ncol=length(countries)) 
-  pop_b <- matrix(NA, nrow=19, ncol=length(countries)) 
+  pop_m <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_f <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_b <- matrix(NA, nrow=17, ncol=length(countries)) 
   
   # compile for model
   for(c in 1:length(countries)){
     ci <- countries[c]
-    pop_m[ ,c] <- poplist[[ci]]$M[1:19]
-    pop_f[ ,c] <- poplist[[ci]]$`F`[1:19]
-    pop_b[ ,c] <- poplist[[ci]]$M[1:19] + poplist[[ci]]$`F`[1:19]
+    pop_m[ ,c] <- poplist[[ci]]$M[1:17]
+    pop_f[ ,c] <- poplist[[ci]]$`F`[1:17]
+    pop_b[ ,c] <- poplist[[ci]]$M[1:17] + poplist[[ci]]$`F`[1:17]
     
     # add ages 90+
-    pop_m[19,c] <- sum(poplist[[ci]]$M[19:21])
-    pop_f[19,c] <- sum(poplist[[ci]]$`F`[19:21])
-    pop_b[19,c] <- sum(poplist[[ci]]$M[19:21]) + sum(poplist[[c]]$`F`[19:21])
+    pop_m[17,c] <- sum(poplist[[ci]]$M[17:21])
+    pop_f[17,c] <- sum(poplist[[ci]]$`F`[17:21])
+    pop_b[17,c] <- sum(poplist[[ci]]$M[17:21]) + sum(poplist[[c]]$`F`[17:21])
   }
   
   
@@ -118,12 +118,12 @@ align_ages <- function(data, popdata){
 index_ages <- function(data, countries){
   
   # min & max bounds of age groupings
-  Amin <- seq(0,90,5)
-  Amax <- c(seq(4,89,5),110)
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
   
   # matrices for storage
-  ageG_min <- matrix(-999, nrow=19, ncol=length(countries))
-  ageG_max <- matrix(-999, nrow=19, ncol=length(countries))
+  ageG_min <- matrix(-999, nrow=17, ncol=length(countries))
+  ageG_max <- matrix(-999, nrow=17, ncol=length(countries))
   
   # get indices
   for(c in 1:length(countries)){
@@ -192,6 +192,12 @@ runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
 }
 
 
+# Function to extract parameter estimates
+extract_samples <- function(fit){
+  names(chains)
+}
+
+
 # Plot fit to Diamond Princess & Charles de Gaulle data
 fit_active <- function(chains, inputs){
   
@@ -214,7 +220,7 @@ fit_active <- function(chains, inputs){
 plot_Pinfection <- function(chains, countries){
   
   # extract estimates
-  infec <- data.frame(co=countries, mean=NA, ciL=NA, ciU=NA)
+  infec <- data.frame(country=countries, mean=NA, ciL=NA, ciU=NA)
   for(c in 1:length(countries)){
     infec[c,2:4] <- quantile(chains$probInfec[,c], c(0.5,0.025,0.975))
   }
@@ -224,25 +230,27 @@ plot_Pinfection <- function(chains, countries){
     geom_linerange(aes(ymin=ciL, ymax=ciU),col='purple')+ theme_minimal()+
     theme(axis.text.x=element_text(angle=60, hjust=1))+ ylab('Prob Infection')+
     xlab('')
-  return(pinf)
+  
+  return(list(plotPI=pinf, estsPI=infec))
 }
 
 
 # Plot model fits
-fit_deaths <- function(chains, inputs, data, countries){
+fit_deaths <- function(chains, inputs, data, countries, amaxLim){
   
-  # age mid & age groups for plots
-  data$age_mid <- data$age_min+((data$age_max-data$age_min)+1)/2
+  # age groups for plots
   data$ageG <- paste(data$age_min, data$age_max, sep='-')
   data$ageG[data$age_max==110] <- paste(data$age_min[data$age_max==110], '+', sep='')
+  indexA <- index_ages(data, countries)
   
-  # list to store plots
+  # list to store plots & estimates
   plotD <- list()
+  fitD <- list()
   
   for(c in 1:length(countries)){
     
     dfc <- data[data$country==countries[c], ]
-    nages <- inputs$NAges[c]
+    nages <- length(unique(dfc$age_min))
     
     if(dfc$sex[1]=='B'){
       
@@ -253,19 +261,25 @@ fit_deaths <- function(chains, inputs, data, countries){
       fit_ba <- matrix(NA, nrow=nages, ncol=3)
       for(a in 1:nages){
         for(ci in 1:3){
-          fit_ba[a,ci] <- sum(fit_b[inputs$ageG_min[a,c]:inputs$ageG_max[a,c],ci])
+          fit_ba[a,ci] <- sum(fit_b[indexA$ageG_min[a,c]:indexA$ageG_max[a,c],ci])
         }
       }
       
-      fit <- data.frame(n=inputs$deaths_b[1:nages,c], sex=rep('B',nages), amin=dfc$age_min,
-                        age=dfc$ageG, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3])
+      fit <- data.frame(n=dfc$deaths, sex=rep('B',nages), age=dfc$ageG, age_min=dfc$age_min,
+                        age_max=dfc$age_max, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3], alpha=1)
       
-      plotD[[c]] <- ggplot(fit, aes(reorder(age,amin), n))+ geom_col(fill='seagreen2')+
+      fit$alpha[fit$age_max<amaxLim] <- 0
+      fitD[[c]] <- fit
+      fit$fit[fit$fit<1] <- 1 # for log scale
+      fit$n[fit$n<1] <- 1
+      plotD[[c]] <- ggplot(fit, aes(reorder(age,age_min), log(n)))+ geom_col(fill='seagreen2', aes(alpha=factor(alpha)))+
         xlab('')+ ylab('')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
         theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
-        labs(fill='')+ geom_point(aes(age, fit))+geom_linerange(aes(age, ymin=ciL, ymax=ciU))+
-        labs(subtitle=paste(dfc$country[1]))
-      
+        labs(fill='')+ geom_point(aes(age, log(fit), shape=as.factor(alpha)))+
+        geom_linerange(aes(age, ymin=log(ciL), ymax=log(ciU)))+
+        labs(subtitle=paste(dfc$country[1]))+ scale_shape_manual(values=c(16,8), guide=F)+
+        scale_alpha_manual(values=c(1,0.5), guide=F)+ ylim(0,NA)
+  
     }else{
       
       # extract samples
@@ -277,28 +291,35 @@ fit_deaths <- function(chains, inputs, data, countries){
       fit_fa <- matrix(NA, nrow=nages, ncol=3)
       for(a in 1:nages){
         for(ci in 1:3){
-          fit_ma[a,ci] <- sum(fit_m[inputs$ageG_min[a,c]:inputs$ageG_max[a,c], ci])
-          fit_fa[a,ci] <- sum(fit_f[inputs$ageG_min[a,c]:inputs$ageG_max[a,c], ci])
+          fit_ma[a,ci] <- sum(fit_m[indexA$ageG_min[a,c]:indexA$ageG_max[a,c], ci])
+          fit_fa[a,ci] <- sum(fit_f[indexA$ageG_min[a,c]:indexA$ageG_max[a,c], ci])
         }
       }
       
-      fit <- data.frame(n=c(inputs$deaths_m[1:nages,c],inputs$deaths_f[1:nages,c]),
-                        sex=c(rep('M',nages),rep('F',nages)), amin=sort(unique(dfc$age_min)), age=NA,
-                        fit=c(fit_ma[,1], fit_fa[,1]), ciL=c(fit_ma[,2], fit_fa[,2]),
-                        ciU=c(fit_ma[,3], fit_fa[,3]))
+      dfc$sex <- factor(dfc$sex,levels=c('M','F'))
+      dfc <- with(dfc, dfc[order(sex),])
+      fit <- data.frame(n=dfc$deaths, sex=dfc$sex, age_min=dfc$age_min, 
+                        age_max=dfc$age_max, age=dfc$ageG,fit=c(fit_ma[,1], fit_fa[,1]), 
+                        ciL=c(fit_ma[,2], fit_fa[,2]),ciU=c(fit_ma[,3], fit_fa[,3]),alpha=1)
       
-      for(a in 1:nrow(fit)) fit$age[a] <- dfc$ageG[dfc$age_min==fit$amin[a]][1]
       fit$sex <- factor(fit$sex, levels=c('F','M'))
-      plotD[[c]] <- ggplot(fit, aes(reorder(age,amin), n))+ geom_col(aes(fill=sex), position=position_dodge())+
-        xlab('')+ ylab('')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
+      fit$alpha[fit$age_max<amaxLim] <- 0
+      fitD[[c]] <- fit
+      fit$fit[fit$fit<1] <- 1 # for log scale
+      fit$n[fit$n<1] <- 1 # for log scale
+      plotD[[c]] <- ggplot(fit, aes(reorder(age,age_min), log(n)))+ xlab('')+ ylab('')+ theme_minimal()+ 
+        geom_col(aes(fill=sex,alpha=factor(alpha)), position=position_dodge())+
+        labs(subtitle=paste(inputs$county[c]))+ labs(fill='')+ 
         theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
-        labs(fill='')+ geom_point(aes(age, fit, group=sex), position=position_dodge(width=0.9))+
-        geom_linerange(aes(age, ymin=ciL, ymax=ciU, group=sex), position=position_dodge(width=0.9))+
+        geom_point(aes(age, log(fit), group=sex, shape=factor(alpha)), position=position_dodge(width=0.9))+
+        geom_linerange(aes(age, ymin=log(ciL), ymax=log(ciU), group=sex), position=position_dodge(width=0.9))+
         scale_fill_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))+
-        labs(subtitle=paste(dfc$country[1]))
+        labs(subtitle=paste(dfc$country[1]))+ scale_shape_manual(values=c(16,8), guide=F)+
+        scale_alpha_manual(values=c(1,0.5), guide=F)+ ylim(0,NA)
+      
     }
   }
-  return(plotD)
+  return(list(plots=plotD, ests=fitD))
 }
 
 
@@ -306,20 +327,20 @@ fit_deaths <- function(chains, inputs, data, countries){
 plot_IFR_age <- function(chains, inputs){
   
   # min & max bounds of age groupings
-  Amin <- seq(0,90,5)
-  Amax <- c(seq(4,89,5),110)
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
   
   # dataframe for ests
-  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',19),rep('F',19)))
-  for(a in 1:19){
+  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',17),rep('F',17)))
+  for(a in 1:17){
     ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
-    ifr[a+19,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
+    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
   }
   
   # plot
-  ifr$age <- rep(seq(1:19),2)
+  ifr$age <- rep(seq(1:17),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
-  ifr$ageG[ifr$ageG=='90-110'] <- '90+'
+  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
   ifrAp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
     geom_point(position=position_dodge(width=0.4))+
     geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+
@@ -359,7 +380,7 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs <- get_agesex(dataA, countries) # age/sex by country
   Inputs$NArea <- length(countries) # N countries
   Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
-  Inputs <- c(Inputs, compile_deathsA(dataA, countries,19)) # death data
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries,17)) # death data
   Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
   Tpop <- compile_pop(poplist, countries)
   Inputs$Tpop_m <- Tpop$pop_m
@@ -370,12 +391,12 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs$CDGamin <- c(5,6,8,10)
   Inputs$CDGamax <- c(5,7,9,12)
   Inputs$CDG_deathsTot <- 0
-  Inputs$agemid <- c(2,7,12,19,22,27,32,37,42,47,52,57,62,67,72,77,82,87,95)
+  Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
   Inputs$DP_pos_m <- dpd$pos_m # Diamond Princess data
   Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,15,17,19)
-  Inputs$DPamax <- c(4,6,8,10,12,14,16,18,19)
-  Inputs$DP_deathsTot <- 15
+  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
+  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
+  Inputs$DP_deathsTot <- 14
   
   return(Inputs)
 }
