@@ -637,26 +637,6 @@ United States of America,F,55,64,3328,23/05/2020,nat,North America
 United States of America,F,65,74,6349,23/05/2020,nat,North America
 United States of America,F,75,84,9777,23/05/2020,nat,North America
 United States of America,F,85,110,16113,23/05/2020,nat,North America
-Catalonia,M,0,9,0,30/05/2020,reg,Europe
-Catalonia,M,10,19,2,30/05/2020,reg,Europe
-Catalonia,M,20,29,3,30/05/2020,reg,Europe
-Catalonia,M,30,39,13,30/05/2020,reg,Europe
-Catalonia,M,40,49,63,30/05/2020,reg,Europe
-Catalonia,M,50,59,235,30/05/2020,reg,Europe
-Catalonia,M,60,69,683,30/05/2020,reg,Europe
-Catalonia,M,70,79,1565,30/05/2020,reg,Europe
-Catalonia,M,80,89,2499,30/05/2020,reg,Europe
-Catalonia,M,90,110,896,30/05/2020,reg,Europe
-Catalonia,F,0,9,0,30/05/2020,reg,Europe
-Catalonia,F,10,19,1,30/05/2020,reg,Europe
-Catalonia,F,20,29,5,30/05/2020,reg,Europe
-Catalonia,F,30,39,17,30/05/2020,reg,Europe
-Catalonia,F,40,49,41,30/05/2020,reg,Europe
-Catalonia,F,50,59,118,30/05/2020,reg,Europe
-Catalonia,F,60,69,302,30/05/2020,reg,Europe
-Catalonia,F,70,79,939,30/05/2020,reg,Europe
-Catalonia,F,80,89,2768,30/05/2020,reg,Europe
-Catalonia,F,90,110,2119,30/05/2020,reg,Europe
 Indonesia,B,0,4,14,30/05/2020,nat,Asia
 Indonesia,B,5,17,9,30/05/2020,nat,Asia
 Indonesia,B,18,29,51,30/05/2020,nat,Asia
@@ -718,8 +698,8 @@ New York State,B,60,69,4270,06/05/2020,reg,North America
 New York State,B,70,79,6300,06/05/2020,reg,North America
 New York State,B,80,89,6227,06/05/2020,reg,North America
 New York State,B,90,110,3365,06/05/2020,reg,North America
-England,B,0,19,18,15/06/2020,nat,Europe
-England,B,20,39,205,15/06/2020,nat,Europe
-England,B,40,59,2191,15/06/2020,nat,Europe
-England,B,60,79,10675,15/06/2020,nat,Europe
-England,B,80,110,14971,15/06/2020,nat,Europe
+England,B,0,19,18,12/06/2020,nat,Europe
+England,B,20,39,205,12/06/2020,nat,Europe
+England,B,40,59,2191,12/06/2020,nat,Europe
+England,B,60,79,10675,12/06/2020,nat,Europe
+England,B,80,110,14971,12/06/2020,nat,Europe
