@@ -85,6 +85,38 @@ agg_deathsAp <- function(deathsA, countries, A){
   return(deathsAge)
 }
 
+# Function to aggregate deaths under 5 years
+agg_deathsu5 <- function(deathsA, countries){
+  
+  # list for aggregated/tidied dataframes
+  agg <- list()
+  
+  # for each country
+  for(c in 1:length(countries)){
+    
+    dfc <- deathsA[deathsA$country==countries[c], ]
+    
+    # if multiple age groups 80+, aggregate
+    if(any(dfc$age_max<4)){ 
+      new <- dfc[dfc$age_min>4, ]
+      for(s in unique(new$sex)){
+        u5_s <- sum(dfc$deaths[dfc$sex==s & dfc$age_min<=4]) 
+        maxA <- max(dfc$age_max[dfc$age_min<=4])
+        nu5s <- data.frame(country=countries[c], sex=s, age_min=0, age_max=maxA,
+                           deaths=as.numeric(u5_s), asof=new$asof[1], nat.reg=new$nat.reg[1], continent=new$continent[1])
+        new <- rbind(new,nu5s)
+      }
+      agg[[c]] <- new
+    }else{
+      agg[[c]] <- dfc
+    }
+  }
+  
+  # return updated dataframe
+  deathsAge <- do.call('rbind', agg)
+  return(deathsAge)
+}
+
 
 
 # Align population and death data age groupings
@@ -165,6 +197,99 @@ adjust_DPdata <- function(DP_raw){
 }
 
 
+tidy_deathsT <- function(deathsT, deathsT_region, countries){
+  
+  # align names 
+  deathsT$Country.Region <- as.character(deathsT$Country.Region)
+  deathsT$Country.Region[deathsT$Country.Region=='Korea, South'] <- 'Republic of Korea'
+  deathsT$Country.Region[deathsT$Country.Region=='Czechia'] <- 'Czech Republic'
+  deathsT$Country.Region[deathsT$Country.Region=='US'] <- 'United States of America'
+  
+  # sum Canadian regions
+  ca <- colSums(deathsT[deathsT$Country.Region=='Canada',5:ncol(deathsT)])
+  deathsT[nrow(deathsT)+1, ] <- c('','Canada',NA,NA,ca)
+  
+  # subset for inlcuded countries 
+  deathsT <- deathsT[deathsT$Country.Region %in% countries, ]
+  deathsT <- deathsT[deathsT$Province.State=='', ]
+  
+  # regional time series
+  deathsTR <- deathsTR[deathsTR$region %in% countries, ]
+  deathsTR$region <- as.character(deathsTR$region)
+  
+  # merge datasets
+  deathsTR <- deathsTR[,1:(ncol(deathsT)-4)]
+  for(c in 1:nrow(deathsT)){
+    tt <- deathsT[c,5:ncol(deathsT)]
+    deathsTR[nrow(deathsTR)+1, ] <- c(paste(deathsT$Country.Region[c]), tt[1:ncol(deathsTR)-1])
+  }
+  
+  # return tidy dataset
+  nas <- colnames(deathsTR)[colSums(is.na(deathsTR))>0]
+  deathsTR <- deathsTR[,1:(which(colnames(deathsTR)==nas[1])-1)]
+  return(deathsT=deathsTR)
+}
+
+
+
+# Function to distribute deaths back to date of onset & seroconversion
+delay_deaths <- function(Cdeaths, countries){
+  
+  # daily deaths
+  ddeathsT <- matrix(0, nrow=143, ncol=length(countries))
+  for(c in 1:length(countries)){
+    dt <- as.numeric(as.vector(t(Cdeaths[Cdeaths$region==countries[c],2:132])))
+    for(i in 2:length(dt)){
+      ddeathsT[i,c] <- dt[i] - dt[i-1]
+    }
+  }
+  
+  # matrices for storage
+  deathsTinfec <- matrix(0, nrow=143, ncol=length(countries))
+  deathsTsero <- matrix(0, nrow=143, ncol=length(countries))
+  deathsTonset <- matrix(0, nrow=143, ncol=length(countries))
+  
+  
+  # infection to death
+  id <- rgamma(1000,shape=(22.9/12.4)^2, rate=22.9/(12.4)^2)
+  id <- id[id<61]
+  for(c in 1:length(countries)){
+    for(i in 1:nrow(deathsTinfec)){
+      if(ddeathsT[i,c]>0){
+        for(k in 1:ddeathsT[i,c]){
+          di <- floor(id[runif(1,1,length(id))])
+          deathsTinfec[(i-di),c] <- deathsTinfec[(i-di),c]+1
+        }
+      }
+    }
+    deathsTinfec[,c] <- cumsum(deathsTinfec[,c])
+  }
+  
+  # onset to seroconversion
+  od <- rgamma(1000,shape=(17.8/8)^2, rate=17.8/(8)^2)
+  os <- rgamma(1000,shape=(10/4)^2, rate=10/(4)^2)
+  od <- od[od<61]
+  os <- os[os<61]
+  for(c in 1:length(countries)){
+    for(i in 1:nrow(deathsTsero)){
+      if(ddeathsT[i,c]>0){
+        for(k in 1:ddeathsT[i,c]){
+          di <- floor(od[runif(1,1,length(od))])
+          di2 <- floor(os[runif(1,1,length(os))])
+          deathsTonset[(i-di),c] <- deathsTonset[(i-di),c]+1
+          if((i-di+di2)<nrow(deathsTsero)) deathsTsero[(i-di+di2),c] <- deathsTsero[(i-di+di2),c]+1
+        }
+      }
+    }
+    deathsTonset[,c] <- cumsum(deathsTonset[,c])
+    deathsTsero[,c] <- cumsum(deathsTsero[,c])
+  }
+  
+  # return matrices
+  return(list(deathsTinfec=deathsTinfec, deathsTonset=deathsTonset, deathsTsero=deathsTsero))
+}
+
+
 # Function to return N age groups & sex by country
 get_agesex <- function(data, countries){
   
@@ -226,7 +351,7 @@ plot_Pinfection <- function(chains, countries){
   }
   
   # plot
-  pinf <- ggplot(infec, aes(reorder(co, mean),mean))+ geom_point(col='purple')+
+  pinf <- ggplot(infec, aes(reorder(country, mean),mean))+ geom_point(col='purple')+
     geom_linerange(aes(ymin=ciL, ymax=ciU),col='purple')+ theme_minimal()+
     theme(axis.text.x=element_text(angle=60, hjust=1))+ ylab('Prob Infection')+
     xlab('')
@@ -402,14 +527,14 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
 }
 
 # Function to get model inputs for time series of death data
-get_deathsT <- function(deathsT, countries, deathsA, infectodeath, infectosero){
+get_deathsT <- function(deathsT, countries, deathsA){
   
   # N days since 22/01/2020
   Ndays <- ncol(deathsT)-1
   
   # matrix of deaths over time
   dt <- matrix(NA, ncol=length(countries), nrow=Ndays)
-  for(c in 1:length(countries)) dt[,c] <- as.numeric(deathsT[deathsT$ï..region==countries[c],2:(Ndays+1)])
+  for(c in 1:length(countries)) dt[,c] <- as.numeric(deathsT[deathsT$region==countries[c],2:(Ndays+1)])
   
   # index for date of age-specific deaths
   TdeathsA <- vector()
@@ -417,20 +542,16 @@ get_deathsT <- function(deathsT, countries, deathsA, infectodeath, infectosero){
   deathsA$asof <- as.Date(deathsA$asof, format('%d/%m/%Y'))
   for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
   
-  # delay from seroconversion to death
-  serotodeath <- infectodeath - infectosero
-  
   # return list of inputs for model
-  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA, serotodeath=serotodeath))
+  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA))
 }
 
 
 # Function to get model inputs for serology data
-get_sero <- function(sero, countries, Ndays, serotodeath){
+get_sero <- function(sero, countries, Ndays){
   
   # countries for model
   sero$region <- as.character(sero$region)
-  sero$region[sero$region=='England'] <- 'England & Wales'
   sero <- sero[sero$region %in% countries, ]
   
   # format dates
@@ -438,7 +559,6 @@ get_sero <- function(sero, countries, Ndays, serotodeath){
   sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
   sero <- sero[!(is.na(sero$tmin)), ]
   dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
-  sero <- sero[sero$tmax<max(dates)-serotodeath, ] # remove any data beyond death time series
   
   # inputs
   NSero <- nrow(sero)
@@ -472,7 +592,7 @@ plot_immunity <- function(chains, inputs, countries, plotfit=F){
     colnames(dts) <- c('mean','ciL','ciU','mciL','mciU')
     
     # plot
-    dts$date <- dates[1:121]
+    dts$date <- dates[1:inputs$Ndays]
     plots[[c]] <- ggplot()+ geom_line(data=dts, aes(date, mean),col='green4')+
       theme_minimal()+ geom_ribbon(data=dts,aes(date, ymin=ciL, ymax=ciU), fill='lightgreen',alpha=0.4)+
       geom_ribbon(data=dts, aes(date, ymin=mciL, ymax=mciU), fill='lightgreen',alpha=0.7)+ xlab('')+
@@ -493,3 +613,4 @@ plot_immunity <- function(chains, inputs, countries, plotfit=F){
   }
   return(plots)
 }
+
