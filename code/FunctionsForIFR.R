@@ -448,6 +448,89 @@ fit_deaths <- function(chains, inputs, data, countries, amaxLim){
 }
 
 
+
+# Plot model fits
+fit_deaths_direct <- function(chains, inputs, data, countries){
+  
+  # age groups for plots
+  data$ageG <- paste(data$age_min, data$age_max, sep='-')
+  data$ageG[data$age_max==110] <- paste(data$age_min[data$age_max==110], '+', sep='')
+  indexA <- index_ages(data, countries)
+  
+  # list to store plots & estimates
+  plotD <- list()
+  fitD <- list()
+  
+  for(c in 1:length(countries)){
+    
+    dfc <- data[data$country==countries[c], ]
+    nages <- length(unique(dfc$age_min))
+    
+    if(dfc$sex[1]=='B'){
+      
+      # extract samples
+      fit_b <- t(apply(chains$natDeath_b[,,c], 2, quantile, probs=c(0.5,0.025,0.975)))
+      
+      # aggregate to data age groups
+      fit_ba <- matrix(NA, nrow=nages, ncol=3)
+      for(a in 1:nages){
+        for(ci in 1:3){
+          fit_ba[a,ci] <- sum(fit_b[indexA$ageG_min[a,c]:indexA$ageG_max[a,c],ci])
+        }
+      }
+      
+      fit <- data.frame(n=dfc$deaths, sex=rep('B',nages), age=dfc$ageG, age_min=dfc$age_min,
+                        age_max=dfc$age_max, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3])
+      
+      
+      fitD[[c]] <- fit
+      plotD[[c]] <- ggplot(fit, aes(reorder(age,age_min), n))+ geom_col(fill='seagreen2')+
+        xlab('')+ ylab('')+ theme_minimal()+ labs(subtitle=paste(inputs$county[c]))+
+        theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
+        labs(fill='')+ geom_point(aes(age, fit))+
+        geom_linerange(aes(age, ymin=ciL, ymax=ciU))+
+        labs(subtitle=paste(dfc$country[1]))
+      
+    }else{
+      
+      # extract samples
+      fit_m <- t(apply(chains$natDeath_m[,,c], 2, quantile, probs=c(0.5,0.025,0.975)))
+      fit_f <- t(apply(chains$natDeath_f[,,c], 2, quantile, probs=c(0.5,0.025,0.975)))
+      
+      # aggregate to data age groups
+      fit_ma <- matrix(NA, nrow=nages, ncol=3)
+      fit_fa <- matrix(NA, nrow=nages, ncol=3)
+      for(a in 1:nages){
+        for(ci in 1:3){
+          fit_ma[a,ci] <- sum(fit_m[indexA$ageG_min[a,c]:indexA$ageG_max[a,c], ci])
+          fit_fa[a,ci] <- sum(fit_f[indexA$ageG_min[a,c]:indexA$ageG_max[a,c], ci])
+        }
+      }
+      
+      dfc$sex <- factor(dfc$sex,levels=c('M','F'))
+      dfc <- with(dfc, dfc[order(sex),])
+      fit <- data.frame(n=dfc$deaths, sex=dfc$sex, age_min=dfc$age_min, 
+                        age_max=dfc$age_max, age=dfc$ageG,fit=c(fit_ma[,1], fit_fa[,1]), 
+                        ciL=c(fit_ma[,2], fit_fa[,2]),ciU=c(fit_ma[,3], fit_fa[,3]))
+      
+      fit$sex <- factor(fit$sex, levels=c('F','M'))
+      fitD[[c]] <- fit
+      plotD[[c]] <- ggplot(fit, aes(reorder(age,age_min), n))+ xlab('')+ ylab('')+ theme_minimal()+ 
+        geom_col(aes(fill=sex), position=position_dodge())+
+        labs(subtitle=paste(inputs$county[c]))+ labs(fill='')+ 
+        theme(axis.text.x=element_text(angle=60, hjust=1),legend.position=c(0.15,0.9))+
+        geom_point(aes(age, fit, group=sex), position=position_dodge(width=0.9))+
+        geom_linerange(aes(age, ymin=ciL, ymax=ciU, group=sex), position=position_dodge(width=0.9))+
+        scale_fill_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))+
+        labs(subtitle=paste(dfc$country[1]))
+      
+    }
+  }
+  return(list(plots=plotD, ests=fitD))
+}
+
+
+
 # Plot age/sex IFRs
 plot_IFR_age <- function(chains, inputs){
   
