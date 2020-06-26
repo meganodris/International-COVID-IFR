@@ -177,46 +177,46 @@ Scotland,F,45,64,118,21/06/2020,nat,Europe
 Scotland,F,65,74,225,21/06/2020,nat,Europe
 Scotland,F,75,84,621,21/06/2020,nat,Europe
 Scotland,F,85,110,1091,21/06/2020,nat,Europe
-England & Wales,M,0,1,2,12/06/2020,nat,Europe
-England & Wales,M,1,4,0,12/06/2020,nat,Europe
-England & Wales,M,5,9,0,12/06/2020,nat,Europe
-England & Wales,M,10,14,2,12/06/2020,nat,Europe
-England & Wales,M,15,19,5,12/06/2020,nat,Europe
-England & Wales,M,20,24,14,12/06/2020,nat,Europe
-England & Wales,M,25,29,32,12/06/2020,nat,Europe
-England & Wales,M,30,34,48,12/06/2020,nat,Europe
-England & Wales,M,35,39,73,12/06/2020,nat,Europe
-England & Wales,M,40,44,148,12/06/2020,nat,Europe
-England & Wales,M,45,49,273,12/06/2020,nat,Europe
-England & Wales,M,50,54,521,12/06/2020,nat,Europe
-England & Wales,M,55,59,951,12/06/2020,nat,Europe
-England & Wales,M,60,64,1335,12/06/2020,nat,Europe
-England & Wales,M,65,69,1771,12/06/2020,nat,Europe
-England & Wales,M,70,74,2917,12/06/2020,nat,Europe
-England & Wales,M,75,79,4010,12/06/2020,nat,Europe
-England & Wales,M,80,84,5343,12/06/2020,nat,Europe
-England & Wales,M,85,89,5192,12/06/2020,nat,Europe
-England & Wales,M,90,110,4290,12/06/2020,nat,Europe
-England & Wales,F,0,1,0,12/06/2020,nat,Europe
-England & Wales,F,1,4,1,12/06/2020,nat,Europe
-England & Wales,F,5,9,0,12/06/2020,nat,Europe
-England & Wales,F,10,14,1,12/06/2020,nat,Europe
-England & Wales,F,15,19,4,12/06/2020,nat,Europe
-England & Wales,F,20,24,9,12/06/2020,nat,Europe
-England & Wales,F,25,29,17,12/06/2020,nat,Europe
-England & Wales,F,30,34,32,12/06/2020,nat,Europe
-England & Wales,F,35,39,53,12/06/2020,nat,Europe
-England & Wales,F,40,44,89,12/06/2020,nat,Europe
-England & Wales,F,45,49,172,12/06/2020,nat,Europe
-England & Wales,F,50,54,303,12/06/2020,nat,Europe
-England & Wales,F,55,59,467,12/06/2020,nat,Europe
-England & Wales,F,60,64,677,12/06/2020,nat,Europe
-England & Wales,F,65,69,941,12/06/2020,nat,Europe
-England & Wales,F,70,74,1577,12/06/2020,nat,Europe
-England & Wales,F,75,79,2490,12/06/2020,nat,Europe
-England & Wales,F,80,84,3955,12/06/2020,nat,Europe
-England & Wales,F,85,89,4832,12/06/2020,nat,Europe
-England & Wales,F,90,110,6319,12/06/2020,nat,Europe
+England,M,0,1,0,31/05/2020,nat,Europe
+England,M,1,4,0,31/05/2020,nat,Europe
+England,M,5,9,0,31/05/2020,nat,Europe
+England,M,10,14,1,31/05/2020,nat,Europe
+England,M,15,19,4,31/05/2020,nat,Europe
+England,M,20,24,11,31/05/2020,nat,Europe
+England,M,25,29,28,31/05/2020,nat,Europe
+England,M,30,34,44,31/05/2020,nat,Europe
+England,M,35,39,59,31/05/2020,nat,Europe
+England,M,40,44,125,31/05/2020,nat,Europe
+England,M,45,49,238,31/05/2020,nat,Europe
+England,M,50,54,440,31/05/2020,nat,Europe
+England,M,55,59,818,31/05/2020,nat,Europe
+England,M,60,64,1166,31/05/2020,nat,Europe
+England,M,65,69,1506,31/05/2020,nat,Europe
+England,M,70,74,2466,31/05/2020,nat,Europe
+England,M,75,79,3436,31/05/2020,nat,Europe
+England,M,80,84,4575,31/05/2020,nat,Europe
+England,M,85,89,4476,31/05/2020,nat,Europe
+England,M,90,110,3698,31/05/2020,nat,Europe
+England,F,0,1,0,31/05/2020,nat,Europe
+England,F,1,4,0,31/05/2020,nat,Europe
+England,F,5,9,0,31/05/2020,nat,Europe
+England,F,10,14,1,31/05/2020,nat,Europe
+England,F,15,19,4,31/05/2020,nat,Europe
+England,F,20,24,8,31/05/2020,nat,Europe
+England,F,25,29,14,31/05/2020,nat,Europe
+England,F,30,34,25,31/05/2020,nat,Europe
+England,F,35,39,46,31/05/2020,nat,Europe
+England,F,40,44,68,31/05/2020,nat,Europe
+England,F,45,49,143,31/05/2020,nat,Europe
+England,F,50,54,254,31/05/2020,nat,Europe
+England,F,55,59,376,31/05/2020,nat,Europe
+England,F,60,64,577,31/05/2020,nat,Europe
+England,F,65,69,773,31/05/2020,nat,Europe
+England,F,70,74,1315,31/05/2020,nat,Europe
+England,F,75,79,2108,31/05/2020,nat,Europe
+England,F,80,84,3373,31/05/2020,nat,Europe
+England,F,85,89,4060,31/05/2020,nat,Europe
+England,F,90,110,5383,31/05/2020,nat,Europe
 New York City,B,0,17,10,28/05/2020,reg,North America
 New York City,B,18,44,653,28/05/2020,reg,North America
 New York City,B,45,64,3761,28/05/2020,reg,North America
@@ -708,8 +708,57 @@ New York State,B,60,69,4270,06/05/2020,reg,North America
 New York State,B,70,79,6300,06/05/2020,reg,North America
 New York State,B,80,89,6227,06/05/2020,reg,North America
 New York State,B,90,110,3365,06/05/2020,reg,North America
-England,B,0,19,18,12/06/2020,nat,Europe
-England,B,20,39,205,12/06/2020,nat,Europe
-England,B,40,59,2191,12/06/2020,nat,Europe
-England,B,60,79,10675,12/06/2020,nat,Europe
-England,B,80,110,14971,12/06/2020,nat,Europe
+Kenya,M,0,9,1,25/06/2020,nat,Africa
+Kenya,M,10,19,1,25/06/2020,nat,Africa
+Kenya,M,20,29,1,25/06/2020,nat,Africa
+Kenya,M,30,39,7,25/06/2020,nat,Africa
+Kenya,M,40,49,18,25/06/2020,nat,Africa
+Kenya,M,50,59,16,25/06/2020,nat,Africa
+Kenya,M,60,110,52,25/06/2020,nat,Africa
+Kenya,F,0,9,0,25/06/2020,nat,Africa
+Kenya,F,10,19,0,25/06/2020,nat,Africa
+Kenya,F,20,29,0,25/06/2020,nat,Africa
+Kenya,F,30,39,3,25/06/2020,nat,Africa
+Kenya,F,40,49,5,25/06/2020,nat,Africa
+Kenya,F,50,59,7,25/06/2020,nat,Africa
+Kenya,F,60,110,16,25/06/2020,nat,Africa
+Wales,M,0,1,0,31/05/2020,nat,Europe
+Wales,M,1,4,0,31/05/2020,nat,Europe
+Wales,M,5,9,0,31/05/2020,nat,Europe
+Wales,M,10,14,0,31/05/2020,nat,Europe
+Wales,M,15,19,0,31/05/2020,nat,Europe
+Wales,M,20,24,1,31/05/2020,nat,Europe
+Wales,M,25,29,2,31/05/2020,nat,Europe
+Wales,M,30,34,1,31/05/2020,nat,Europe
+Wales,M,35,39,2,31/05/2020,nat,Europe
+Wales,M,40,44,5,31/05/2020,nat,Europe
+Wales,M,45,49,9,31/05/2020,nat,Europe
+Wales,M,50,54,21,31/05/2020,nat,Europe
+Wales,M,55,59,37,31/05/2020,nat,Europe
+Wales,M,60,64,50,31/05/2020,nat,Europe
+Wales,M,65,69,78,31/05/2020,nat,Europe
+Wales,M,70,74,129,31/05/2020,nat,Europe
+Wales,M,75,79,174,31/05/2020,nat,Europe
+Wales,M,80,84,223,31/05/2020,nat,Europe
+Wales,M,85,89,213,31/05/2020,nat,Europe
+Wales,M,90,110,181,31/05/2020,nat,Europe
+Wales,F,0,1,0,31/05/2020,nat,Europe
+Wales,F,1,4,0,31/05/2020,nat,Europe
+Wales,F,5,9,0,31/05/2020,nat,Europe
+Wales,F,10,14,0,31/05/2020,nat,Europe
+Wales,F,15,19,0,31/05/2020,nat,Europe
+Wales,F,20,24,0,31/05/2020,nat,Europe
+Wales,F,25,29,1,31/05/2020,nat,Europe
+Wales,F,30,34,2,31/05/2020,nat,Europe
+Wales,F,35,39,1,31/05/2020,nat,Europe
+Wales,F,40,44,5,31/05/2020,nat,Europe
+Wales,F,45,49,4,31/05/2020,nat,Europe
+Wales,F,50,54,12,31/05/2020,nat,Europe
+Wales,F,55,59,22,31/05/2020,nat,Europe
+Wales,F,60,64,27,31/05/2020,nat,Europe
+Wales,F,65,69,44,31/05/2020,nat,Europe
+Wales,F,70,74,77,31/05/2020,nat,Europe
+Wales,F,75,79,110,31/05/2020,nat,Europe
+Wales,F,80,84,153,31/05/2020,nat,Europe
+Wales,F,85,89,212,31/05/2020,nat,Europe
+Wales,F,90,110,281,31/05/2020,nat,Europe
