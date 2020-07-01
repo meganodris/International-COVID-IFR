@@ -118,13 +118,17 @@ transformed parameters {
   for(a in 7:17) log_ifr_m[a] = slope_m*(agemid[a]) + intercept;
   for(a in 1:17) ifr_m[a] = exp(log_ifr_m[a]);
   for(a in 11:17) ifr_f[a] = exp(log_ifr_m[a])*relifrsex;
+  for(a in 1:17){
+    ifr_m[a] = ifr_m[a]/relProbInfection[a];
+    ifr_f[a] = ifr_f[a]/relProbInfection[a];
+  }
 
   
   // probs by age, sex & region
   for (a in 1:17){
     for(c in 1:NArea){
-      natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*relProbInfection[a]*ifr_m[a];
-      natDeath_f[a,c] = pop_f[a,c]*probInfec[c]*relProbInfection[a]*ifr_f[a];
+      natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*ifr_m[a];
+      natDeath_f[a,c] = pop_f[a,c]*probInfec[c]*ifr_f[a];
       natDeath_b[a,c] = natDeath_f[a,c] + natDeath_m[a,c];
     }
   }
@@ -205,12 +209,21 @@ generated quantities {
   real dpifr_m[8];
   real cdgifr_f[4];
   real cdgifr_m[4];
+  real ifr_b[17];
+  real ifr_RR[17];
   
   
   // population-weighted IFRs
   for(c in 1:NArea){
     ifr_C[c] = sum(to_vector(ifr_m).*to_vector(Tpop_m[,c]) + to_vector(ifr_f).*to_vector(Tpop_f[,c]))/sum(Tpop_b[,c]);
   }
+  
+  // average IFR for males and females
+  for(a in 1:17) ifr_b[a] = (ifr_m[a]+ifr_m[a])/2;
+  
+  
+  // IFR relative to 55-59 group
+  for(a in 1:17) ifr_RR[a] = ifr_b[a]/ifr_b[12];
   
   // align to DP & CDG age groups
   dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
