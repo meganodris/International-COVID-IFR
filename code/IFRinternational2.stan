@@ -146,12 +146,6 @@ model {
   real estDeaths_b[17,NArea];
   real estDeaths_m[17,NArea];
   real estDeaths_f[17,NArea];
-  real estDPdeaths;
-  real estCDGdeaths;
-  real dpifr_f[8];
-  real dpifr_m[8];
-  real cdgifr_f[4];
-  real cdgifr_m[4];
 
   // Priors
   for(c in 1:NArea) log_probInfec[c] ~ uniform(-50,-0.001);
@@ -175,26 +169,8 @@ model {
       deaths_f[1:NAges[c],c] ~ poisson(estDeaths_f[1:NAges[c],c]);
     }
   }
-
-  // align IFRs to DP & CDG age groups
-  dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
-  dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
-  cdgifr_m = alignMEAN(ifr_m, 4, CDGamin, CDGamax);
-  cdgifr_f = alignMEAN(ifr_f, 4, CDGamin, CDGamax);
- 
-  // Sum expected deaths across age groups
-  estDPdeaths=0;
-  estCDGdeaths=0;
-  for(j in 1:8){ 
-    estDPdeaths=estDPdeaths+(dpifr_f[j]*DP_pos_f[j]+dpifr_m[j]*DP_pos_m[j]);
-  }
-  for(j in 1:4){ 
-    estCDGdeaths=estCDGdeaths+(cdgifr_f[j]*CDG_pos_f[j]+cdgifr_m[j]*CDG_pos_m[j]);
-  }
   
   // Likelihood
-  DP_deathsTot ~ poisson(estDPdeaths);
-  CDG_deathsTot ~ poisson(estCDGdeaths);
   for(c in 1:NSero){
     NPos[c] ~ binomial(NSamples[c], mean(seroT[tmin[c]:tmax[c],SeroAreaInd[c]]));
   }
