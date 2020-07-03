@@ -179,14 +179,14 @@ model {
 generated quantities {
   
   real ifr_C[NArea]; 
+  real ifr_b[17];
+  real ifr_RR[17];
   real estDPdeaths;
   real estCDGdeaths;
   real dpifr_f[8];
   real dpifr_m[8];
   real cdgifr_f[4];
   real cdgifr_m[4];
-  real ifr_b[17];
-  real ifr_RR[17];
   
   
   // population-weighted IFRs
