@@ -54,7 +54,6 @@ unique(dff$country[dff$asof>'2020-06-12'])
 dff$asof[dff$asof>'2020-06-12'] <- '2020-06-12'
 sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
 sero$tmax[sero$region=='England'] <- '2020-06-12'
-sero$region[sero$region=='England'] <- 'England & Wales'
 
 # data inputs for model
 countries <- sort(as.character(countries))
