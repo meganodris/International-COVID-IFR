@@ -1,74 +1,66 @@
-rm(list=ls())
 library(rstan)
 
-# source functions
+# Source functions
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR')
 source('./code/FunctionsForIFR.R')
 
 
-# death data (adjusted)
-df <- read.csv('./data/deaths_age.csv')
-countries <- sort(unique(df$country))
-df <- df[df$country %in% countries,]
-df <- agg_deathsAp(df, countries, 80)
-df <- agg_deathsu5(df, countries)
+#----- Data Inputs -----#
 
-# population data (not adjusted)
+# Age-specific death data
+df <- read.csv('./data/deaths_age.csv')
+df <- df[df$nat.reg=='nat', ]
+countries <- sort(unique(df$country))
+df <- agg_deathsAp(df, countries, 80) # aggregate 80+ ages
+df <- agg_deathsu5(df, countries) # aggregate ages <4
+df$age_max[df$age_max==17] <- 19 
+df$age_min[df$age_min==18] <- 20
+
+# Demographic data
 poplist <- list()
 for(k in unique(countries)){
   poplist[[k]] <- read.csv(paste('./data/population/general-population/', k,'-2019.csv', sep=''))
 } 
 
-# Diamond Princess & Charles de Gaulle data
+# Active Surveillance data
 dpraw <- read.csv('./data/DiamondPrincess.csv')
 dpd <- adjust_DPdata(dpraw)
 cdg <- read.csv('./data/CharlesDeGaulle.csv')
 
-
-# align death and pop data
-dff <- df[df$age_max<65,]
-dff$age_max[dff$age_max==17] <- 19 
-dff$age_min[dff$age_min==18] <- 20
-
-
-# serology data
+# Serology data
 sero <- read.csv('./data/seroprev_estimates.csv')
-colnames(sero)[1] <- 'country'
-sero$region <- as.character(sero$region)
-sero <- sero[sero$region %in% countries,]
+sero <- sero[sero$region %in% countries, ]
 
-
-# death time series
+# Death time series
 setwd('C:/Users/Megan/Documents/GitHub/COVID-19/csse_covid_19_data/csse_covid_19_time_series')
 deathsT <- read.csv('time_series_covid19_deaths_global.csv')
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data/')
 deathsTR <- read.csv('deathsT_region.csv')
-colnames(deathsTR)[1] <- 'region'
 deathsT <- tidy_deathsT(deathsT, deathsTR, countries)
 
-
-# hack for now
-dff$asof <- as.Date(dff$asof, format('%d/%m/%Y'))
+# Hack the timings for now
+df$asof <- as.Date(df$asof, format('%d/%m/%Y'))
 colnames(deathsT)[ncol(deathsT)]
-unique(dff$country[dff$asof>'2020-06-12'])
-dff$asof[dff$asof>'2020-06-12'] <- '2020-06-12'
+unique(df$country[df$asof>'2020-06-12'])
+df$asof[df$asof>'2020-06-12'] <- '2020-06-12'
 sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
 sero$tmax[sero$region=='England'] <- '2020-06-12'
 
-# data inputs for model
+# List of inputs for model
+dfU65 <- df[df$age_max<65, ]
 countries <- sort(as.character(countries))
-Inputs <- get_inputs(countries, poplist, poplist, dff, cdg, dpd)
-Inputs <- c(Inputs, get_deathsT(deathsT, countries, dff))
+Inputs <- get_inputs(countries, poplist, poplist, dfU65, cdg, dpd)
+Inputs <- c(Inputs, get_deathsT(deathsT, countries, dfU65))
 Inputs <- c(Inputs, get_sero(sero, countries, Inputs$Ndays))
 g <- delay_deaths(deathsT, countries)
 Inputs$deathsTinfec <- g$deathsTinfec
 Inputs$deathsTsero <- g$deathsTsero
-Inputs$relProbInfection <- rep(1,17) # rel prob infection
+Inputs$relProbInfection <- rep(1,17) 
 
 
-# Run model
+#----- Run model -----#
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/code')
-fit <- runStan(model='IFRinternational2.stan', Inputs, N_iter=6000, N_chains=3, max_td=15, ad=0.7)
+fit <- runStan(model='IFRinternational_main.stan', Inputs, N_iter=6000, N_chains=3, max_td=15, ad=0.7)
 
 
 # Check convergence

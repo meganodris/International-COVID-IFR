@@ -206,8 +206,10 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
   deathsT$Country.Region[deathsT$Country.Region=='US'] <- 'United States of America'
   
   # sum Canadian regions
-  ca <- colSums(deathsT[deathsT$Country.Region=='Canada',5:ncol(deathsT)])
+  ca <- colSums(deathsT[deathsT$Country.Region=='Canada', 5:ncol(deathsT)])
+  ci <- colSums(deathsT[deathsT$Country.Region=='China', 5:ncol(deathsT)])
   deathsT[nrow(deathsT)+1, ] <- c('','Canada',NA,NA,ca)
+  deathsT[nrow(deathsT)+1, ] <- c('','China',NA,NA,ca)
   
   # subset for inlcuded countries 
   deathsT <- deathsT[deathsT$Country.Region %in% countries, ]
