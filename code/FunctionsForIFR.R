@@ -2,6 +2,10 @@
 library(ggplot2)
 library(epitools)
 
+
+#----- 1. Functions for compiling model inputs -----#
+
+
 # Function to compile demographic data for model
 compile_pop <- function(poplist, countries){
   
@@ -118,7 +122,6 @@ agg_deathsu5 <- function(deathsA, countries){
 }
 
 
-
 # Align population and death data age groupings
 align_ages <- function(data, popdata){
   
@@ -196,7 +199,7 @@ adjust_DPdata <- function(DP_raw){
   return(DP_raw) # return adjusted data
 }
 
-
+# Compile death time series data
 tidy_deathsT <- function(deathsT, deathsT_region, countries){
   
   # align names 
@@ -205,7 +208,7 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
   deathsT$Country.Region[deathsT$Country.Region=='Czechia'] <- 'Czech Republic'
   deathsT$Country.Region[deathsT$Country.Region=='US'] <- 'United States of America'
   
-  # sum Canadian regions
+  # sum Canadian & Chinese regions
   ca <- colSums(deathsT[deathsT$Country.Region=='Canada', 5:ncol(deathsT)])
   ci <- colSums(deathsT[deathsT$Country.Region=='China', 5:ncol(deathsT)])
   deathsT[nrow(deathsT)+1, ] <- c('','Canada',NA,NA,ca)
@@ -231,7 +234,6 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
   deathsTR <- deathsTR[,1:(which(colnames(deathsTR)==nas[1])-1)]
   return(deathsT=deathsTR)
 }
-
 
 
 # Function to distribute deaths back to date of onset & seroconversion
@@ -309,6 +311,84 @@ get_agesex <- function(data, countries){
   return(list(NAges=NAges, gender=gender))
 }
 
+# List of data inputs for model
+get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
+  
+  Inputs <- list()
+  Inputs <- get_agesex(dataA, countries) # age/sex by country
+  Inputs$NArea <- length(countries) # N countries
+  Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries,17)) # death data
+  Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
+  Tpop <- compile_pop(poplist, countries)
+  Inputs$Tpop_m <- Tpop$pop_m
+  Inputs$Tpop_f <- Tpop$pop_f
+  Inputs$Tpop_b <- Tpop$pop_b
+  Inputs$CDG_pos_m <- cdg$pos_m
+  Inputs$CDG_pos_f <- cdg$pos_f
+  Inputs$CDGamin <- c(5,6,8,10)
+  Inputs$CDGamax <- c(5,7,9,12)
+  Inputs$CDG_deathsTot <- 0
+  Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
+  Inputs$DP_pos_m <- dpd$pos_m 
+  Inputs$DP_pos_f <- dpd$pos_f
+  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
+  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
+  Inputs$DP_deathsTot <- 15
+  Inputs$country <- countries
+  
+  return(Inputs)
+}
+
+
+# Function to get model inputs for time series of death data
+get_deathsT <- function(deathsT, countries, deathsA){
+  
+  # N days since 22/01/2020
+  Ndays <- ncol(deathsT)-1
+  
+  # matrix of deaths over time
+  dt <- matrix(NA, ncol=length(countries), nrow=Ndays)
+  for(c in 1:length(countries)) dt[,c] <- as.numeric(deathsT[deathsT$region==countries[c],2:(Ndays+1)])
+  
+  # index for date of age-specific deaths
+  TdeathsA <- vector()
+  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
+  deathsA$asof <- as.Date(deathsA$asof, format('%d/%m/%Y'))
+  for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
+  
+  # return list of inputs for model
+  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA))
+}
+
+
+# Function to get model inputs for serology data
+get_sero <- function(sero, countries, Ndays){
+  
+  # countries for model
+  sero$region <- as.character(sero$region)
+  sero <- sero[sero$region %in% countries, ]
+  
+  # format dates
+  sero$tmin <- as.Date(sero$tmin, format('%d/%m/%Y'))
+  sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
+  sero <- sero[!(is.na(sero$tmin)), ]
+  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
+  
+  # inputs
+  NSero <- nrow(sero)
+  SeroAreaInd <- vector()
+  tmin <- vector()
+  tmax <- vector()
+  for(i in 1:NSero){
+    SeroAreaInd[i] <- which(countries==sero$region[i])
+    tmin[i]  <- which(dates==sero$tmin[i])
+    tmax[i]  <- which(dates==sero$tmax[i])
+  }
+  
+  # return inputs for model
+  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaInd=SeroAreaInd, tmin=tmin, tmax=tmax))
+}
 
 # Run stan model 
 runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
@@ -319,9 +399,52 @@ runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
 }
 
 
-# Function to extract parameter estimates
-extract_samples <- function(fit){
-  names(chains)
+
+#----- 2. Functions for model outputs -----#
+
+# Plot age/sex IFRs
+plot_IFR_age <- function(chains, inputs){
+  
+  # min & max bounds of age groupings
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
+  
+  # dataframe for ests
+  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',17),rep('F',17)))
+  for(a in 1:17){
+    ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
+    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
+  }
+  
+  # plot
+  ifr$age <- rep(seq(1:17),2)
+  ifr$ageG <- paste(Amin,Amax, sep='-')
+  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
+  ifrAp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
+    geom_point(position=position_dodge(width=0.4))+
+    geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+
+    theme_minimal()+ ylab('IFR')+ xlab('')+ labs(col='')+
+    theme(axis.text.x=element_text(angle=60,hjust=1), legend.position=c(0.1,0.85))+
+    scale_colour_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))
+  
+  # return plot & data
+  return(list(ifrA=ifr, ifrAp=ifrAp))
+}
+
+# Extract other parameter estimates
+extract_pars <- function(chains, linmod=F){
+  
+  pars <- data.frame(par=c('DPdeaths','CDGdeaths'), mean=NA, ciL=NA, ciU=NA)
+  
+  # active surveillance deaths
+  pars[1,2:4] <- quantile(chains$estDPdeaths, c(0.5,0.025,0.975))
+  pars[2,2:4] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
+  
+  if(linmod==T){
+    pars[3,] <- c('slope_m', quantile(chains$slope_m, c(0.5,0.025,0.975)))
+    pars[3,] <- c('intercept', quantile(chains$intercept, c(0.5,0.025,0.975)))
+    pars[3,] <- c('relIFRsex', quantile(chains$relifrsex, c(0.5,0.025,0.975)))
+  }
 }
 
 
@@ -329,7 +452,8 @@ extract_samples <- function(fit){
 fit_active <- function(chains, inputs){
   
   # model estimates
-  active_fit <- data.frame(outbreak=c('Diamond Princess','Charles de Gaulle'), N=c(inputs$DP_deathsTot, inputs$CDG_deathsTot),
+  active_fit <- data.frame(outbreak=c('Diamond Princess','Charles de Gaulle'), 
+                           N=c(inputs$DP_deathsTot, inputs$CDG_deathsTot),
                            mean=NA, ciL=NA, ciU=NA)
   active_fit[1,3:5] <- quantile(chains$estDPdeaths, c(0.5,0.025,0.975))
   active_fit[2,3:5] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
@@ -340,7 +464,17 @@ fit_active <- function(chains, inputs){
     labs(subtitle='Predicted deaths from active surveillance campaigns')
   
   return(m_fit)
+}
 
+# Seroprevalence point fits
+serofit <- function(chains, sero){
+  
+  sfit <- sero[ ,1:12]
+  sfit[c('fit','fciL','fciU')] <- NA
+  for(i in 1:nrow(sfit)){
+    sfit[i,c('fit','fciL','fciU')] <- quantile(chains$serofit[,i], c(0.5,0.025,0.975))
+  } 
+  return(sfit)
 }
 
 # Plot cumulative probabilities of infection by country
@@ -362,7 +496,7 @@ plot_Pinfection <- function(chains, countries){
 }
 
 
-# Plot model fits
+# Plot model fits on log scale
 fit_deaths <- function(chains, inputs, data, countries, amaxLim){
   
   # age groups for plots
@@ -392,7 +526,8 @@ fit_deaths <- function(chains, inputs, data, countries, amaxLim){
         }
       }
       
-      fit <- data.frame(n=dfc$deaths, sex=rep('B',nages), age=dfc$ageG, age_min=dfc$age_min,
+      fit <- data.frame(country=countries[c], continent=dfc$continent[1], n=dfc$deaths, 
+                        sex=rep('B',nages), age=dfc$ageG,age_min=dfc$age_min,
                         age_max=dfc$age_max, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3], alpha=1)
       
       fit$alpha[fit$age_max<amaxLim] <- 0
@@ -425,8 +560,9 @@ fit_deaths <- function(chains, inputs, data, countries, amaxLim){
       
       dfc$sex <- factor(dfc$sex,levels=c('M','F'))
       dfc <- with(dfc, dfc[order(sex),])
-      fit <- data.frame(n=dfc$deaths, sex=dfc$sex, age_min=dfc$age_min, 
-                        age_max=dfc$age_max, age=dfc$ageG,fit=c(fit_ma[,1], fit_fa[,1]), 
+      fit <- data.frame(country=countries[c], continent=dfc$continent[1], n=dfc$deaths, 
+                        sex=dfc$sex, age_min=dfc$age_min, age_max=dfc$age_max, 
+                        age=dfc$ageG,fit=c(fit_ma[,1], fit_fa[,1]), 
                         ciL=c(fit_ma[,2], fit_fa[,2]),ciU=c(fit_ma[,3], fit_fa[,3]),alpha=1)
       
       fit$sex <- factor(fit$sex, levels=c('F','M'))
@@ -446,9 +582,9 @@ fit_deaths <- function(chains, inputs, data, countries, amaxLim){
       
     }
   }
+  fitD <- do.call('rbind', fitD)
   return(list(plots=plotD, ests=fitD))
 }
-
 
 
 # Plot model fits
@@ -532,37 +668,6 @@ fit_deaths_direct <- function(chains, inputs, data, countries){
 }
 
 
-
-# Plot age/sex IFRs
-plot_IFR_age <- function(chains, inputs){
-  
-  # min & max bounds of age groupings
-  Amin <- seq(0,80,5)
-  Amax <- c(seq(4,79,5),110)
-  
-  # dataframe for ests
-  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',17),rep('F',17)))
-  for(a in 1:17){
-    ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
-    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
-  }
-  
-  # plot
-  ifr$age <- rep(seq(1:17),2)
-  ifr$ageG <- paste(Amin,Amax, sep='-')
-  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
-  ifrAp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
-    geom_point(position=position_dodge(width=0.4))+
-    geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+
-    theme_minimal()+ ylab('IFR')+ xlab('')+ labs(col='')+
-    theme(axis.text.x=element_text(angle=60,hjust=1), legend.position=c(0.1,0.85))+
-    scale_colour_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))
-  
-  # return plot & data
-  return(list(ifrA=ifr, ifrAp=ifrAp))
-}
-
-
 # Plot country-specific IFRs
 plot_IFR_area <- function(chains, inputs, countries){
   
@@ -581,83 +686,6 @@ plot_IFR_area <- function(chains, inputs, countries){
   
   # return plot & data
   return(list(ifrc=ifrc, ifrCp=ifrCp))
-}
-
-
-get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
-  
-  Inputs <- list()
-  Inputs <- get_agesex(dataA, countries) # age/sex by country
-  Inputs$NArea <- length(countries) # N countries
-  Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
-  Inputs <- c(Inputs, compile_deathsA(dataA, countries,17)) # death data
-  Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
-  Tpop <- compile_pop(poplist, countries)
-  Inputs$Tpop_m <- Tpop$pop_m
-  Inputs$Tpop_f <- Tpop$pop_f
-  Inputs$Tpop_b <- Tpop$pop_b
-  Inputs$CDG_pos_m <- cdg$pos_m
-  Inputs$CDG_pos_f <- cdg$pos_f
-  Inputs$CDGamin <- c(5,6,8,10)
-  Inputs$CDGamax <- c(5,7,9,12)
-  Inputs$CDG_deathsTot <- 0
-  Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
-  Inputs$DP_pos_m <- dpd$pos_m # Diamond Princess data
-  Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
-  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
-  Inputs$DP_deathsTot <- 15
-  
-  return(Inputs)
-}
-
-# Function to get model inputs for time series of death data
-get_deathsT <- function(deathsT, countries, deathsA){
-  
-  # N days since 22/01/2020
-  Ndays <- ncol(deathsT)-1
-  
-  # matrix of deaths over time
-  dt <- matrix(NA, ncol=length(countries), nrow=Ndays)
-  for(c in 1:length(countries)) dt[,c] <- as.numeric(deathsT[deathsT$region==countries[c],2:(Ndays+1)])
-  
-  # index for date of age-specific deaths
-  TdeathsA <- vector()
-  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
-  deathsA$asof <- as.Date(deathsA$asof, format('%d/%m/%Y'))
-  for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
-  
-  # return list of inputs for model
-  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA))
-}
-
-
-# Function to get model inputs for serology data
-get_sero <- function(sero, countries, Ndays){
-  
-  # countries for model
-  sero$region <- as.character(sero$region)
-  sero <- sero[sero$region %in% countries, ]
-  
-  # format dates
-  sero$tmin <- as.Date(sero$tmin, format('%d/%m/%Y'))
-  sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
-  sero <- sero[!(is.na(sero$tmin)), ]
-  dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
-  
-  # inputs
-  NSero <- nrow(sero)
-  SeroAreaInd <- vector()
-  tmin <- vector()
-  tmax <- vector()
-  for(i in 1:NSero){
-    SeroAreaInd[i] <- which(countries==sero$region[i])
-    tmin[i]  <- which(dates==sero$tmin[i])
-    tmax[i]  <- which(dates==sero$tmax[i])
-  }
-  
-  # return inputs for model
-  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaInd=SeroAreaInd, tmin=tmin, tmax=tmax))
 }
 
 
