@@ -410,20 +410,23 @@ plot_IFR_age <- function(chains, inputs){
   Amax <- c(seq(4,79,5),110)
   
   # dataframe for ests
-  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, sex=c(rep('M',17),rep('F',17)))
+  ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, 
+                    sex=c(rep('M',17),rep('F',17), rep('B',17), rep('RR',17)))
   for(a in 1:17){
     ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
     ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
+    ifr[a+34,1:3] <- quantile(chains$ifr_b[,a], c(0.5,0.025,0.975))
+    ifr[a+51,1:3] <- quantile(chains$ifr_RR[,a], c(0.5,0.025,0.975))
   }
   
   # plot
   ifr$age <- rep(seq(1:17),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
   ifr$ageG[ifr$ageG=='80-110'] <- '80+'
-  ifrAp <- ggplot(ifr, aes(reorder(ageG,age), mean, col=sex))+ 
+  ifrAp <- ggplot(ifr[ifr$sex %in% c('M','F'),], aes(reorder(ageG,age), mean*100, col=sex))+ 
     geom_point(position=position_dodge(width=0.4))+
-    geom_linerange(aes(ymin=ciL, ymax=ciU, col=sex), position=position_dodge(width=0.4))+
-    theme_minimal()+ ylab('IFR')+ xlab('')+ labs(col='')+
+    geom_linerange(aes(ymin=ciL*100, ymax=ciU*100, col=sex), position=position_dodge(width=0.4))+
+    theme_minimal()+ ylab('IFR (%)')+ xlab('')+ labs(col='')+
     theme(axis.text.x=element_text(angle=60,hjust=1), legend.position=c(0.1,0.85))+
     scale_colour_manual(values=c('indianred1','royalblue1'), labels=c('female','male'))
   
@@ -441,10 +444,13 @@ extract_pars <- function(chains, linmod=F){
   pars[2,2:4] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
   
   if(linmod==T){
-    pars[3,] <- c('slope_m', quantile(chains$slope_m, c(0.5,0.025,0.975)))
-    pars[3,] <- c('intercept', quantile(chains$intercept, c(0.5,0.025,0.975)))
-    pars[3,] <- c('relIFRsex', quantile(chains$relifrsex, c(0.5,0.025,0.975)))
+    pars[3,2:4] <- quantile(chains$slope_m, c(0.5,0.025,0.975))
+    pars[4,2:4] <- quantile(chains$intercept, c(0.5,0.025,0.975))
+    pars[5,2:4] <- quantile(chains$relifrsex, c(0.5,0.025,0.975))
+    pars$par <- as.character(pars$par)
+    pars$par[3:5] <- c('slope_m','intercept','relifrsex')
   }
+  return(pars)
 }
 
 
@@ -466,6 +472,7 @@ fit_active <- function(chains, inputs){
   return(m_fit)
 }
 
+
 # Seroprevalence point fits
 serofit <- function(chains, sero){
   
@@ -477,22 +484,35 @@ serofit <- function(chains, sero){
   return(sfit)
 }
 
-# Plot cumulative probabilities of infection by country
-plot_Pinfection <- function(chains, countries){
+
+# Seroprevance time series
+sero_time <- function(chains, Inputs, countries, continent){
   
+  # matrices for samples
+  seroT <- matrix(ncol=5, nrow=Inputs$Ndays*length(countries))
+  infecT <- matrix(ncol=5, nrow=Inputs$Ndays*length(countries))
+  seroT[ ,1] <- sort(rep(countries,Inputs$Ndays))
+  infecT[ ,1] <- sort(rep(countries,Inputs$Ndays))
+
   # extract estimates
-  infec <- data.frame(country=countries, mean=NA, ciL=NA, ciU=NA)
+  ind <- 0
   for(c in 1:length(countries)){
-    infec[c,2:4] <- quantile(chains$probInfec[,c], c(0.5,0.025,0.975))
+    for(i in 1:Inputs$Ndays){
+      ind <- ind+1
+      seroT[ind,3:5] <- quantile(chains$seroT[,i,c], c(0.5,0.025,0.975))
+      infecT[ind,3:5] <- quantile(chains$infecT[,i,c], c(0.5,0.025,0.975))
+      seroT[ind,2] <- continent[c]
+      infecT[ind,2] <- continent[c]
+    }
   }
   
-  # plot
-  pinf <- ggplot(infec, aes(reorder(country, mean),mean))+ geom_point(col='purple')+
-    geom_linerange(aes(ymin=ciL, ymax=ciU),col='purple')+ theme_minimal()+
-    theme(axis.text.x=element_text(angle=60, hjust=1))+ ylab('Prob Infection')+
-    xlab('')
+  # to dataframe
+  seroT <- as.data.frame(seroT)
+  infecT <- as.data.frame(infecT)
+  colnames(seroT) <- c('country','continent','mean','ciL','ciU')
+  colnames(infecT) <- c('country','continent','mean','ciL','ciU')
   
-  return(list(plotPI=pinf, estsPI=infec))
+  return(list(seroT=seroT, infecT=infecT))
 }
 
 
@@ -617,7 +637,8 @@ fit_deaths_direct <- function(chains, inputs, data, countries){
         }
       }
       
-      fit <- data.frame(n=dfc$deaths, sex=rep('B',nages), age=dfc$ageG, age_min=dfc$age_min,
+      fit <- data.frame(country=countries[c], continent=dfc$continent[1], 
+                        n=dfc$deaths, sex=rep('B',nages), age=dfc$ageG, age_min=dfc$age_min,
                         age_max=dfc$age_max, fit=fit_ba[,1], ciL=fit_ba[,2], ciU=fit_ba[,3])
       
       
@@ -647,7 +668,8 @@ fit_deaths_direct <- function(chains, inputs, data, countries){
       
       dfc$sex <- factor(dfc$sex,levels=c('M','F'))
       dfc <- with(dfc, dfc[order(sex),])
-      fit <- data.frame(n=dfc$deaths, sex=dfc$sex, age_min=dfc$age_min, 
+      fit <- data.frame(country=countries[c], continent=dfc$continent[1], 
+                        n=dfc$deaths, sex=dfc$sex, age_min=dfc$age_min, 
                         age_max=dfc$age_max, age=dfc$ageG,fit=c(fit_ma[,1], fit_fa[,1]), 
                         ciL=c(fit_ma[,2], fit_fa[,2]),ciU=c(fit_ma[,3], fit_fa[,3]))
       
@@ -664,6 +686,7 @@ fit_deaths_direct <- function(chains, inputs, data, countries){
       
     }
   }
+  fitD <- do.call('rbind',fitD)
   return(list(plots=plotD, ests=fitD))
 }
 
