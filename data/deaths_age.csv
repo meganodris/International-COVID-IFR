@@ -158,11 +158,18 @@ Ireland,B,55,64,59,28/05/2020,nat,Europe
 Ireland,B,65,74,198,28/05/2020,nat,Europe
 Ireland,B,75,84,473,28/05/2020,nat,Europe
 Ireland,B,85,110,608,28/05/2020,nat,Europe
-Northern Ireland,B,0,19,0,28/05/2020,nat,Europe
-Northern Ireland,B,20,39,1,28/05/2020,nat,Europe
-Northern Ireland,B,40,59,22,28/05/2020,nat,Europe
-Northern Ireland,B,60,79,149,28/05/2020,nat,Europe
-Northern Ireland,B,80,110,345,28/05/2020,nat,Europe
+Northern Ireland,M,0,14,0,26/06/2020,nat,Europe
+Northern Ireland,M,15,44,4,26/06/2020,nat,Europe
+Northern Ireland,M,45,64,33,26/06/2020,nat,Europe
+Northern Ireland,M,65,74,63,26/06/2020,nat,Europe
+Northern Ireland,M,75,84,146,26/06/2020,nat,Europe
+Northern Ireland,M,85,110,163,26/06/2020,nat,Europe
+Northern Ireland,F,0,14,0,26/06/2020,nat,Europe
+Northern Ireland,F,15,44,2,26/06/2020,nat,Europe
+Northern Ireland,F,45,64,18,26/06/2020,nat,Europe
+Northern Ireland,F,65,74,45,26/06/2020,nat,Europe
+Northern Ireland,F,75,84,131,26/06/2020,nat,Europe
+Northern Ireland,F,85,110,219,26/06/2020,nat,Europe
 Scotland,M,0,1,0,21/06/2020,nat,Europe
 Scotland,M,1,14,0,21/06/2020,nat,Europe
 Scotland,M,15,44,14,21/06/2020,nat,Europe
