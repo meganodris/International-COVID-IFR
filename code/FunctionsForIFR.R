@@ -200,7 +200,7 @@ adjust_DPdata <- function(DP_raw){
 }
 
 # Compile death time series data
-tidy_deathsT <- function(deathsT, deathsT_region, countries){
+tidy_deathsT <- function(deathsT, deathsTR, countries){
   
   # align names 
   deathsT$Country.Region <- as.character(deathsT$Country.Region)
@@ -212,7 +212,7 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
   ca <- colSums(deathsT[deathsT$Country.Region=='Canada', 5:ncol(deathsT)])
   ci <- colSums(deathsT[deathsT$Country.Region=='China', 5:ncol(deathsT)])
   deathsT[nrow(deathsT)+1, ] <- c('','Canada',NA,NA,ca)
-  deathsT[nrow(deathsT)+1, ] <- c('','China',NA,NA,ca)
+  deathsT[nrow(deathsT)+1, ] <- c('','China',NA,NA,ci)
   
   # subset for inlcuded countries 
   deathsT <- deathsT[deathsT$Country.Region %in% countries, ]
@@ -223,15 +223,16 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
   deathsTR$region <- as.character(deathsTR$region)
   
   # merge datasets
-  deathsTR <- deathsTR[,1:(ncol(deathsT)-4)]
+  latestdate <- max(which(!is.na(colSums(deathsTR[,3:ncol(deathsTR)]))))+2
+  deathsTR <- deathsTR[,2:latestdate]
   for(c in 1:nrow(deathsT)){
     tt <- deathsT[c,5:ncol(deathsT)]
     deathsTR[nrow(deathsTR)+1, ] <- c(paste(deathsT$Country.Region[c]), tt[1:ncol(deathsTR)-1])
   }
   
   # return tidy dataset
-  nas <- colnames(deathsTR)[colSums(is.na(deathsTR))>0]
-  deathsTR <- deathsTR[,1:(which(colnames(deathsTR)==nas[1])-1)]
+  #nas <- colnames(deathsTR)[colSums(is.na(deathsTR))>0]
+  #deathsTR <- deathsTR[,1:(which(colnames(deathsTR)==nas[1])-1)]
   return(deathsT=deathsTR)
 }
 
@@ -240,23 +241,23 @@ tidy_deathsT <- function(deathsT, deathsT_region, countries){
 delay_deaths <- function(Cdeaths, countries){
   
   # daily deaths
-  ddeathsT <- matrix(0, nrow=143, ncol=length(countries))
+  Ndays <- ncol(Cdeaths)-1
+  ddeathsT <- matrix(0, nrow=Ndays, ncol=length(countries))
   for(c in 1:length(countries)){
-    dt <- as.numeric(as.vector(t(Cdeaths[Cdeaths$region==countries[c],2:132])))
+    dt <- as.numeric(as.vector(t(Cdeaths[Cdeaths$region==countries[c],2:(Ndays+1)])))
     for(i in 2:length(dt)){
       ddeathsT[i,c] <- dt[i] - dt[i-1]
     }
   }
   
   # matrices for storage
-  deathsTinfec <- matrix(0, nrow=143, ncol=length(countries))
-  deathsTsero <- matrix(0, nrow=143, ncol=length(countries))
-  deathsTonset <- matrix(0, nrow=143, ncol=length(countries))
+  deathsTinfec <- matrix(0, nrow=Ndays, ncol=length(countries))
+  deathsTsero <- matrix(0, nrow=Ndays, ncol=length(countries))
+  deathsTonset <- matrix(0, nrow=Ndays, ncol=length(countries))
   
   
   # infection to death
   id <- rgamma(1000,shape=(22.9/12.4)^2, rate=22.9/(12.4)^2)
-  id <- id[id<61]
   for(c in 1:length(countries)){
     for(i in 1:nrow(deathsTinfec)){
       if(ddeathsT[i,c]>0){
@@ -272,8 +273,6 @@ delay_deaths <- function(Cdeaths, countries){
   # onset to seroconversion
   od <- rgamma(1000,shape=(17.8/8)^2, rate=17.8/(8)^2)
   os <- rgamma(1000,shape=(10/4)^2, rate=10/(4)^2)
-  od <- od[od<61]
-  os <- os[os<61]
   for(c in 1:length(countries)){
     for(i in 1:nrow(deathsTsero)){
       if(ddeathsT[i,c]>0){
@@ -290,7 +289,9 @@ delay_deaths <- function(Cdeaths, countries){
   }
   
   # return matrices
-  return(list(deathsTinfec=deathsTinfec, deathsTonset=deathsTonset, deathsTsero=deathsTsero))
+  return(list(deathsTinfec=deathsTinfec[1:(Ndays-20), ], 
+              deathsTonset=deathsTonset[1:(Ndays-20), ], 
+              deathsTsero=deathsTsero[1:(Ndays-20), ]))
 }
 
 
@@ -358,7 +359,7 @@ get_deathsT <- function(deathsT, countries, deathsA){
   for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
   
   # return list of inputs for model
-  return(list(Ndays=Ndays, deathsT=dt, TdeathsA=TdeathsA))
+  return(list(Ndays=Ndays-20, deathsT=dt, TdeathsA=TdeathsA))
 }
 
 
@@ -374,6 +375,7 @@ get_sero <- function(sero, countries, Ndays){
   sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
   sero <- sero[!(is.na(sero$tmin)), ]
   dates <- seq.Date(as.Date('2020-01-22'),by=1, length.out=Ndays)
+  sero <- sero[!sero$tmin>max(dates), ]
   
   # inputs
   NSero <- nrow(sero)
