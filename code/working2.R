@@ -38,16 +38,21 @@ setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data/')
 deathsTR <- read.csv('deathsT_region.csv')
 deathsT <- tidy_deathsT(deathsT, deathsTR, countries)
 
+# Distribute deaths backwards
+g <- delay_deaths(deathsT, countries)
+
 # Hack the timings for now
 df$asof <- as.Date(df$asof, format('%d/%m/%Y'))
 colnames(deathsT)[ncol(deathsT)]
-unique(df$country[df$asof>'2020-06-12'])
-df$asof[df$asof>'2020-06-12'] <- '2020-06-12'
+unique(df$country[df$asof>'2020-06-19'])
+df$asof[df$asof>'2020-06-19'] <- '2020-06-19'
+colnames(deathsT)[ncol(deathsT)-20]
 sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
-sero$tmax[sero$region=='England'] <- '2020-06-12'
-sero <- sero[!is.na(sero$tmax), ]
-sero$n <- 500
-sero$n_pos <- round(sero$n*sero$seroprev)
+unique(sero$region[sero$tmax>'2020-05-30'])
+sero$tmax[sero$tmax>'2020-05-30'] <- '2020-05-30'
+sero$tmin <- as.Date(sero$tmin, format('%d/%m/%Y'))
+sero <- sero[!sero$tmin>max(dates), ]
+
 
 # List of inputs for model
 dfU65 <- df[df$age_max<65, ]
@@ -56,8 +61,8 @@ continent <- vector()
 for(i in 1:length(countries)) continent[i] <- paste(df$continent[df$country==countries[i]][1])
 Inputs <- get_inputs(countries, poplist, poplist, dfU65, cdg, dpd)
 Inputs <- c(Inputs, get_deathsT(deathsT, countries, dfU65))
+sero <- sero[!is.na(sero$tmax), ]
 Inputs <- c(Inputs, get_sero(sero, countries, Inputs$Ndays))
-g <- delay_deaths(deathsT, countries)
 Inputs$deathsTinfec <- g$deathsTinfec
 Inputs$deathsTsero <- g$deathsTsero
 Inputs$relProbInfection <- rep(1,17) 
@@ -82,13 +87,11 @@ ifrAge <- plot_IFR_age(chains, Inputs)
 ifrPop <- plot_IFR_area(chains, Inputs, countries)
 
 # Lambda estimates
-lambda <- plot_Pinfection(chains, countries)
 sero <- sero[!is.na(sero$tmax), ]
 lambdaFit <- serofit(chains, sero)
 
 # Other paramater estimates
 pars <- extract_pars(chains, linmod=T)
-Pinfec <- plot_Pinfection(chains, countries)
 
 # Fit to active surveillance data
 dp <- fit_active(chains, Inputs)
@@ -111,12 +114,13 @@ setwd(paste(opath, folder, sep='/'))
 # output pars
 write.csv(ifrAge$ifrA, 'IFRage.csv', row.names=F)
 write.csv(ifrPop$ifrc, 'IFRPop.csv', row.names=F)
-write.csv(Pinfec$estsPI, 'ProbInfec.csv', row.names=F)
 write.csv(pars, 'Params.csv', row.names=F)
+write.csv(lambdaFit, 'Fitserology.csv', row.names=F)
 write.csv(seroT$seroT, 'seroT.csv', row.names=F)
 write.csv(seroT$infecT, 'infecT.csv', row.names=F)
 write.csv(plotFit$ests, 'FitDeaths.csv', row.names=F)
 
+# plots
 library(gridExtra)
 png(filename='ImmunityT1.png', width=20, height=15, res=400, units='cm')
 grid.arrange(grobs=imm[1:6], ncol=3, left='Proportion infected', bottom='date')

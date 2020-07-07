@@ -73,7 +73,7 @@ data {
   int Ndays;
   int deathsTinfec[Ndays,NArea];
   int deathsTsero[Ndays,NArea];
-  int deathsT[Ndays,NArea];
+  int deathsT[Ndays+20,NArea];
   int TdeathsA[NArea];
   
 }
