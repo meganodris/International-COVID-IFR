@@ -45,10 +45,15 @@ unique(df$country[df$asof>'2020-06-12'])
 df$asof[df$asof>'2020-06-12'] <- '2020-06-12'
 sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
 sero$tmax[sero$region=='England'] <- '2020-06-12'
+sero <- sero[!is.na(sero$tmax), ]
+sero$n <- 500
+sero$n_pos <- round(sero$n*sero$seroprev)
 
 # List of inputs for model
 dfU65 <- df[df$age_max<65, ]
 countries <- sort(as.character(countries))
+continent <- vector()
+for(i in 1:length(countries)) continent[i] <- paste(df$continent[df$country==countries[i]][1])
 Inputs <- get_inputs(countries, poplist, poplist, dfU65, cdg, dpd)
 Inputs <- c(Inputs, get_deathsT(deathsT, countries, dfU65))
 Inputs <- c(Inputs, get_sero(sero, countries, Inputs$Ndays))
@@ -69,50 +74,49 @@ traceplot(fit, pars=names(fit)[1:10])
 stan_dens(fit, pars=names(fit)[1:10])
 
 
-#=== plot outputs
-imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
-imm[[2]]
 
-# IFR estimates by age
-ifrA <- plot_IFR_age(chains, Inputs)
-ifrA$ifrAp
-x <- ifrA$ifrA
-x$age_mid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
-xx <- ggplot(x, aes(reorder(ageG,age), log(mean), col=sex))+ geom_point()+
-  theme_minimal()+ theme(axis.text.x=element_text(angle=60, hjust=1))+
-  xlab('')+ ylab('log IFR')
-xx
-# IFR estimates by country
-ifrC <- plot_IFR_area(chains, Inputs, countries)
-ifrC$ifrCp
-ifrC$ifrc
+#----- Model outputs -----#
 
-# fit to active surveillance campaigns
+# IFR estimates
+ifrAge <- plot_IFR_age(chains, Inputs)
+ifrPop <- plot_IFR_area(chains, Inputs, countries)
+
+# Lambda estimates
+lambda <- plot_Pinfection(chains, countries)
+sero <- sero[!is.na(sero$tmax), ]
+lambdaFit <- serofit(chains, sero)
+
+# Other paramater estimates
+pars <- extract_pars(chains, linmod=T)
+Pinfec <- plot_Pinfection(chains, countries)
+
+# Fit to active surveillance data
 dp <- fit_active(chains, Inputs)
-dp
 
-# Prob infection by country
-pinf <- plot_Pinfection(chains, countries)
-pinf$plotPI
-pp <- pinf$estsPI
+# Seroprevalence time series
+seroT <- sero_time(chains, Inputs, countries, continent)
+imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
 
-# fits
-df <- agg_deathsAp(df, countries, 80)
+# Fit to age data
 plotFit <- fit_deaths(chains, Inputs, df, countries, 65)
-plotFit$plots[5]
 
 
-# outputs
-opath <- 'C:/Users/Megan/OneDrive - University of Cambridge/COVID/IFRModel/international/test_fits'
+# Output path
+opath <- 'C:/Users/Megan/OneDrive - University of Cambridge/COVID/IFRModel/international/NationalOnly'
 setwd(opath)
-folder <- 'age-constant-lin-u65'
+folder <- 'Lin-u65-sero'
 dir.create(folder, showWarnings=F)
 setwd(paste(opath, folder, sep='/'))
 
-# ifrs
-write.csv(ifrA$ifrA, 'IFRage.csv')
-write.csv(ifrC$ifrc, 'IFRW.csv')
-write.csv(pinf$estsPI, 'SeroEsts.csv')
+# output pars
+write.csv(ifrAge$ifrA, 'IFRage.csv', row.names=F)
+write.csv(ifrPop$ifrc, 'IFRPop.csv', row.names=F)
+write.csv(Pinfec$estsPI, 'ProbInfec.csv', row.names=F)
+write.csv(pars, 'Params.csv', row.names=F)
+write.csv(seroT$seroT, 'seroT.csv', row.names=F)
+write.csv(seroT$infecT, 'infecT.csv', row.names=F)
+write.csv(plotFit$ests, 'FitDeaths.csv', row.names=F)
+
 library(gridExtra)
 png(filename='ImmunityT1.png', width=20, height=15, res=400, units='cm')
 grid.arrange(grobs=imm[1:6], ncol=3, left='Proportion infected', bottom='date')
