@@ -114,7 +114,7 @@ transformed parameters {
   // transformed parameters
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
   for(a in 1:17) ifr_m[a] = exp(log_ifr_m[a]);
-  for(a in 1:17) ifr_f[a] = exp(log_ifr_m[a]);
+  for(a in 1:17) ifr_f[a] = exp(log_ifr_f[a]);
   
   // age-specific attack rates
   for(a in 1:17){
