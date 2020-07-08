@@ -81,11 +81,8 @@ data {
 parameters {
   
   real <lower=-50, upper=-0.001> log_probInfec[NArea];  
-  real <lower=0> slope_m;
-  real intercept; 
-  real <lower=-50, upper=-0.001> log_ifr_mY[6];
-  real <lower=-50, upper=-0.001> log_ifr_fY[10];
-  real log_relifrsex; 
+  real <lower=-50, upper=-0.001> log_ifr_m[17];
+  real <lower=-50, upper=-0.001> log_ifr_f[17];
   //real phi; 
   
 }
@@ -98,9 +95,7 @@ transformed parameters {
   // infection fatality ratios
   real ifr_f[17];
   real ifr_m[17];
-  real log_ifr_m[17];
-  real relifrsex;
-  
+
   // estimated deaths by age sex & area
   real natDeath_m[17,NArea];
   real natDeath_f[17,NArea];
@@ -118,12 +113,8 @@ transformed parameters {
   
   // transformed parameters
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
-  relifrsex = exp(log_relifrsex);
-  for(a in 1:6) log_ifr_m[a] = log_ifr_mY[a];
-  for(a in 1:10) ifr_f[a] = exp(log_ifr_fY[a]);
-  for(a in 7:17) log_ifr_m[a] = slope_m*(agemid[a]) + intercept;
   for(a in 1:17) ifr_m[a] = exp(log_ifr_m[a]);
-  for(a in 11:17) ifr_f[a] = exp(log_ifr_m[a])*relifrsex;
+  for(a in 1:17) ifr_f[a] = exp(log_ifr_m[a]);
   
   // age-specific attack rates
   for(a in 1:17){
@@ -164,11 +155,8 @@ model {
 
   // Priors
   for(c in 1:NArea) log_probInfec[c] ~ uniform(-50,-0.001);
-  for(a in 1:6) log_ifr_mY[a] ~ uniform(-50,-0.001);
-  for(a in 1:10) log_ifr_fY[a] ~ uniform(-50,-0.001);
-  intercept ~ uniform(-50,-0.001);
-  log_relifrsex ~ uniform(-5,5);
-  slope_m ~ normal(0,1);
+  for(a in 1:17) log_ifr_m[a] ~ uniform(-50,-0.001);
+  for(a in 1:17) log_ifr_f[a] ~ uniform(-50,-0.001);
   
   // fit to age & sex-specific data
   for(c in 1:NArea){
