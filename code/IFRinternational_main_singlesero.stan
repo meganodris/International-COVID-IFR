@@ -63,11 +63,11 @@ data {
   
   // Serology data
   int NSero;
-  int SeroAreaInd[NSero];
-  int NSamples[NSero];
-  int NPos[NSero];
-  int tmin[NSero];
-  int tmax[NSero];
+  int SeroAreaInd;
+  int NSamples;
+  int NPos;
+  int tmin;
+  int tmax;
  
   // Time series of deaths
   int Ndays;
@@ -108,7 +108,7 @@ transformed parameters {
   real u65deaths[NArea];
   
   // expected seroprevalence at location & time of serosuvey
-  real serofit[NSero];
+  real serofit;
   
   // transformed parameters
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
@@ -137,7 +137,7 @@ transformed parameters {
   }
   
   // expected seroprevalence at time of serosurveys
-  for(i in 1:NSero) serofit[i] = mean(seroT[tmin[i]:tmax[i],SeroAreaInd[i]]);
+  serofit = mean(seroT[tmin:tmax,SeroAreaInd]);
 }
 
 
@@ -168,9 +168,7 @@ model {
   }
   
   // Likelihood
-  for(i in 1:NSero){
-    NPos[i] ~ binomial(NSamples[i], mean(seroT[tmin[i]:tmax[i],SeroAreaInd[i]]));
-  }
+  NPos ~ binomial(NSamples, mean(seroT[tmin:tmax,SeroAreaInd]));
 }
  
 generated quantities {
