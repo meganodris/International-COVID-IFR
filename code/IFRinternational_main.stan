@@ -107,7 +107,7 @@ transformed parameters {
   // total deaths <65 years
   real u65deaths[NArea];
   
-  // expected seroprevalence at location & time of serosuvey
+  // expected seroprevalence at location & time of serosurvey
   real serofit[NSero];
   
   // transformed parameters
