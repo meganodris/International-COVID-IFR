@@ -83,7 +83,7 @@ parameters {
   real <lower=-50, upper=-0.001> log_probInfec[NArea];  
   real <lower=-50, upper=-0.001> log_ifr_m[17];
   real <lower=-50, upper=-0.001> log_ifr_f[17];
-  //real phi; 
+  real phi; 
   
 }
 
@@ -115,18 +115,13 @@ transformed parameters {
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
   for(a in 1:17) ifr_m[a] = exp(log_ifr_m[a]);
   for(a in 1:17) ifr_f[a] = exp(log_ifr_f[a]);
-  
-  // age-specific attack rates
-  for(a in 1:17){
-    ifr_m[a] = ifr_m[a]/relProbInfection[a];
-    ifr_f[a] = ifr_f[a]/relProbInfection[a];
-  }
+
   
   // probs by age, sex & region
   for (a in 1:17){
     for(c in 1:NArea){
-      natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*ifr_m[a];
-      natDeath_f[a,c] = pop_f[a,c]*probInfec[c]*ifr_f[a];
+      natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*ifr_m[a]*relProbInfection[a];
+      natDeath_f[a,c] = pop_f[a,c]*probInfec[c]*ifr_f[a]*relProbInfection[a];
       natDeath_b[a,c] = natDeath_f[a,c] + natDeath_m[a,c];
     }
   }
@@ -163,13 +158,13 @@ model {
     
     if(gender[c]==1){
       estDeaths_b[1:NAges[c],c] = alignSUM(natDeath_b[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
-      deaths_b[1:NAges[c],c] ~ poisson(estDeaths_b[1:NAges[c],c]);
+      deaths_b[1:NAges[c],c] ~ neg_binomial_2(estDeaths_b[1:NAges[c],c], phi);
     }
     if(gender[c]==2){
       estDeaths_m[1:NAges[c],c] = alignSUM(natDeath_m[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
       estDeaths_f[1:NAges[c],c] = alignSUM(natDeath_f[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
-      deaths_m[1:NAges[c],c] ~ poisson(estDeaths_m[1:NAges[c],c]);
-      deaths_f[1:NAges[c],c] ~ poisson(estDeaths_f[1:NAges[c],c]);
+      deaths_m[1:NAges[c],c] ~ neg_binomial_2(estDeaths_m[1:NAges[c],c], phi);
+      deaths_f[1:NAges[c],c] ~ neg_binomial_2(estDeaths_f[1:NAges[c],c], phi);
     }
   }
   
