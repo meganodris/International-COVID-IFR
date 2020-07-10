@@ -164,6 +164,7 @@ index_ages <- function(data, countries){
   for(c in 1:length(countries)){
     
     dfc <- data[data$country==countries[c], ]
+    dfc <- dfc[order(dfc$age_min), ]
     
     if(dfc$sex[1]=='B'){
       for(a in 1:nrow(dfc)){
