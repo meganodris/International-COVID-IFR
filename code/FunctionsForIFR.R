@@ -45,6 +45,8 @@ compile_deathsA <- function(deathsA, countries, nAges){
   for(c in 1:length(countries)){
     
     dfc <- deathsA[deathsA$country==countries[c], ]
+    dfc <- dfc[order(dfc$age_min), ]
+    
     if(dfc$sex[1]=='B'){
       deaths_b[1:nrow(dfc),c] <- dfc$deaths
     }else{
@@ -78,12 +80,12 @@ agg_deathsAp <- function(deathsA, countries, A){
                            deaths=as.numeric(d80p), asof=new$asof[1], nat.reg=new$nat.reg[1], continent=new$continent[1])
         new <- rbind(new,n80p)
       }
-      agg[[c]] <- new
+      agg[[c]] <- new[order(new$age_min), ]
     }else{
-      agg[[c]] <- dfc
+      agg[[c]] <- dfc[order(dfc$age_min), ]
     }
   }
-  
+
   # return updated dataframe
   deathsAge <- do.call('rbind', agg)
   return(deathsAge)
@@ -110,12 +112,12 @@ agg_deathsu5 <- function(deathsA, countries){
                            deaths=as.numeric(u5_s), asof=new$asof[1], nat.reg=new$nat.reg[1], continent=new$continent[1])
         new <- rbind(new,nu5s)
       }
-      agg[[c]] <- new
+      agg[[c]] <- new[order(new$age_min), ]
     }else{
-      agg[[c]] <- dfc
+      agg[[c]] <- dfc[order(dfc$age_min), ]
     }
   }
-  
+
   # return updated dataframe
   deathsAge <- do.call('rbind', agg)
   return(deathsAge)
