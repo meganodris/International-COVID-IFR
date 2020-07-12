@@ -157,8 +157,8 @@ index_ages <- function(data, countries){
   Amax <- c(seq(4,79,5),110)
   
   # matrices for storage
-  ageG_min <- matrix(-999, nrow=17, ncol=length(countries))
-  ageG_max <- matrix(-999, nrow=17, ncol=length(countries))
+  ageG_min <- matrix(-999, nrow=13, ncol=length(countries))
+  ageG_max <- matrix(-999, nrow=13, ncol=length(countries))
   
   # get indices
   for(c in 1:length(countries)){
@@ -320,7 +320,7 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs <- get_agesex(dataA, countries) # age/sex by country
   Inputs$NArea <- length(countries) # N countries
   Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
-  Inputs <- c(Inputs, compile_deathsA(dataA, countries,17)) # death data
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries,13)) # death data
   Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
   Tpop <- compile_pop(poplist, countries)
   Inputs$Tpop_m <- Tpop$pop_m
