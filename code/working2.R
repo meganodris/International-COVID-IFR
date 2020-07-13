@@ -51,7 +51,16 @@ sero$tmax <- as.Date(sero$tmax, format('%d/%m/%Y'))
 unique(sero$region[sero$tmax>'2020-05-30'])
 sero$tmax[sero$tmax>'2020-05-30'] <- '2020-05-30'
 sero$tmin <- as.Date(sero$tmin, format('%d/%m/%Y'))
-sero <- sero[!sero$tmin>max(dates), ]
+sero <- sero[!sero$tmin>'2020-05-30', ]
+sero <- sero[!is.na(sero$study),]
+for(i in unique(sero$study)){
+  nr <- nrow(sero[sero$study==i, ])
+  for(n in 1:nr){
+    sero$n[sero$study==i][n] <- floor(5000/nr)
+  }
+  sero$n_pos[sero$study==i] <- round(sero$seroprev[sero$study==i]*sero$n[sero$study==i])
+}
+
 
 
 # List of inputs for model
@@ -70,7 +79,7 @@ Inputs$relProbInfection <- rep(1,17)
 
 #----- Run model -----#
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/code')
-fit <- runStan(model='IFRinternational_main.stan', Inputs, N_iter=6000, N_chains=3, max_td=15, ad=0.7)
+fit <- runStan(model='IFRinternational_main.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.9)
 
 
 # Check convergence
@@ -85,11 +94,14 @@ stan_dens(fit, pars=names(fit)[1:10])
 # IFR estimates
 ifrAge <- plot_IFR_age(chains, Inputs)
 ifrPop <- plot_IFR_area(chains, Inputs, countries)
+ifrAge$ifrAp
+ifrPop$ifrCp
 
 # Lambda estimates
 sero <- sero[!is.na(sero$tmax), ]
 lambdaFit <- serofit(chains, sero)
-
+ggplot(lambdaFit, aes(seroprev,fit,col=region))+ geom_point()+
+  geom_line(aes(seroprev, seroprev))
 # Other paramater estimates
 pars <- extract_pars(chains, linmod=T)
 
@@ -101,13 +113,13 @@ seroT <- sero_time(chains, Inputs, countries, continent)
 imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
 
 # Fit to age data
-plotFit <- fit_deaths(chains, Inputs, df, countries, 65)
-
-
+plotFit <- fit_deaths_direct(chains, Inputs, dfU65, countries)
+plotFit$plots[[14]]
+imm[[14]]
 # Output path
 opath <- 'C:/Users/Megan/OneDrive - University of Cambridge/COVID/IFRModel/international/NationalOnly'
 setwd(opath)
-folder <- 'Lin-u65-sero'
+folder <- 'Main-sero-equalW'
 dir.create(folder, showWarnings=F)
 setwd(paste(opath, folder, sep='/'))
 
@@ -119,6 +131,8 @@ write.csv(lambdaFit, 'Fitserology.csv', row.names=F)
 write.csv(seroT$seroT, 'seroT.csv', row.names=F)
 write.csv(seroT$infecT, 'infecT.csv', row.names=F)
 write.csv(plotFit$ests, 'FitDeaths.csv', row.names=F)
+saveRDS(Inputs, 'Inputs.RDS')
+saveRDS(chains, 'Chains.RDS')
 
 # plots
 library(gridExtra)
