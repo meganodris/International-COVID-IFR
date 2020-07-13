@@ -24,26 +24,20 @@ data {
   int <lower=1> NAges[NArea];
   int gender[NArea]; 
   
-  // Population by 5 year age groups, excluding LTC
+  // Population by 5 year age groups
   matrix[17,NArea] pop_m;
   matrix[17,NArea] pop_f;
   int pop_b[17,NArea];
   
-  // Population by 5 year age groups, total
-  matrix[17,NArea] Tpop_m;
-  matrix[17,NArea] Tpop_f;
-  matrix[17,NArea] Tpop_b;
-  
-  // Age-specific death data
-  int deaths_m[17,NArea];
-  int deaths_f[17,NArea];
-  int deaths_b[17,NArea];
+  // Age-specific death data <65 years
+  int deaths_m[13,NArea];
+  int deaths_f[13,NArea];
+  int deaths_b[13,NArea];
   
   // Min & max of age bands for indexing
-  int ageG_min[17,NArea];
-  int ageG_max[17,NArea];
-  real agemid[17];
-  
+  int ageG_min[13,NArea];
+  int ageG_max[13,NArea];
+
   // Age-specific probabilities of infection
   real relProbInfection[17];
   
@@ -81,8 +75,8 @@ data {
 parameters {
   
   real <lower=-50, upper=-0.001> log_probInfec[NArea];  
-  real <lower=-50, upper=-0.001> log_ifr_m[17];
-  real <lower=-50, upper=-0.001> log_ifr_f[17];
+  real <lower=-50, upper=-0.001> log_ifr_m[13];
+  real <lower=-50, upper=-0.001> log_ifr_f[13];
   
 }
 
@@ -91,11 +85,7 @@ transformed parameters {
   // cumulative prob infection
   real probInfec[NArea];
 
-  // infection fatality ratios
-  real ifr_f[17];
-  real ifr_m[17];
-
-  // estimated deaths by age sex & area
+  // estimated deaths by age, sex & area
   real natDeath_m[17,NArea];
   real natDeath_f[17,NArea];
   real natDeath_b[17,NArea];
@@ -107,15 +97,51 @@ transformed parameters {
   // total deaths <65 years
   real u65deaths[NArea];
   
-  // expected seroprevalence at location & time of serosuvey
+  // expected seroprevalence at location & time of serosurvey
   real serofit;
+  
+  // mean increase in log IFR estimates by age (20-64)
+  real diff_ifr_m[8]; 
+  real diff_ifr_f[8];
+  real mean_increase_ifr;
+  
+  // IFRs
+  real log_ifr_fO[4]; 
+  real log_ifr_mO[4];
+  real ifr_m[17];
+  real ifr_f[17];
+  real ifr_b[17];
+  
+  // mean increase in log IFRs 20-64
+  for(i in 1:8){
+    diff_ifr_m[i] = log_ifr_m[i+5] - log_ifr_m[i+4];
+    diff_ifr_f[i] = log_ifr_f[i+5] - log_ifr_f[i+4];
+  }
+  mean_increase_ifr = exp((mean(diff_ifr_m)+mean(diff_ifr_f))/2);
+  
+  // infer IFRs >64
+  log_ifr_mO[1] = log_ifr_m[13]+ mean(diff_ifr_m);
+  log_ifr_fO[1] = log_ifr_f[13]+ mean(diff_ifr_f);
+  for(a in 2:4){
+    if(a<4){
+      log_ifr_mO[a] = log_ifr_mO[a-1] + mean(diff_ifr_m);
+      log_ifr_fO[a] = log_ifr_fO[a-1] + mean(diff_ifr_f);
+    }else{
+      log_ifr_mO[a] = log_ifr_mO[a-1] + mean(diff_ifr_m)*1.5; // assume 85 mid-point for 80+
+      log_ifr_fO[a] = log_ifr_fO[a-1] + mean(diff_ifr_f)*1.5;
+    }
+  }
+
+  // IFRs all ages
+  for(a in 1:13) ifr_m[a] = exp(log_ifr_m[a]);
+  for(a in 1:13) ifr_f[a] = exp(log_ifr_f[a]);
+  for(a in 14:17) ifr_m[a] = exp(log_ifr_mO[a-13])/relProbInfection[a];
+  for(a in 14:17) ifr_f[a] = exp(log_ifr_fO[a-13])/relProbInfection[a];
+  for(a in 1:17) ifr_b[a] = (ifr_m[a]+ifr_f[a])/2;
   
   // transformed parameters
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
-  for(a in 1:17) ifr_m[a] = exp(log_ifr_m[a]);
-  for(a in 1:17) ifr_f[a] = exp(log_ifr_f[a]);
 
-  
   // probs by age, sex & region
   for (a in 1:17){
     for(c in 1:NArea){
@@ -143,14 +169,14 @@ transformed parameters {
 
 model {
 
-  real estDeaths_b[17,NArea];
-  real estDeaths_m[17,NArea];
-  real estDeaths_f[17,NArea];
+  real estDeaths_b[13,NArea];
+  real estDeaths_m[13,NArea];
+  real estDeaths_f[13,NArea];
 
   // Priors
   for(c in 1:NArea) log_probInfec[c] ~ uniform(-50,-0.001);
-  for(a in 1:17) log_ifr_m[a] ~ uniform(-50,-0.001);
-  for(a in 1:17) log_ifr_f[a] ~ uniform(-50,-0.001);
+  for(a in 1:13) log_ifr_m[a] ~ uniform(-50,-0.001);
+  for(a in 1:13) log_ifr_f[a] ~ uniform(-50,-0.001);
   
   // fit to age & sex-specific data
   for(c in 1:NArea){
@@ -174,7 +200,6 @@ model {
 generated quantities {
   
   real ifr_C[NArea]; 
-  real ifr_b[17];
   real ifr_RR[17];
   real estDPdeaths;
   real estCDGdeaths;
@@ -183,17 +208,13 @@ generated quantities {
   real cdgifr_f[4];
   real cdgifr_m[4];
   
+  // IFR relative to 55-59 group
+  for(a in 1:17) ifr_RR[a] = ifr_b[a]/ifr_b[12];
   
   // population-weighted IFRs
   for(c in 1:NArea){
-    ifr_C[c] = sum(to_vector(ifr_m).*to_vector(Tpop_m[,c]) + to_vector(ifr_f).*to_vector(Tpop_f[,c]))/sum(Tpop_b[,c]);
+    ifr_C[c] = sum(to_vector(ifr_m).*to_vector(pop_m[,c]) + to_vector(ifr_f).*to_vector(pop_f[,c]))/sum(pop_b[,c]);
   }
-  
-  // average IFR for males and females
-  for(a in 1:17) ifr_b[a] = (ifr_m[a]+ifr_m[a])/2;
-  
-  // IFR relative to 55-59 group
-  for(a in 1:17) ifr_RR[a] = ifr_b[a]/ifr_b[12];
   
   // align to DP & CDG age groups
   dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
