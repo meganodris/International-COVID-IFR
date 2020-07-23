@@ -10,21 +10,21 @@ library(epitools)
 compile_pop <- function(poplist, countries){
   
   # matrices for model
-  pop_m <- matrix(NA, nrow=17, ncol=length(countries)) 
-  pop_f <- matrix(NA, nrow=17, ncol=length(countries)) 
-  pop_b <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_m <- matrix(NA, nrow=14, ncol=length(countries)) 
+  pop_f <- matrix(NA, nrow=14, ncol=length(countries)) 
+  pop_b <- matrix(NA, nrow=14, ncol=length(countries)) 
   
   # compile for model
   for(c in 1:length(countries)){
     ci <- countries[c]
-    pop_m[ ,c] <- poplist[[ci]]$M[1:17]
-    pop_f[ ,c] <- poplist[[ci]]$`F`[1:17]
-    pop_b[ ,c] <- poplist[[ci]]$M[1:17] + poplist[[ci]]$`F`[1:17]
+    pop_m[ ,c] <- poplist[[ci]]$M[1:14]
+    pop_f[ ,c] <- poplist[[ci]]$`F`[1:14]
+    pop_b[ ,c] <- poplist[[ci]]$M[1:14] + poplist[[ci]]$`F`[1:14]
     
     # add ages 90+
-    pop_m[17,c] <- sum(poplist[[ci]]$M[17:21])
-    pop_f[17,c] <- sum(poplist[[ci]]$`F`[17:21])
-    pop_b[17,c] <- sum(poplist[[ci]]$M[17:21]) + sum(poplist[[c]]$`F`[17:21])
+    pop_m[14,c] <- sum(poplist[[ci]]$M[14:21])
+    pop_f[14,c] <- sum(poplist[[ci]]$`F`[14:21])
+    pop_b[14,c] <- sum(poplist[[ci]]$M[14:21]) + sum(poplist[[c]]$`F`[14:21])
   }
   
   
@@ -152,15 +152,15 @@ align_ages <- function(data, popdata){
 
 
 # Index age groups for model
-index_ages <- function(data, countries){
+index_ages <- function(data, countries, NAges){
   
   # min & max bounds of age groupings
   Amin <- seq(0,80,5)
   Amax <- c(seq(4,79,5),110)
   
   # matrices for storage
-  ageG_min <- matrix(-999, nrow=13, ncol=length(countries))
-  ageG_max <- matrix(-999, nrow=13, ncol=length(countries))
+  ageG_min <- matrix(-999, nrow=NAges, ncol=length(countries))
+  ageG_max <- matrix(-999, nrow=NAges, ncol=length(countries))
   
   # get indices
   for(c in 1:length(countries)){
@@ -316,18 +316,14 @@ get_agesex <- function(data, countries){
 }
 
 # List of data inputs for model
-get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
+get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd, NAges){
   
   Inputs <- list()
   Inputs <- get_agesex(dataA, countries) # age/sex by country
   Inputs$NArea <- length(countries) # N countries
   Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
-  Inputs <- c(Inputs, compile_deathsA(dataA, countries,13)) # death data
-  Inputs <- c(Inputs, index_ages(dataA, countries)) # age indices
-  Tpop <- compile_pop(poplist, countries)
-  Inputs$Tpop_m <- Tpop$pop_m
-  Inputs$Tpop_f <- Tpop$pop_f
-  Inputs$Tpop_b <- Tpop$pop_b
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries,NAges)) # death data
+  Inputs <- c(Inputs, index_ages(dataA, countries,NAges)) # age indices
   Inputs$CDG_pos_m <- cdg$pos_m
   Inputs$CDG_pos_f <- cdg$pos_f
   Inputs$CDGamin <- c(5,6,8,10)
@@ -336,8 +332,8 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd){
   Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
   Inputs$DP_pos_m <- dpd$pos_m 
   Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
-  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
+  Inputs$DPamin <- c(1,5,7,9,11,13,14,14)
+  Inputs$DPamax <- c(4,6,8,10,12,14,14,14)
   Inputs$DP_deathsTot <- 15
   Inputs$country <- countries
   
@@ -411,23 +407,23 @@ runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
 plot_IFR_age <- function(chains, inputs){
   
   # min & max bounds of age groupings
-  Amin <- seq(0,80,5)
-  Amax <- c(seq(4,79,5),110)
+  Amin <- seq(0,65,5)
+  Amax <- c(seq(4,64,5),110)
   
   # dataframe for ests
   ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, 
-                    sex=c(rep('M',17),rep('F',17), rep('B',17), rep('RR',17)))
-  for(a in 1:17){
+                    sex=c(rep('M',14),rep('F',14), rep('B',14), rep('RR',14)))
+  for(a in 1:14){
     ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
-    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
-    ifr[a+34,1:3] <- quantile(chains$ifr_b[,a], c(0.5,0.025,0.975))
-    ifr[a+51,1:3] <- quantile(chains$ifr_RR[,a], c(0.5,0.025,0.975))
+    ifr[a+14,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
+    ifr[a+28,1:3] <- quantile(chains$ifr_b[,a], c(0.5,0.025,0.975))
+    ifr[a+42,1:3] <- quantile(chains$ifr_RR[,a], c(0.5,0.025,0.975))
   }
   
   # plot
-  ifr$age <- rep(seq(1:17),2)
+  ifr$age <- rep(seq(1:14),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
-  ifr$ageG[ifr$ageG=='80-110'] <- '80+'
+  ifr$ageG[ifr$ageG=='65-110'] <- '65+'
   ifrAp <- ggplot(ifr[ifr$sex %in% c('M','F'),], aes(reorder(ageG,age), mean*100, col=sex))+ 
     geom_point(position=position_dodge(width=0.4))+
     geom_linerange(aes(ymin=ciL*100, ymax=ciU*100, col=sex), position=position_dodge(width=0.4))+
@@ -440,7 +436,7 @@ plot_IFR_age <- function(chains, inputs){
 }
 
 # Extract other parameter estimates
-extract_pars <- function(chains, linmod=F){
+extract_pars <- function(chains){
   
   pars <- data.frame(par=c('DPdeaths','CDGdeaths'), mean=NA, ciL=NA, ciU=NA)
   
@@ -448,13 +444,6 @@ extract_pars <- function(chains, linmod=F){
   pars[1,2:4] <- quantile(chains$estDPdeaths, c(0.5,0.025,0.975))
   pars[2,2:4] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
   
-  if(linmod==T){
-    pars[3,2:4] <- quantile(chains$slope_m, c(0.5,0.025,0.975))
-    pars[4,2:4] <- quantile(chains$intercept, c(0.5,0.025,0.975))
-    pars[5,2:4] <- quantile(chains$relifrsex, c(0.5,0.025,0.975))
-    pars$par <- as.character(pars$par)
-    pars$par[3:5] <- c('slope_m','intercept','relifrsex')
-  }
   return(pars)
 }
 
@@ -618,7 +607,7 @@ fit_deaths_direct <- function(chains, inputs, data, countries){
   # age groups for plots
   data$ageG <- paste(data$age_min, data$age_max, sep='-')
   data$ageG[data$age_max==110] <- paste(data$age_min[data$age_max==110], '+', sep='')
-  indexA <- index_ages(data, countries)
+  indexA <- index_ages(data, countries, NAges=17)
   
   # list to store plots & estimates
   plotD <- list()
