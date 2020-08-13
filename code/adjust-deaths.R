@@ -32,10 +32,11 @@ for(c in unique(loc$country)){
     
   }else{
     
+    total <- sum(dfc$deaths[dfc$age_max>65])
     Wf <- dfc$deaths[dfc$age_max>65 & dfc$sex=='F']/sum(dfc$deaths[dfc$age_max>65]) # proportions F
     Wm <- dfc$deaths[dfc$age_max>65 & dfc$sex=='M']/sum(dfc$deaths[dfc$age_max>65]) # proportions M
-    dfc$deaths[dfc$age_max>65 & dfc$sex=='F'] <- round(Wf*(sum(dfc$deaths[dfc$age_max>65 & dfc$sex=='F']) - LTC))
-    dfc$deaths[dfc$age_max>65 & dfc$sex=='M'] <- round(Wm*(sum(dfc$deaths[dfc$age_max>65 & dfc$sex=='M']) - LTC))
+    dfc$deaths[dfc$age_max>65 & dfc$sex=='F'] <- round(Wf*(total - LTC))
+    dfc$deaths[dfc$age_max>65 & dfc$sex=='M'] <- round(Wm*(total - LTC))
     
   }
   
