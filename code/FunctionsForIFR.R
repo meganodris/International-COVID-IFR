@@ -321,7 +321,7 @@ get_inputs <- function(countries, poplist, dataA, df65p, deathsT, sero, cdg, dpd
   # Death and population data
   Inputs <- get_agesex(dataA, countries) # age/sex by country
   Inputs$NArea <- length(countries) # N countries
-  Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
+  Inputs <- c(Inputs, compile_pop(poplist, countries)) # population data
   Inputs <- c(Inputs, compile_deathsA(dataA, countries, NAges)) # death data
   Inputs <- c(Inputs, index_ages(dataA, countries, NAges)) # age indices
   Inputs <- c(Inputs, get_deathsT(deathsT, countries, dataA)) # death time series
