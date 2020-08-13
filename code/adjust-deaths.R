@@ -1,5 +1,4 @@
 #===== Script to adjust for nursing home deaths =====#
-library(readxl)
 
 
 # source functions
@@ -10,7 +9,7 @@ source('./code/FunctionsForIFR.R')
 df <- read.csv('./data/deaths_age.csv')
 
 # death location data
-loc <- read_excel('./data/deaths_location.xlsx', sheet='Sheet1')
+loc <- read.csv('./data/deaths_location.csv')
 loc$pLTC <- loc$LTC_deaths/loc$total_deaths
 
 

@@ -1,0 +1,14 @@
+﻿country,asof,total_deaths,LTC_deaths,pLTC,source,notes
+Scotland,10/05/2020,3213,1438,0.4475568,https://www.nrscotland.gov.uk/covid19stats,
+England,01/05/2020,31777,8280,0.260565818,https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsinvolvingcovid19englandandwales,
+Wales,01/05/2020,1566,413,0.263729246,https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsinvolvingcovid19englandandwales,
+Northern Ireland,08/05/2020,599,274,0.457429048,https://files.nisra.gov.uk/Deaths/Weekly-Deaths-Dashboard.html,
+Ireland,06/05/2020,1375,857,0.623272727,https://www.gov.ie/en/publication/20f2e0-updates-on-covid-19-coronavirus-since-january-2020/,
+Sweden,14/05/2020,2899,1637,0.564677475,https://www.socialstyrelsen.se/statistik-och-data/statistik/statistik-om-covid-19/statistik-om-covid-19-bland-aldre-efter-boendeform/,used location of death - care home or hospital. Also gives deaths for those who have home assistance. Only excluded care home deaths
+Germany,03/05/2020,6649,2401,0.361106933,https://ltccovid.org/wp-content/uploads/2020/05/Mortality-associated-with-COVID-3-May-final-6.pdf,
+Denmark,24/04/2020,394,133,0.337563452,https://www.ssi.dk/aktuelt/nyheder/2020/sa-mange-er-smittet-med-sars-cov-2-pa-danske-plejehjem,
+Switzerland,12/05/2020,1749,927,0.530017153,https://interaktiv.tagesanzeiger.ch/2020/corona-tote-mehrheitlich-aus-altersheimen/,
+Hungary,18/04/2020,172,33,0.191860465,https://ltccovid.org/wp-content/uploads/2020/05/Mortality-associated-with-COVID-3-May-final-6.pdf,
+Norway,02/05/2020,211,127,0.601895735,https://ltccovid.org/wp-content/uploads/2020/05/Mortality-associated-with-COVID-3-May-final-6.pdf,
+Portugal,23/04/2020,820,327,0.398780488,https://ltccovid.org/wp-content/uploads/2020/05/Mortality-associated-with-COVID-3-May-final-6.pdf,
+Finland,28/05/2020,313,141,0.450479233,https://thl.fi/en/web/infectious-diseases/what-s-new/coronavirus-covid-19-latest-updates/situation-update-on-coronavirus#Coronavirus-related_deaths,
