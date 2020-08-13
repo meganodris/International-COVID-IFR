@@ -17,7 +17,6 @@ Code and data to reproduce the analysis in "Age-specific mortality and immunity 
 could be excluded.
 - 'deathsT_region.csv' contains daily time-series of COVID-19 deaths for a subset of locations, where unavailable from the COVID-19 Data Repository 
 by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University.
-- 'serostudies.csv' are the results from each seroprevalence surveys included in the analysis.
-- 'CharlesDeGaulle.csv' and 'DiamondPrincess.csv' inlcude the reported number of age-specific infections detected from active surveillance campaigns on the Charles de Gaulle aircraft 
-carrier and Diamond Princess cruise ship.
-- 'France_NursingHomePop.csv' is the nursing home population demographics of France.
+- 'serostudies.csv' are the results from each of the seroprevalence surveys included in the analysis.
+- 'CharlesDeGaulle.csv' and 'DiamondPrincess.csv' inlcude the reported number of age-specific infections detected from active surveillance campaigns on the Charles de Gaulle aircraft carrier and Diamond Princess cruise ship.
+- 'France_NursingHomePop.csv' is the nursing home population demographics for France.
