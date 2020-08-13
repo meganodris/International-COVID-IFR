@@ -10,21 +10,21 @@ library(epitools)
 compile_pop <- function(poplist, countries){
   
   # matrices for model
-  pop_m <- matrix(NA, nrow=14, ncol=length(countries)) 
-  pop_f <- matrix(NA, nrow=14, ncol=length(countries)) 
-  pop_b <- matrix(NA, nrow=14, ncol=length(countries)) 
+  pop_m <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_f <- matrix(NA, nrow=17, ncol=length(countries)) 
+  pop_b <- matrix(NA, nrow=17, ncol=length(countries)) 
   
   # compile for model
   for(c in 1:length(countries)){
     ci <- countries[c]
-    pop_m[ ,c] <- poplist[[ci]]$M[1:14]
-    pop_f[ ,c] <- poplist[[ci]]$`F`[1:14]
-    pop_b[ ,c] <- poplist[[ci]]$M[1:14] + poplist[[ci]]$`F`[1:14]
+    pop_m[ ,c] <- poplist[[ci]]$M[1:17]
+    pop_f[ ,c] <- poplist[[ci]]$`F`[1:17]
+    pop_b[ ,c] <- poplist[[ci]]$M[1:17] + poplist[[ci]]$`F`[1:17]
     
     # add ages 90+
-    pop_m[14,c] <- sum(poplist[[ci]]$M[14:21])
-    pop_f[14,c] <- sum(poplist[[ci]]$`F`[14:21])
-    pop_b[14,c] <- sum(poplist[[ci]]$M[14:21]) + sum(poplist[[c]]$`F`[14:21])
+    pop_m[17,c] <- sum(poplist[[ci]]$M[17:21])
+    pop_f[17,c] <- sum(poplist[[ci]]$`F`[17:21])
+    pop_b[17,c] <- sum(poplist[[ci]]$M[17:21]) + sum(poplist[[c]]$`F`[17:21])
   }
   
   
@@ -332,8 +332,8 @@ get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd, NAges){
   Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
   Inputs$DP_pos_m <- dpd$pos_m 
   Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,14,14)
-  Inputs$DPamax <- c(4,6,8,10,12,14,14,14)
+  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
+  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
   Inputs$DP_deathsTot <- 15
   Inputs$country <- countries
   
@@ -407,21 +407,21 @@ runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
 plot_IFR_age <- function(chains, inputs){
   
   # min & max bounds of age groupings
-  Amin <- seq(0,65,5)
-  Amax <- c(seq(4,64,5),110)
+  Amin <- seq(0,80,5)
+  Amax <- c(seq(4,79,5),110)
   
   # dataframe for ests
   ifr <- data.frame(mean=NA, ciL=NA, ciU=NA, 
-                    sex=c(rep('M',14),rep('F',14), rep('B',14), rep('RR',14)))
-  for(a in 1:14){
+                    sex=c(rep('M',17),rep('F',17), rep('B',17), rep('RR',17)))
+  for(a in 1:17){
     ifr[a,1:3] <- quantile(chains$ifr_m[,a], c(0.5,0.025,0.975))
-    ifr[a+14,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
-    ifr[a+28,1:3] <- quantile(chains$ifr_b[,a], c(0.5,0.025,0.975))
-    ifr[a+42,1:3] <- quantile(chains$ifr_RR[,a], c(0.5,0.025,0.975))
+    ifr[a+17,1:3] <- quantile(chains$ifr_f[,a], c(0.5,0.025,0.975))
+    ifr[a+34,1:3] <- quantile(chains$ifr_b[,a], c(0.5,0.025,0.975))
+    ifr[a+51,1:3] <- quantile(chains$ifr_RR[,a], c(0.5,0.025,0.975))
   }
   
   # plot
-  ifr$age <- rep(seq(1:14),2)
+  ifr$age <- rep(seq(1:17),2)
   ifr$ageG <- paste(Amin,Amax, sep='-')
   ifr$ageG[ifr$ageG=='65-110'] <- '65+'
   ifrAp <- ggplot(ifr[ifr$sex %in% c('M','F'),], aes(reorder(ageG,age), mean*100, col=sex))+ 
