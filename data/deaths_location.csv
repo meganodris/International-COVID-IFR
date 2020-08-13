@@ -1,4 +1,4 @@
-﻿country,asof,total_deaths,LTC_deaths,pLTC,source,notes
+country,asof,total_deaths,LTC_deaths,pLTC,source,notes
 Scotland,10/05/2020,3213,1438,0.4475568,https://www.nrscotland.gov.uk/covid19stats,
 England,01/05/2020,31777,8280,0.260565818,https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsinvolvingcovid19englandandwales,
 Wales,01/05/2020,1566,413,0.263729246,https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/deathsinvolvingcovid19englandandwales,
