@@ -52,7 +52,7 @@ g <- delay_deaths(deathsT, countries)
 
 
 # List of inputs for model
-Inputs <- get_inputs(countries, poplist, poplist, dfU65, df65p, deathsT, sero, cdg, dpd, 13)
+Inputs <- get_inputs(countries, poplist, dfU65, df65p, deathsT, sero, cdg, dpd, 13)
 Inputs$deathsTinfec <- g$deathsTinfec
 Inputs$deathsTsero <- g$deathsTsero
 Inputs$relProbInfection <- rep(1,17) 
@@ -61,7 +61,7 @@ Inputs$relProbInfection <- rep(1,17)
 
 #----- Run model -----#
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/code')
-fit <- runStan(model='IFRinternational.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.95)
+fit <- runStan(model='IFRinternational.stan', Inputs, N_iter=6000, N_chains=2, max_td=15, ad=0.95)
 
 
 # Check convergence
