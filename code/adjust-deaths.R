@@ -8,54 +8,36 @@ source('./code/FunctionsForIFR.R')
 
 # death data
 df <- read.csv('./data/deaths_age.csv')
-countries <- sort(unique(df$country))
-df <- agg_deathsAp(df, countries,90)
 
 # death location data
 loc <- read_excel('./data/deaths_location.xlsx', sheet='Sheet1')
 loc$pLTC <- loc$LTC_deaths/loc$total_deaths
-loc <- loc[!(loc$country %in% c('England','Wales','Geneva')),]
 
-# nursing home population
-NHpop <- list()
-NH <- list.files('./data/population/nursing-home-population/')
-for(k in unique(NH)) NHpop[[k]] <- read.csv(paste('./data/population/nursing-home-population/', k, sep=''))
-for(k in 1:length(NHpop)) names(NHpop)[k] <- substr(names(NHpop)[k],1,nchar(names(NHpop)[k])-4)
 
-# remove nursing home deaths
+#--- Adjustment to remove nursing home deaths
+# assumes proportion of COVID-19 LTC deaths is constant in time
+# assumes age-distribution of LTC deaths to be the same as all COVID-19 deaths
 new <- list()
 for(c in unique(loc$country)){
   
-  # extract death & nursing home data
+  # country-specific death data
   dfc <- df[df$country==c, ]
-  NHc <- NHpop[[c]]
   
   # number of deaths associated with LTC settings
   LTC <- sum(dfc$deaths)*loc$pLTC[loc$country==c]
   
   if(dfc$sex[1]=='B'){
     
-    NHc$B <- NHc$M + NHc$`F` # sum M + F
-    W <- NHc$B/sum(NHc$B) # weights
+    W <- dfc$deaths[dfc$age_max>65]/sum(dfc$deaths[dfc$age_max>65]) # proportions
+    dfc$deaths[dfc$age_max>65] <- round(W*(sum(dfc$deaths[dfc$age_max>65]) - LTC))
     
-    for(k in which(dfc$age_max>65)){ # align age groupings
-      minA <- which(dfc$age_min[k]==NHc$age_min)
-      maxA <- which(dfc$age_max[k]==NHc$age_max)
-      if(length(minA)==0) minA <- 1
-      dfc$deaths[k] <- dfc$deaths[k] - round(sum(W[minA:maxA])*LTC)
-    }
   }else{
     
-    Wf <- NHc$`F`/sum(NHc$`F` + NHc$M) # weights F
-    Wm <- NHc$M/sum(NHc$`F` + NHc$M) # weights M
+    Wf <- dfc$deaths[dfc$age_max>65 & dfc$sex=='F']/sum(dfc$deaths[dfc$age_max>65]) # proportions F
+    Wm <- dfc$deaths[dfc$age_max>65 & dfc$sex=='M']/sum(dfc$deaths[dfc$age_max>65]) # proportions M
+    dfc$deaths[dfc$age_max>65 & dfc$sex=='F'] <- round(Wf*(sum(dfc$deaths[dfc$age_max>65 & dfc$sex=='F']) - LTC))
+    dfc$deaths[dfc$age_max>65 & dfc$sex=='M'] <- round(Wm*(sum(dfc$deaths[dfc$age_max>65 & dfc$sex=='M']) - LTC))
     
-    for(k in which(dfc$age_max>65)){ # align age groupings
-      minA <- which(dfc$age_min[k]==NHc$age_min)
-      maxA <- which(dfc$age_max[k]==NHc$age_max)
-      if(length(minA)==0) minA <- 1
-      if(dfc$sex[k]=='M') dfc$deaths[k] <- dfc$deaths[k] - round(sum(Wm[minA:maxA])*LTC)
-      if(dfc$sex[k]=='F') dfc$deaths[k] <- dfc$deaths[k] - round(sum(Wf[minA:maxA])*LTC)
-    }
   }
   
   new[[c]] <- dfc
@@ -63,6 +45,6 @@ for(c in unique(loc$country)){
 
 # output adjusted death data csv
 adjusted_deaths <- do.call('rbind', new)
-adjusted_deaths <- rbind(adjusted_deaths, df[df$country=='France', ])
+adjusted_deaths <- rbind(adjusted_deaths, df[df$country %in% c('France'), ])
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data')
 write.csv(adjusted_deaths, 'deaths_age_adjusted.csv', row.names=F)

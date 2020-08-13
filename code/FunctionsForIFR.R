@@ -234,8 +234,6 @@ tidy_deathsT <- function(deathsT, deathsTR, countries){
   }
   
   # return tidy dataset
-  #nas <- colnames(deathsTR)[colSums(is.na(deathsTR))>0]
-  #deathsTR <- deathsTR[,1:(which(colnames(deathsTR)==nas[1])-1)]
   return(deathsT=deathsTR)
 }
 
@@ -316,27 +314,33 @@ get_agesex <- function(data, countries){
 }
 
 # List of data inputs for model
-get_inputs <- function(countries, poplist, poplist_adj, dataA, cdg, dpd, NAges){
+get_inputs <- function(countries, poplist, poplist_adj, dataA, df65p, deathsT, sero, cdg, dpd, NAges){
   
   Inputs <- list()
+  
+  # Death and population data
   Inputs <- get_agesex(dataA, countries) # age/sex by country
   Inputs$NArea <- length(countries) # N countries
   Inputs <- c(Inputs, compile_pop(poplist_adj, countries)) # population data
-  Inputs <- c(Inputs, compile_deathsA(dataA, countries,NAges)) # death data
-  Inputs <- c(Inputs, index_ages(dataA, countries,NAges)) # age indices
+  Inputs <- c(Inputs, compile_deathsA(dataA, countries, NAges)) # death data
+  Inputs <- c(Inputs, index_ages(dataA, countries, NAges)) # age indices
+  Inputs <- c(Inputs, get_deathsT(deathsT, countries, dataA)) # death time series
+  Inputs <- c(Inputs, get_sero(sero, countries, Inputs$Ndays)) # serology data
+  Inputs$indexArea65p <- which(countries=='England') # adjusted death data 65+
+  Inputs$deaths65p_m <- df65p$deaths[df65p$sex=='M']
+  Inputs$deaths65p_f <- df65p$deaths[df65p$sex=='F']
+  
+  # Active surveillance data
   Inputs$CDG_pos_m <- cdg$pos_m
   Inputs$CDG_pos_f <- cdg$pos_f
   Inputs$CDGamin <- c(5,6,8,10)
   Inputs$CDGamax <- c(5,7,9,12)
-  Inputs$CDG_deathsTot <- 0
   Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
   Inputs$DP_pos_m <- dpd$pos_m 
   Inputs$DP_pos_f <- dpd$pos_f
   Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
   Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
-  Inputs$DP_deathsTot <- 15
-  Inputs$country <- countries
-  
+
   return(Inputs)
 }
 
@@ -378,18 +382,19 @@ get_sero <- function(sero, countries, Ndays){
   
   # inputs
   NSero <- nrow(sero)
-  SeroAreaInd <- vector()
+  SeroAreaIndex <- vector()
   tmin <- vector()
   tmax <- vector()
   for(i in 1:NSero){
-    SeroAreaInd[i] <- which(countries==sero$region[i])
+    SeroAreaIndex[i] <- which(countries==sero$region[i])
     tmin[i]  <- which(dates==sero$tmin[i])
     tmax[i]  <- which(dates==sero$tmax[i])
   }
   
   # return inputs for model
-  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaInd=SeroAreaInd, tmin=tmin, tmax=tmax))
+  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaIndex=SeroAreaIndex, tmin=tmin, tmax=tmax))
 }
+
 
 # Run stan model 
 runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){

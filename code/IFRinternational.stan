@@ -1,5 +1,6 @@
 functions {
   
+  // function to sum across groups
   real[] alignSUM(real[] d, int Nage, int[] AMin, int[] AMax){
     
     real Da[Nage];
@@ -7,6 +8,7 @@ functions {
     return(Da);
   }
   
+  // function to average across groups
   real[] alignMEAN(real[] d, int Nage, int[] AMin, int[] AMax){
     
     real Da[Nage];
@@ -38,31 +40,17 @@ data {
   int ageG_min[13,NArea];
   int ageG_max[13,NArea];
   
-  // Adjusted data 65+
+  // Adjusted death data 65+ (i.e. non-LTC deaths)
   int deaths65p_m[4];
   int deaths65p_f[4];
-  int indArea65p;
+  int indexArea65p;
 
-  // Age-specific probabilities of infection
+  // Age-specific relative probabilities of infection
   real relProbInfection[17];
-  
-  // Diamond Princess data 
-  int <lower=0> DP_pos_m[8]; 
-  int <lower=0> DP_pos_f[8]; 
-  int <lower=0> DPamin[8];
-  int <lower=0> DPamax[8];
-  int <lower=0> DP_deathsTot;
-  
-  // Charles de Gaulle data 
-  int <lower=0> CDG_pos_m[4]; 
-  int <lower=0> CDG_pos_f[4]; 
-  int <lower=0> CDGamin[4];
-  int <lower=0> CDGamax[4];
-  int <lower=0> CDG_deathsTot;
   
   // Serology data
   int NSero;
-  int SeroAreaInd[NSero];
+  int SeroAreaIndex[NSero];
   int NSamples[NSero];
   int NPos[NSero];
   int tmin[NSero];
@@ -75,6 +63,18 @@ data {
   int deathsT[Ndays+20,NArea];
   int TdeathsA[NArea];
   
+  // Diamond Princess data 
+  int <lower=0> DP_pos_m[8]; 
+  int <lower=0> DP_pos_f[8]; 
+  int <lower=0> DPamin[8];
+  int <lower=0> DPamax[8];
+
+  // Charles de Gaulle data 
+  int <lower=0> CDG_pos_m[4]; 
+  int <lower=0> CDG_pos_f[4]; 
+  int <lower=0> CDGamin[4];
+  int <lower=0> CDGamax[4];
+
 }
 
 parameters {
@@ -98,15 +98,15 @@ transformed parameters {
   matrix[Ndays,NArea] seroT;
   matrix[Ndays,NArea] infecT;
   
-  // total deaths <65 years
+  // total deaths <65 and 65+
   real u65deaths[NArea];
   real o65deaths[NArea];
   
   // expected seroprevalence at location & time of serosurvey
   real serofit[NSero];
   
-  // mean increase in IFR estimates
-  real diff_ifr_b[15]; // 
+  // mean increase in IFR estimates 10+
+  real diff_ifr_b[14]; // 
   real mean_increase_ifr;
   
   // IFRs
@@ -119,9 +119,10 @@ transformed parameters {
   // transformed parameters
   for(c in 1:NArea) probInfec[c] = exp(log_probInfec[c]);
   
+  // IFRs 65+ 
   for(a in 1:4){
-    ifrm65p[a] = deaths65p_m[a]/(pop_m[a+13,indArea65p]*probInfec[indArea65p]*relProbInfection[a+13]);
-    ifrf65p[a] = deaths65p_f[a]/(pop_f[a+13,indArea65p]*probInfec[indArea65p]*relProbInfection[a+13]);
+    ifrm65p[a] = deaths65p_m[a]/(pop_m[a+13,indexArea65p]*probInfec[indexArea65p]*relProbInfection[a+13]);
+    ifrf65p[a] = deaths65p_f[a]/(pop_f[a+13,indexArea65p]*probInfec[indexArea65p]*relProbInfection[a+13]);
   }
   
   // IFRs all ages
@@ -133,7 +134,7 @@ transformed parameters {
   }
   for(a in 1:17) ifr_b[a] = (ifr_m[a]+ifr_f[a])/2;
 
-  // probs by age, sex & region
+  // Estimated deaths by age, sex & region
   for (a in 1:17){
     for(c in 1:NArea){
       natDeath_m[a,c] = pop_m[a,c]*probInfec[c]*ifr_m[a]*relProbInfection[a];
@@ -142,14 +143,13 @@ transformed parameters {
     }
   }
   
-  
-  // mean increase in log IFRs 20-64
-  for(i in 1:15){
-    diff_ifr_b[i] = ifr_b[i+1] - ifr_b[i];
+  // mean increase in IFRs aged 10+
+  for(i in 1:14){
+    diff_ifr_b[i] = ifr_b[i+3] - ifr_b[i+2];
   }
-  mean_increase_ifr = sum(diff_ifr_b)/15;
+  mean_increase_ifr = sum(diff_ifr_b)/14;
   
-  // total expected deaths <65
+  // total expected deaths <65 and 65+
   for(c in 1:NArea){
     u65deaths[c] = sum(natDeath_b[1:13,c]);
     o65deaths[c] = sum(natDeath_b[14:17,c]);
@@ -162,7 +162,7 @@ transformed parameters {
   }
   
   // expected seroprevalence at time of serosurveys
-  for(i in 1:NSero) serofit[i] = mean(seroT[tmin[i]:tmax[i],SeroAreaInd[i]]);
+  for(i in 1:NSero) serofit[i] = mean(seroT[tmin[i]:tmax[i],SeroAreaIndex[i]]);
 }
 
 
@@ -177,7 +177,7 @@ model {
   for(a in 1:13) log_ifr_m[a] ~ uniform(-50,-0.001);
   for(a in 1:13) log_ifr_f[a] ~ uniform(-50,-0.001);
 
-  // fit to age & sex-specific data
+  // Fit to age & sex-specific data
   for(c in 1:NArea){
     if(gender[c]==1){
       estDeaths_b[1:NAges[c],c] = alignSUM(natDeath_b[,c], NAges[c], ageG_min[,c], ageG_max[,c]);
@@ -193,7 +193,7 @@ model {
   
   // Likelihood
   for(i in 1:NSero){
-    NPos[i] ~ binomial(NSamples[i], mean(seroT[tmin[i]:tmax[i],SeroAreaInd[i]]));
+    NPos[i] ~ binomial(NSamples[i], mean(seroT[tmin[i]:tmax[i],SeroAreaIndex[i]]));
   }
   
 }
@@ -212,21 +212,20 @@ generated quantities {
   // IFR relative to 55-59 group
   for(a in 1:17) ifr_RR[a] = ifr_b[a]/ifr_b[12];
   
-  // population-weighted IFRs
+  // Population-weighted IFRs
   for(c in 1:NArea){
     ifr_C[c] = sum(to_vector(ifr_m).*to_vector(pop_m[,c]) + to_vector(ifr_f).*to_vector(pop_f[,c]))/sum(pop_b[,c]);
   }
   
-  // align to DP & CDG age groups
+  // Align IFRs to DP & CDG age groups
   dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
   dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
   cdgifr_m = alignMEAN(ifr_m, 4, CDGamin, CDGamax);
   cdgifr_f = alignMEAN(ifr_f, 4, CDGamin, CDGamax);
  
-  // sum expected deaths across age groups for DP and CDG
+  // Sum expected deaths across age groups for DP and CDG
   estDPdeaths=0;
   estCDGdeaths=0;
-  //estDPdeaths = ifr_m[14]*sum(DP_pos_m[6:8]) + ifr_f[14]*sum(DP_pos_f);
   for(j in 1:8){ 
     estDPdeaths=estDPdeaths+(dpifr_f[j]*DP_pos_f[j]+dpifr_m[j]*DP_pos_m[j]);
   }
