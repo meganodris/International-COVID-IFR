@@ -84,10 +84,8 @@ lambdaFit <- serofit(chains, sero)
 ggplot(lambdaFit, aes(seroprev,fit))+ geom_point(aes(col=region))+
   geom_line(aes(seroprev, seroprev))
 
-# Other paramater estimates
-pars <- extract_pars(chains)
 
-# Fit to active surveillance data
+# Check IFR estimates against active surveillance data
 dp <- fit_active(chains, Inputs)
 dp
 
@@ -97,20 +95,9 @@ imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
 imm[[16]]
 
 # Fit to age data
-df <- agg_deathsAp(df, countries, 80)
-plotFit <- fit_deaths_direct(chains, Inputs, df, countries)
+plotFit <- fit_deaths(chains, Inputs, df, countries)
 plotFit$plots[[14]]
 
-
-
-# output pars
-write.csv(ifrAge$ifrA, 'IFRage.csv', row.names=F)
-write.csv(ifrPop$ifrc, 'IFRPop.csv', row.names=F)
-write.csv(pars, 'Params.csv', row.names=F)
-write.csv(lambdaFit, 'Fitserology.csv', row.names=F)
-write.csv(seroT$seroT, 'seroT.csv', row.names=F)
-write.csv(seroT$infecT, 'infecT.csv', row.names=F)
-write.csv(plotFit$ests, 'FitDeaths.csv', row.names=F)
 
 
 
