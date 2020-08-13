@@ -74,7 +74,7 @@ data {
 
 parameters {
   
-  real <lower=-50, upper=-0.001> log_probInfec[NArea];  
+  real <lower=-50, upper=1> log_probInfec[NArea];  
   real <lower=-50, upper=-0.001> log_ifr_m[14];
   real <lower=-50, upper=-0.001> log_ifr_f[14];
 }
@@ -163,7 +163,7 @@ model {
   //real dpifr_m[8];
 
   // Priors
-  for(c in 1:NArea) log_probInfec[c] ~ uniform(-50,-0.001);
+  for(c in 1:NArea) log_probInfec[c] ~ uniform(-50,1);
   for(a in 1:14) log_ifr_m[a] ~ uniform(-50,-0.001);
   for(a in 1:14) log_ifr_f[a] ~ uniform(-50,-0.001);
 
