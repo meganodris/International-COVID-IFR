@@ -56,7 +56,7 @@ Inputs <- get_inputs(countries, poplist, dfU65, df65p, deathsT, sero, cdg, dpd, 
 Inputs$deathsTinfec <- g$deathsTinfec
 Inputs$deathsTsero <- g$deathsTsero
 Inputs$relProbInfection <- rep(1,17) 
-
+Inputs$relProbInfection[14:17] <- 0.7
 
 
 #----- Run model -----#
@@ -90,6 +90,8 @@ dp <- fit_active(chains, Inputs)
 dp
 
 # Seroprevalence time series
+continent <- vector()
+for(i in 1:length(countries)) continent[i] <- paste(df$continent[df$country==countries[i]][1])
 seroT <- sero_time(chains, Inputs, countries, continent)
 imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
 imm[[16]]
