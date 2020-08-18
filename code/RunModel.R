@@ -41,10 +41,8 @@ sero$region <- as.character(sero$region)
 sero <- sero[sero$region %in% countries, ]
 
 # Death time series from Johns Hopkins repo
-setwd('C:/Users/Megan/Documents/GitHub/COVID-19/csse_covid_19_data/csse_covid_19_time_series') 
-deathsT <- read.csv('time_series_covid19_deaths_global.csv')
-setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data/')
-deathsTR <- read.csv('deathsT_region.csv')
+deathsT <- read.csv('data/time_series_covid19_deaths_global.csv')
+deathsTR <- read.csv('data/deathsT_region.csv') # time series not included in Johns Hopkins repo
 deathsT <- tidy_deathsT(deathsT, deathsTR, countries)
 
 # Distribute deaths backwards for timing of seroconversion & infection
