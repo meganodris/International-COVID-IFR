@@ -299,7 +299,7 @@ delay_deaths <- function(Cdeaths, countries){
 # Function to return N age groups & sex by country
 get_agesex <- function(data, countries){
   
-  # vectors to indicate Nages & sex by country
+  # vectors to index Nages & sex by country
   NAges <- vector()
   gender <- vector()
   
