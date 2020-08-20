@@ -1,6 +1,7 @@
 #===== Functions for International IFR model analysis =====#
 library(ggplot2)
 library(epitools)
+library(beepr)
 
 
 #----- 1. Functions for compiling model inputs -----#
@@ -187,21 +188,6 @@ index_ages <- function(data, countries, NAges){
 }
 
 
-# Tidy Diamond Princess data
-adjust_DPdata <- function(DP_raw){
-  
-  # age-sex breakdown for 634/712 cases
-  pos_m <- DP_raw$pos_m
-  pos_f <- DP_raw$pos_f
-  
-  AdditionalPositives <- 712 - sum(pos_m+pos_f) # cases with no age/sex
-  wts <- cbind(pos_m, pos_f)/(sum(pos_m+pos_f)) # assume same age/sex dist of new positives
-  DP_raw$pos_m <- round(pos_m + (AdditionalPositives*wts)[,1])
-  DP_raw$pos_f <- round(pos_f + (AdditionalPositives*wts)[,2])
-  
-  return(DP_raw) # return adjusted data
-}
-
 # Compile death time series data
 tidy_deathsT <- function(deathsT, deathsTR, countries){
   
@@ -329,17 +315,6 @@ get_inputs <- function(countries, poplist, dataA, df65p, deathsT, sero, cdg, dpd
   Inputs$indexArea65p <- which(countries=='England') # adjusted death data 65+
   Inputs$deaths65p_m <- df65p$deaths[df65p$sex=='M']
   Inputs$deaths65p_f <- df65p$deaths[df65p$sex=='F']
-  
-  # Active surveillance data
-  Inputs$CDG_pos_m <- cdg$pos_m
-  Inputs$CDG_pos_f <- cdg$pos_f
-  Inputs$CDGamin <- c(5,6,8,10)
-  Inputs$CDGamax <- c(5,7,9,12)
-  Inputs$agemid <- c(2,7,12,17,22,27,32,37,42,47,52,57,62,67,72,77,85)
-  Inputs$DP_pos_m <- dpd$pos_m 
-  Inputs$DP_pos_f <- dpd$pos_f
-  Inputs$DPamin <- c(1,5,7,9,11,13,15,17)
-  Inputs$DPamax <- c(4,6,8,10,12,14,16,17)
 
   return(Inputs)
 }
@@ -438,24 +413,6 @@ plot_IFR_age <- function(chains, inputs){
   
   # return plot & data
   return(list(ifrA=ifr, ifrAp=ifrAp))
-}
-
-
-# Plot fit to Diamond Princess & Charles de Gaulle data
-fit_active <- function(chains, inputs){
-  
-  # model estimates
-  active_fit <- data.frame(outbreak=c('Diamond Princess','Charles de Gaulle'), 
-                           N=c(15,0), mean=NA, ciL=NA, ciU=NA)
-  active_fit[1,3:5] <- quantile(chains$estDPdeaths, c(0.5,0.025,0.975))
-  active_fit[2,3:5] <- quantile(chains$estCDGdeaths, c(0.5,0.025,0.975))
-  
-  m_fit <- ggplot(active_fit, aes(outbreak, N))+ geom_col(fill='royalblue')+ 
-    geom_point(aes(outbreak,mean))+ xlab('')+ ylab('N deaths')+
-    geom_linerange(aes(outbreak,ymin=ciL,ymax=ciU))+ theme_minimal()+ 
-    labs(subtitle='Predicted deaths from active surveillance campaigns')
-  
-  return(m_fit)
 }
 
 

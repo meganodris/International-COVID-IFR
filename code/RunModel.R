@@ -30,11 +30,6 @@ for(k in unique(countries)){
   poplist[[k]] <- read.csv(paste('./data/population/', k,'-2019.csv', sep=''))
 } 
 
-# Active Surveillance data
-dpraw <- read.csv('./data/DiamondPrincess.csv')
-dpd <- adjust_DPdata(dpraw)
-cdg <- read.csv('./data/CharlesDeGaulle.csv')
-
 # Serology data
 sero <- read.csv('./data/serostudies.csv')
 sero$region <- as.character(sero$region)
@@ -82,10 +77,6 @@ lambdaFit <- serofit(chains, sero)
 ggplot(lambdaFit, aes(seroprev,fit))+ geom_point(aes(col=region))+
   geom_line(aes(seroprev, seroprev))
 
-
-# Check IFR estimates against active surveillance data
-dp <- fit_active(chains, Inputs)
-dp
 
 # Seroprevalence time series
 continent <- vector()

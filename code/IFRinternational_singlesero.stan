@@ -62,18 +62,6 @@ data {
   int deathsTsero[Ndays,NArea];
   int deathsT[Ndays+20,NArea];
   int TdeathsA[NArea];
-  
-  // Diamond Princess data 
-  int <lower=0> DP_pos_m[8]; 
-  int <lower=0> DP_pos_f[8]; 
-  int <lower=0> DPamin[8];
-  int <lower=0> DPamax[8];
-
-  // Charles de Gaulle data 
-  int <lower=0> CDG_pos_m[4]; 
-  int <lower=0> CDG_pos_f[4]; 
-  int <lower=0> CDGamin[4];
-  int <lower=0> CDGamax[4];
 
 }
 
@@ -200,12 +188,6 @@ generated quantities {
   
   real ifr_C[NArea]; 
   real ifr_RR[17];
-  real estDPdeaths;
-  real estCDGdeaths;
-  real dpifr_f[8];
-  real dpifr_m[8];
-  real cdgifr_f[4];
-  real cdgifr_m[4];
   
   // IFR relative to 55-59 group
   for(a in 1:17) ifr_RR[a] = ifr_b[a]/ifr_b[12];
@@ -213,22 +195,6 @@ generated quantities {
   // Population-weighted IFRs
   for(c in 1:NArea){
     ifr_C[c] = sum(to_vector(ifr_m).*to_vector(pop_m[,c]) + to_vector(ifr_f).*to_vector(pop_f[,c]))/sum(pop_b[,c]);
-  }
-  
-  // Align IFRs to DP & CDG age groups
-  dpifr_m = alignMEAN(ifr_m, 8, DPamin, DPamax);
-  dpifr_f = alignMEAN(ifr_f, 8, DPamin, DPamax);
-  cdgifr_m = alignMEAN(ifr_m, 4, CDGamin, CDGamax);
-  cdgifr_f = alignMEAN(ifr_f, 4, CDGamin, CDGamax);
- 
-  // Sum expected deaths across age groups for DP and CDG
-  estDPdeaths=0;
-  estCDGdeaths=0;
-  for(j in 1:8){ 
-    estDPdeaths=estDPdeaths+(dpifr_f[j]*DP_pos_f[j]+dpifr_m[j]*DP_pos_m[j]);
-  }
-  for(j in 1:4){ 
-    estCDGdeaths=estCDGdeaths+(cdgifr_f[j]*CDG_pos_f[j]+cdgifr_m[j]*CDG_pos_m[j]);
   }
 
 }
