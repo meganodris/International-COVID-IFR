@@ -103,7 +103,7 @@ agg_deathsu5 <- function(deathsA, countries){
     
     dfc <- deathsA[deathsA$country==countries[c], ]
     
-    # if multiple age groups 80+, aggregate
+    # if multiple age groups <5, aggregate
     if(any(dfc$age_max<4)){ 
       new <- dfc[dfc$age_min>4, ]
       for(s in unique(new$sex)){
