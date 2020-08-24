@@ -1,7 +1,6 @@
 #===== Functions for International IFR model analysis =====#
 library(ggplot2)
 library(epitools)
-library(beepr)
 
 
 #----- 1. Functions for compiling model inputs -----#
@@ -375,7 +374,6 @@ get_sero <- function(sero, countries, Ndays){
 runStan <- function(model, inputs, N_iter, N_chains, max_td, ad){
   f <- stan(file=model,data=inputs,iter=N_iter,
             chains=N_chains,control=list(max_treedepth=max_td, adapt_delta=ad))
-  beepr::beep('coin')
   return(f)
 }
 
