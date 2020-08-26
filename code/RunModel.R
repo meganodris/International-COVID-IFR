@@ -1,7 +1,6 @@
 library(rstan)
 
 # Source functions
-setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR')
 source('./code/FunctionsForIFR.R')
 
 
@@ -9,7 +8,7 @@ source('./code/FunctionsForIFR.R')
 
 # Age-specific death data
 df <- read.csv('./data/deaths_age.csv')
-df <- df[df$nat.reg=='nat', ]
+df <- df[df$nat.reg=='nat', ] # national-level only
 countries <- sort(as.character(unique(df$country)))
 df <- agg_deathsAp(df, countries, 80) # aggregate 80+ age groups
 df <- agg_deathsu5(df, countries) # aggregate ages <4
@@ -45,16 +44,14 @@ g <- delay_deaths(deathsT, countries)
 
 
 # List of inputs for model
-Inputs <- get_inputs(countries, poplist, dfU65, df65p, deathsT, sero, cdg, dpd, 13)
+Inputs <- get_inputs(countries, poplist, dfU65, df65p, deathsT, sero, NAges=13)
 Inputs$deathsTinfec <- g$deathsTinfec
 Inputs$deathsTsero <- g$deathsTsero
-Inputs$relProbInfection <- rep(1,17) 
-Inputs$relProbInfection[14:17] <- 0.7
+Inputs$relProbInfection <- c(rep(1,13),0.7,0.7,0.7,0.7) 
 
 
 #----- Run model -----#
-setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/code')
-fit <- runStan(model='IFRinternational.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.95)
+fit <- runStan(model='code/IFRinternational.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.95)
 
 
 # Check convergence
