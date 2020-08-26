@@ -69,13 +69,11 @@ ifrPop <- plot_IFR_area(chains, Inputs, countries)
 ifrAge$ifrAp
 ifrPop$ifrCp
 
-# Lambda estimates
+# Observed & expected seroprevalence values
 lambdaFit <- serofit(chains, sero)
-ggplot(lambdaFit, aes(seroprev,fit))+ geom_point(aes(col=region))+
-  geom_line(aes(seroprev, seroprev))
 
 
-# Seroprevalence time series
+# Seroprevalence time series plots
 continent <- vector()
 for(i in 1:length(countries)) continent[i] <- paste(df$continent[df$country==countries[i]][1])
 seroT <- sero_time(chains, Inputs, countries, continent)
