@@ -299,7 +299,7 @@ get_agesex <- function(data, countries){
 }
 
 # List of data inputs for model
-get_inputs <- function(countries, poplist, dataA, df65p, deathsT, sero, cdg, dpd, NAges){
+get_inputs <- function(countries, poplist, dataA, df65p, deathsT, sero, NAges){
   
   Inputs <- list()
   
