@@ -19,4 +19,5 @@ could be excluded.
 by the Center for Systems Science and Engineering (CSSE) at Johns Hopkins University (https://github.com/CSSEGISandData/COVID-19).
 - ```deathsT_region.csv``` contains daily time-series of COVID-19 deaths for a subset of locations, where unavailable from the Johns Hopkins repository.
 - ```serostudies.csv``` are the results from each of the seroprevalence surveys included in the analysis.
+- ```data_sources.csv``` contains URL links to sources of age-specific death data for each country.
 - ```France_NursingHomePop.csv``` is the nursing home population demographics for France.
