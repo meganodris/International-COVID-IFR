@@ -239,9 +239,7 @@ delay_deaths <- function(Cdeaths, countries){
   # matrices for storage
   deathsTinfec <- matrix(0, nrow=Ndays, ncol=length(countries))
   deathsTsero <- matrix(0, nrow=Ndays, ncol=length(countries))
-  deathsTonset <- matrix(0, nrow=Ndays, ncol=length(countries))
-  
-  
+
   # infection to death
   id <- rgamma(1000,shape=(22.9/12.4)^2, rate=22.9/(12.4)^2)
   for(c in 1:length(countries)){
@@ -249,7 +247,8 @@ delay_deaths <- function(Cdeaths, countries){
       if(ddeathsT[i,c]>0){
         for(k in 1:ddeathsT[i,c]){
           di <- floor(id[runif(1,1,length(id))])
-          deathsTinfec[(i-di),c] <- deathsTinfec[(i-di),c]+1
+          if((i-di)<1) deathsTinfec[1,c] <- deathsTinfec[1,c]+1
+          else deathsTinfec[(i-di),c] <- deathsTinfec[(i-di),c]+1
         }
       }
     }
@@ -265,18 +264,17 @@ delay_deaths <- function(Cdeaths, countries){
         for(k in 1:ddeathsT[i,c]){
           di <- floor(od[runif(1,1,length(od))])
           di2 <- floor(os[runif(1,1,length(os))])
-          deathsTonset[(i-di),c] <- deathsTonset[(i-di),c]+1
-          if((i-di+di2)<nrow(deathsTsero)) deathsTsero[(i-di+di2),c] <- deathsTsero[(i-di+di2),c]+1
+          if((i-di+di2)<1) deathsTsero[1,c] <- deathsTsero[1,c]+1
+          else if((i-di+di2)>nrow(deathsTsero)) deathsTsero[nrow(deathsTsero),c] <- deathsTsero[nrow(deathsTsero),c]+1
+          else deathsTsero[(i-di+di2),c] <- deathsTsero[(i-di+di2),c]+1
         }
       }
     }
-    deathsTonset[,c] <- cumsum(deathsTonset[,c])
     deathsTsero[,c] <- cumsum(deathsTsero[,c])
   }
   
   # return matrices
   return(list(deathsTinfec=deathsTinfec[1:(Ndays-20), ], 
-              deathsTonset=deathsTonset[1:(Ndays-20), ], 
               deathsTsero=deathsTsero[1:(Ndays-20), ]))
 }
 
