@@ -7,6 +7,7 @@ source('./code/FunctionsForIFR.R')
 
 # death data
 df <- read.csv('./data/deaths_age.csv')
+engwales <- read.csv('./data/deaths_nonNH_EngWales.csv')
 
 # death location data
 loc <- read.csv('./data/deaths_location.csv')
@@ -45,6 +46,11 @@ for(c in unique(loc$country)){
 
 # output adjusted death data csv
 adjusted_deaths <- do.call('rbind', new)
+adjusted_deaths <- adjusted_deaths[!adjusted_deaths$country %in% c('England','Wales'), ]
+adjusted_deaths <- rbind(adjusted_deaths, engwales) # add known numbers from England & Wales
 adjusted_deaths <- rbind(adjusted_deaths, df[df$country %in% c('France'), ]) # add France hospital only data
 setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data')
 write.csv(adjusted_deaths, 'deaths_age_adjusted.csv', row.names=F)
+
+
+
