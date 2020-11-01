@@ -224,7 +224,7 @@ tidy_deathsT <- function(deathsT, deathsTR, countries){
 
 
 # Function to distribute deaths back to date of onset & seroconversion
-delay_deaths <- function(Cdeaths, countries){
+delay_deaths <- function(Cdeaths, countries, decay=NULL){
   
   # daily deaths
   Ndays <- ncol(Cdeaths)-1
@@ -239,9 +239,15 @@ delay_deaths <- function(Cdeaths, countries){
   # matrices for storage
   deathsTinfec <- matrix(0, nrow=Ndays, ncol=length(countries))
   deathsTsero <- matrix(0, nrow=Ndays, ncol=length(countries))
+  
+  # delay distributions 
+  io <- rgamma(1e4, shape=(6.5/2.6)^2, rate=6.5/(2.6^2)) # incubation period - Backer et al.
+  os <- rgamma(1e4, shape=(10/8)^2, rate=10/(8^2)) # onset to seroconversion - Lou et al.
+  od <- rgamma(1e4, shape=(20/10)^2, rate=20/(10^2)) # onset to death - Wu et al.
 
-  # infection to death
-  id <- rgamma(1000,shape=(22.9/12.4)^2, rate=22.9/(12.4)^2)
+  # infections
+  id <- io + od
+  IDcdf <- ecdf(id)
   for(c in 1:length(countries)){
     for(i in 1:nrow(deathsTinfec)){
       if(ddeathsT[i,c]>0){
@@ -255,9 +261,8 @@ delay_deaths <- function(Cdeaths, countries){
     deathsTinfec[,c] <- cumsum(deathsTinfec[,c])
   }
   
-  # onset to seroconversion
-  od <- rgamma(1000,shape=(17.8/8)^2, rate=17.8/(8)^2)
-  os <- rgamma(1000,shape=(10/4)^2, rate=10/(4)^2)
+  # seroconversions
+  SDcdf <- ecdf(od-os)
   for(c in 1:length(countries)){
     for(i in 1:nrow(deathsTsero)){
       if(ddeathsT[i,c]>0){
@@ -273,9 +278,15 @@ delay_deaths <- function(Cdeaths, countries){
     deathsTsero[,c] <- cumsum(deathsTsero[,c])
   }
   
+  # account for decaying antibodies
+  if(!is.null(decay)){
+    for(i in 1:nrow(deathsTsero)) deathsTsero[i, ] <- round(deathsTsero[i, ]*exp(-i*(decay)))
+    
+  }
+ 
   # return matrices
-  return(list(deathsTinfec=deathsTinfec[1:(Ndays-20), ], 
-              deathsTsero=deathsTsero[1:(Ndays-20), ]))
+  return(list(deathsTinfec=deathsTinfec[1:(Ndays-10), ], 
+              deathsTsero=deathsTsero[1:(Ndays-10), ]))
 }
 
 
@@ -312,6 +323,7 @@ get_inputs <- function(countries, poplist, dataA, df65p, deathsT, sero, NAges){
   Inputs$indexArea65p <- which(countries=='England') # adjusted death data 65+
   Inputs$deaths65p_m <- df65p$deaths[df65p$sex=='M']
   Inputs$deaths65p_f <- df65p$deaths[df65p$sex=='F']
+  Inputs$seroprev <- sero$seroprev
 
   return(Inputs)
 }
@@ -334,7 +346,7 @@ get_deathsT <- function(deathsT, countries, deathsA){
   for(c in 1:length(countries)) TdeathsA[c] <- which(dates==deathsA$asof[deathsA$country==countries[c]][1])
   
   # return list of inputs for model
-  return(list(Ndays=Ndays-20, deathsT=dt, TdeathsA=TdeathsA))
+  return(list(Ndays=Ndays-10, deathsT=dt, TdeathsA=TdeathsA))
 }
 
 
@@ -364,7 +376,7 @@ get_sero <- function(sero, countries, Ndays){
   }
   
   # return inputs for model
-  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, SeroAreaIndex=SeroAreaIndex, tmin=tmin, tmax=tmax))
+  return(list(NSero=NSero, NSamples=sero$n, NPos=sero$n_pos, seroprev=sero$seroprev, SeroAreaIndex=SeroAreaIndex, tmin=tmin, tmax=tmax))
 }
 
 
