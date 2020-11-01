@@ -2,7 +2,7 @@
 
 
 # source functions
-setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR')
+setwd('~/International-COVID-IFR')
 source('./code/FunctionsForIFR.R')
 
 # death data
@@ -49,7 +49,7 @@ adjusted_deaths <- do.call('rbind', new)
 adjusted_deaths <- adjusted_deaths[!adjusted_deaths$country %in% c('England','Wales'), ]
 adjusted_deaths <- rbind(adjusted_deaths, engwales) # add known numbers from England & Wales
 adjusted_deaths <- rbind(adjusted_deaths, df[df$country %in% c('France'), ]) # add France hospital only data
-setwd('C:/Users/Megan/Documents/GitHub/International-COVID-IFR/data')
+setwd('~/International-COVID-IFR/data')
 write.csv(adjusted_deaths, 'deaths_age_adjusted.csv', row.names=F)
 
 
