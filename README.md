@@ -1,10 +1,10 @@
 # International-COVID-IFR
 
-Code and data to reproduce the analysis in "Age-specific mortality and immunity patterns of SARS-CoV-2 infection in 45 countries".
+Code and data to reproduce the analysis in "Age-specific mortality and immunity patterns of SARS-CoV-2".
 
 ### **_Code_**
 - ```RunModel.R``` is the main RScript to call all data, functions & model fitting.
-- ```IFRInternational.stan``` contains the core model code.
+- ```IFRInternational_ensemble.stan``` contains the core ensemble model code.
 - ```IFRInternational_singlesero.stan``` contains core model code for use when only a single seroprevalence datapoint is being included in the model likelihood.
 - ```adjust-deaths.R``` estimates age-specific non-nursing home COVID-19 deaths aged 65+ for a subset of countries.
 
