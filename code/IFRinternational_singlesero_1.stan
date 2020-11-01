@@ -50,11 +50,11 @@ data {
   
   // Serology data
   int NSero;
-  int SeroAreaIndex[NSero];
-  int NSamples[NSero];
-  int NPos[NSero];
-  int tmin[NSero];
-  int tmax[NSero];
+  int SeroAreaIndex;
+  int NSamples;
+  int NPos;
+  int tmin;
+  int tmax;
  
   // Time series of deaths
   int Ndays;
@@ -91,7 +91,7 @@ transformed parameters {
   real o65deaths[NArea];
   
   // expected seroprevalence at location & time of serosurvey
-  real serofit[NSero];
+  real serofit;
   
   // mean increase in IFR estimates 10+
   real diff_ifr_b[14]; // 
@@ -150,7 +150,7 @@ transformed parameters {
   }
   
   // expected seroprevalence at time of serosurveys
-  for(i in 1:NSero) serofit[i] = mean(seroT[tmin[i]:tmax[i],SeroAreaIndex[i]]);
+  serofit = mean(seroT[tmin:tmax,SeroAreaIndex]);
 }
 
 
@@ -180,9 +180,7 @@ model {
   }
   
   // Likelihood
-  for(i in 1:NSero){
-    NPos[i] ~ binomial(NSamples[i], mean(seroT[tmin[i]:tmax[i],SeroAreaIndex[i]]));
-  }
+  NPos ~ binomial(NSamples, mean(seroT[tmin:tmax,SeroAreaIndex]));
   
 }
  
