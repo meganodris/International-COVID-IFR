@@ -33,6 +33,7 @@ for(k in unique(countries)){
 sero <- read.csv('./data/serostudies.csv')
 sero$region <- as.character(sero$region)
 sero <- sero[sero$region %in% countries, ]
+sero <- sero[!sero$n_pos==0, ]
 
 # Death time series from Johns Hopkins repo
 deathsT <- read.csv('data/time_series_covid19_deaths_global.csv')
@@ -51,7 +52,7 @@ Inputs$relProbInfection <- c(rep(1,13),0.7,0.7,0.7,0.7)
 
 
 #----- Run model -----#
-fit <- runStan(model='code/IFRinternational.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.95)
+fit <- runStan(model='code/IFRinternational_ensemble.stan', Inputs, N_iter=10000, N_chains=3, max_td=15, ad=0.95)
 
 
 # Check convergence
@@ -63,7 +64,7 @@ stan_dens(fit, pars=names(fit)[1:10])
 
 #----- Model outputs -----#
 
-# IFR estimates
+# IFR estimates & plots
 ifrAge <- plot_IFR_age(chains, Inputs)
 ifrPop <- plot_IFR_area(chains, Inputs, countries)
 ifrAge$ifrAp
@@ -78,11 +79,11 @@ continent <- vector()
 for(i in 1:length(countries)) continent[i] <- paste(df$continent[df$country==countries[i]][1])
 seroT <- sero_time(chains, Inputs, countries, continent)
 imm <- plot_immunity(chains, Inputs, countries, plotfit=T)
-imm[[16]]
+imm[[3]]
 
 # Fit to age data
-plotFit <- fit_deaths(chains, Inputs, df, countries)
-plotFit$plots[[14]]
+plotFit <- fit_deaths(chains, Inputs, dfU65, countries)
+plotFit$plots[[3]]
 
 
 
