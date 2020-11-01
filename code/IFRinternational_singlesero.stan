@@ -60,14 +60,14 @@ data {
   int Ndays;
   int deathsTinfec[Ndays,NArea];
   int deathsTsero[Ndays,NArea];
-  int deathsT[Ndays+20,NArea];
+  int deathsT[Ndays+10,NArea];
   int TdeathsA[NArea];
 
 }
 
 parameters {
   
-  real <lower=-50, upper=1> log_probInfec[NArea];  
+  real <lower=-50, upper=2> log_probInfec[NArea];  
   real <lower=-50, upper=-0.001> log_ifr_m[13];
   real <lower=-50, upper=-0.001> log_ifr_f[13];
 }
