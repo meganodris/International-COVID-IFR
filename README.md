@@ -1,6 +1,6 @@
 # International-COVID-IFR
 
-Code and data to reproduce the analysis in "Age-specific mortality and immunity patterns of SARS-CoV-2".
+Code and data to reproduce the analysis in "Age-specific mortality and immunity patterns of SARS-CoV-2". https://doi.org/10.1038/s41586-020-2918-0
 
 ### **_Code_**
 - ```RunModel.R``` is the main RScript to call all data, functions & model fitting.
